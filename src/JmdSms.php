@@ -47,7 +47,7 @@ class JmdSms
      */
     private function getVerifyCodeSms()
     {
-        $class = $this->verifyCodeSms[$this->verifyCodeKey++];
+        $class = array_get($this->verifyCodeSms,$this->verifyCodeKey++);
         return class_exists($class) ? new $class : false;
     }
 
