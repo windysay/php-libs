@@ -65,7 +65,7 @@ class CaptchaSender
         $cacheKey = 'captcha-tunnel-' . date('-Ymd-') . $mobile;
         $tunnelIndex = intval(Utils::getCache($cacheKey)) % $tunnelNum;
 
-        // 循环发送所有通道，直到成功
+        // 循环发送所有通道，直到成功或全部通道都失败
         $times = 0;
         do {
             $tunnel = new self::$tunnels[$tunnelIndex++];

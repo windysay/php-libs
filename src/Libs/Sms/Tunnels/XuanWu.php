@@ -41,11 +41,7 @@ class XuanWu implements Captcha
 
     public function __construct()
     {
-        if (class_exists('Yii')) {
-            $this->config[self::SMS_YZM] = \Yii::$app->params['xuanwu_sms'] ?: $this->config[self::SMS_YZM];
-            $this->config[self::SMS_YX] = \Yii::$app->params['xuanwu_sms_yx'] ?: $this->config[self::SMS_YX];
-            $this->appName = strval(\Yii::$app->params['app_name']);
-        }
+        $this->appName = strval(Utils::getParam('app_name'));
     }
 
     public function sendCaptcha($mobile, $code)

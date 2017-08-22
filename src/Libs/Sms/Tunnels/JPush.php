@@ -1,8 +1,8 @@
 <?php
 namespace JMD\Libs\Sms\Tunnels;
 
+use JMD\App\Utils;
 use JMD\Libs\Sms\Interfaces\Captcha;
-use Yii;
 
 /**
  * 极光短信
@@ -29,8 +29,8 @@ class JPush implements Captcha
 
     public function __construct(array $options = array())
     {
-        $this->appKey = Yii::$app->params['jiguang_app_key'];
-        $this->masterSecret = Yii::$app->params['jiguang_sectet_key'];
+        $this->appKey = Utils::getParam('jiguang_app_key');
+        $this->masterSecret = Utils::getParam('jiguang_sectet_key');
         $this->options = array_merge([
             'ssl_verify' => true,
             'disable_ssl' => false
@@ -111,7 +111,8 @@ class JPush implements Captcha
         $output = curl_exec($ch);
 
         if ($output === false) {
-            return "Error Code:" . curl_errno($ch) . ", Error Message:" . curl_error($ch);
+            Utils::alert("极光短信推送失败 =》 Error Code:" . curl_errno($ch) . ", Error Message:" . curl_error($ch));
+            return false;
         } else {
             $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
             $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
@@ -135,7 +136,6 @@ class JPush implements Captcha
             $response['http_code'] = $httpCode;
         }
         curl_close($ch);
-        @file_put_contents(Yii::$app->params["jiguang_sms_log_path"] . 'log-' . date('Y-m-d') . '.log', "\n" . date('Y-m-d H:i:s') . ' - ' . json_encode($response, JSON_UNESCAPED_UNICODE), FILE_APPEND);
         return $response;
     }
 }
