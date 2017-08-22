@@ -45,6 +45,7 @@ class Sms
             if (!$sms) {
                 /** 如果两个渠道都发送失败 则记录日志统计 */
                 \Yii::warning('所有渠道验证码发送失败->' . $mobile);
+                EmailHelper::sendEmail('所有渠道验证码发送失败->' . $mobile, '所有渠道验证码发送失败->' . $mobile);
                 return false;
             }
 
