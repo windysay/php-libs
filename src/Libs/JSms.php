@@ -8,7 +8,7 @@ use Yii;
  * Class JSms
  * @package common\components\jpush
  */
-class JSms implements SmsVerifyCodeInterface
+class JSms implements SmsCaptchaInterface
 {
     const URL = 'https://api.sms.jpush.cn/v1/';
     const TEMPLATE_CAPTCHA = 138124;  //验证码：{{code}}。请勿告知他人，谨防上当受骗。温馨提示：九秒贷未授权任何个人或机构代客户申请，或收取前期费用！
@@ -45,7 +45,7 @@ class JSms implements SmsVerifyCodeInterface
      * @param int $temp_id
      * @return mixed
      */
-    public function sendCode($mobile, $captcha)
+    public function sendCapture($mobile, $captcha)
     {
         $path = 'messages';
         $body = array(

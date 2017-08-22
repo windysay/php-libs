@@ -10,7 +10,7 @@ use Yii;
  * 玄武短信发送接口
  * Class XuanwuSms
  */
-class XuanWuSms implements SmsVerifyCodeInterface
+class XuanWuSms implements SmsCaptchaInterface
 {
     const SMS_YZM = 'yzm'; //验证码通道
     const SMS_YX = 'yx';  // 营销通道
@@ -48,7 +48,7 @@ class XuanWuSms implements SmsVerifyCodeInterface
         }
     }
 
-    public function sendCode($mobile, $code)
+    public function sendCapture($mobile, $code)
     {
         $text = str_replace([
             '{captcha}',

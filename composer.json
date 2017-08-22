@@ -1,6 +1,6 @@
 {
   "name": "jmd-backend/php-libs",
-  "description": "九秒贷短信类库",
+  "description": "php类库",
   "license": "apache v2",
   "require": {
     "php": ">=5.4.0",
@@ -8,7 +8,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Jmd\\Libs\\": "src/"
+      "Jmd\\Libs\\": "src/Libs"
     }
   }
 }
