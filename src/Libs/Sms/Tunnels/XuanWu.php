@@ -1,16 +1,16 @@
 <?php
 
-namespace Jmd\Libs\sms;
+namespace JMD\Libs\Sms\Tunnels;
 
+use JMD\App\Utils;
+use JMD\Libs\Sms\Interfaces\Captcha;
 use SoapClient;
-use common\helpers\EmailHelper;
-use Yii;
 
 /**
  * 玄武短信发送接口
  * Class XuanwuSms
  */
-class XuanWuSms implements SmsCaptchaInterface
+class XuanWu implements Captcha
 {
     const SMS_YZM = 'yzm'; //验证码通道
     const SMS_YX = 'yx';  // 营销通道
@@ -48,7 +48,7 @@ class XuanWuSms implements SmsCaptchaInterface
         }
     }
 
-    public function sendCapture($mobile, $code)
+    public function sendCaptcha($mobile, $code)
     {
         $text = str_replace([
             '{captcha}',
@@ -102,11 +102,8 @@ class XuanWuSms implements SmsCaptchaInterface
         if ($result->PostResult->result != 0 || $result->PostResult->message != '成功') {
             $flag = false;
             $con = ['tel' => $mobile, 'text' => $text, 'callback' => $result];
-            EmailHelper::sendEmail('玄武短信发送失败，请检查', json_encode($con, 256));
+            Utils::alert('玄武短信发送失败，请检查', json_encode($con, 256));
         }
-        @file_put_contents($config['log'] . 'log-' . date('Y-m-d') . '.log',
-            "\n" . date('Y-m-d H:i:s') . ' - ' . $mobile . ' - ' . $text . ' || 结果->' . json_encode($result, 256),
-            FILE_APPEND);
         return $flag;
     }
 

@@ -1,6 +1,7 @@
 {
   "name": "jmd-backend/php-libs",
   "description": "php类库",
+  "type": "library",
   "license": "apache v2",
   "require": {
     "php": ">=5.4.0",
@@ -8,7 +9,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Jmd\\Libs\\": "src/Libs"
+      "JMD\\Libs\\": "src/Libs"
     }
   }
 }

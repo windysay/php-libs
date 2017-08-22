@@ -1,6 +1,7 @@
 <?php
-namespace Jmd\Libs\sms;
+namespace JMD\Libs\Sms\Tunnels;
 
+use JMD\Libs\Sms\Interfaces\Captcha;
 use Yii;
 
 /**
@@ -8,7 +9,7 @@ use Yii;
  * Class JSms
  * @package common\components\jpush
  */
-class JSms implements SmsCaptchaInterface
+class JPush implements Captcha
 {
     const URL = 'https://api.sms.jpush.cn/v1/';
     const TEMPLATE_CAPTCHA = 138124;  //验证码：{{code}}。请勿告知他人，谨防上当受骗。温馨提示：九秒贷未授权任何个人或机构代客户申请，或收取前期费用！
@@ -45,7 +46,7 @@ class JSms implements SmsCaptchaInterface
      * @param int $temp_id
      * @return mixed
      */
-    public function sendCapture($mobile, $captcha)
+    public function sendCaptcha($mobile, $captcha)
     {
         $path = 'messages';
         $body = array(
@@ -72,7 +73,7 @@ class JSms implements SmsCaptchaInterface
             $body['send_time'] = $time;
         }
         $url = self::URL . $path;
-        $sms = new JSms();
+        $sms = new JPush();
         $result = $sms->request('POST', $url, $body);
         return empty($result['body']['msg_id']) ? false : true;
     }
