@@ -1,6 +1,5 @@
 <?php
-
-namespace common\components\jpush;
+namespace jmdsms;
 
 use jmdsms\SmsInterface;
 use jmdsms\SmsVerifyCodeInterface;

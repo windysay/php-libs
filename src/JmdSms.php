@@ -1,9 +1,6 @@
 <?php
 namespace jmdsms;
 
-
-use common\components\jpush\JSms;
-
 class JmdSms
 {
 
@@ -37,7 +34,7 @@ class JmdSms
         $sms = $this->getVerifyCodeSms();
         while (!$sms->sendCode($mobile, $captcha)) {
             $sms = $this->getVerifyCodeSms();
-            if (empty($sms)) {
+            if (!$sms) {
                 return false;
             }
         }
@@ -46,11 +43,12 @@ class JmdSms
 
 
     /**
-     * @return SmsVerifyCodeInterface
+     * @return SmsVerifyCodeInterface|boolean
      */
     private function getVerifyCodeSms()
     {
-        return $this->verifyCodeSms[$this->verifyCodeKey++];
+        $class = $this->verifyCodeSms[$this->verifyCodeKey++];
+        return class_exists($class) ? new $class : false;
     }
 
 
