@@ -1,5 +1,5 @@
 <?php
-namespace jmdsms;
+namespace Jmd\Libs;
 
 /**
  * 发送验证码抽象接口
