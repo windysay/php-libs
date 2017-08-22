@@ -3,6 +3,8 @@
 namespace jmdsms;
 
 use SoapClient;
+use common\helpers\EmailHelper;
+use Yii;
 
 /**
  * 玄武短信发送接口
