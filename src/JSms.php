@@ -1,7 +1,6 @@
 <?php
 namespace Jmd\Libs;
 
-use jmdsms\SmsVerifyCodeInterface;
 use Yii;
 
 /**
