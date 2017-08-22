@@ -1,5 +1,5 @@
 <?php
-namespace Jmd\Libs;
+namespace Jmd\Libs\sms;
 
 class Sms
 {
