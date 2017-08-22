@@ -60,9 +60,9 @@ class Sms
     private function getCaptchaSms()
     {
         $mobile = $this->mobile;
-        $cacheName = 'captcha-count' . $mobile . date('Ymd');
 
-        if ($this->captchaKey === null) {
+        if (!isset($this->captchaKey)) {
+            $cacheName = 'captcha-count' . $mobile . date('Ymd');
             $this->captchaKey = intval(\Yii::$app->cache->get($cacheName));
             $this->captchaKey = $this->captchaKey < count($this->captchaSms) ? $this->captchaKey : 0;
             \Yii::$app->cache->set($cacheName, $this->captchaKey + 1, 60 * 60 * 24);
