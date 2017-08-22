@@ -3,11 +3,12 @@
   "description": "九秒贷短信类库",
   "license": "apache v2",
   "require": {
-    "php": ">=5.4.0"
+    "php": ">=5.4.0",
+    "homer/guodu-sms": "1.0.0"
   },
   "autoload": {
     "psr-4": {
-      "jmdsms\\": "src/"
+      "Jmd\\Libs\\": "src/"
     }
   }
 }

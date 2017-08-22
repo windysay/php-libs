@@ -1,6 +1,6 @@
 <?php
 
-namespace jmdsms;
+namespace Jmd\Libs;
 
 use SoapClient;
 use common\helpers\EmailHelper;

@@ -1,7 +1,7 @@
 <?php
-namespace jmdsms;
+namespace Jmd\Libs;
 
-class JmdSms
+class Sms
 {
 
     /**
@@ -22,7 +22,7 @@ class JmdSms
      * @param string|integer $captcha 验证码
      * @return bool
      */
-    public static function sendCode($mobile, $captcha)
+    public static function sendCapture($mobile, $captcha)
     {
         $sms = new self();
         return $sms->_sendCode($mobile, $captcha);
