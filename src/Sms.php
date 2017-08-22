@@ -35,6 +35,8 @@ class Sms
         while (!$sms->sendCode($mobile, $captcha)) {
             $sms = $this->getVerifyCodeSms();
             if (!$sms) {
+                /** 如果两个渠道都发送失败 则记录日志统计 */
+                \Yii::info('所有渠道验证码发送失败->' . $mobile);
                 return false;
             }
         }
