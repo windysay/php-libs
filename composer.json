@@ -1,0 +1,13 @@
+{
+  "name": "jmd-backend/php-libs",
+  "description": "九秒贷短信类库",
+  "license": "apache v2",
+  "require": {
+    "php": ">=5.4.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "jmdsms\\": "src/"
+    }
+  }
+}
