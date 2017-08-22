@@ -1,6 +1,8 @@
 <?php
 namespace Jmd\Libs\sms;
 
+use common\helpers\EmailHelper;
+
 class Sms
 {
 
