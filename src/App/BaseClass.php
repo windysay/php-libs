@@ -10,6 +10,6 @@ class BaseClass {
             $project_type = \JMD\Common\Configs::$projectType;
             self::$instance[$class] = "\\JMD\\App\\{$project_type}\\{$class}";
         }
-        return call_user_func([self::$instance[$class], $name], $arguments);
+        return call_user_func_array([self::$instance[$class], $name], $arguments);
     }
 }
