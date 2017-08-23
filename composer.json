@@ -9,7 +9,7 @@
   },
   "autoload": {
     "psr-4": {
-      "JMD\\Libs\\": "src/Libs"
+      "JMD\\": "src"
     }
   }
 }
