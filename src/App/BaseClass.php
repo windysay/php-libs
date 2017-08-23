@@ -7,7 +7,7 @@ class BaseClass {
     {
         $class = static::$class;
         if (!isset(self::$instance[$class])) {
-            $project_type = \JMD\Common\Configs::$project_type;
+            $project_type = \JMD\Common\Configs::$projectType;
             self::$instance[$class] = "\\JMD\\App\\{$project_type}\\{$class}";
         }
         return call_user_func([self::$instance[$class], $name], $arguments);
