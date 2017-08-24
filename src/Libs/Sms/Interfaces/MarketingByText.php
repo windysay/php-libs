@@ -1,5 +1,5 @@
 <?php
-namespace JMD\App\Interfaces;
+namespace JMD\Libs\Sms\Interfaces;
 
 interface MarketingByText
 {

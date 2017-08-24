@@ -2,9 +2,9 @@
 
 namespace JMD\Libs\Sms\Tunnels;
 
-use JMD\App\Interfaces\MarketingByText;
 use JMD\App\Utils;
 use JMD\Libs\Sms\Interfaces\Captcha;
+use JMD\Libs\Sms\Interfaces\MarketingByText;
 use SoapClient;
 
 /**

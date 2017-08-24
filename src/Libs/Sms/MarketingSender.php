@@ -1,7 +1,7 @@
 <?php
 namespace JMD\Libs\Sms;
 
-use JMD\App\Interfaces\MarketingByText;
+use JMD\Libs\Sms\Interfaces\MarketingByText;
 use JMD\Libs\Sms\Tunnels\XuanWu;
 
 class MarketingSender
