@@ -70,7 +70,7 @@ class JPush implements Captcha, NoticeByTempId
      * @param array $tempPara   模版参数
      * @return bool 发送成功返回true否则false
      */
-    public function sendNotice($mobile, $tempId, $tempPara = [])
+    public function sendNoticeByTempId($mobile, $tempId, $tempPara = [])
     {
         return $this->sendMessage($mobile, $tempId, $tempPara);
     }

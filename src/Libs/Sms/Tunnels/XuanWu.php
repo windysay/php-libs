@@ -2,6 +2,7 @@
 
 namespace JMD\Libs\Sms\Tunnels;
 
+use JMD\App\Interfaces\MarketingByText;
 use JMD\App\Utils;
 use JMD\Libs\Sms\Interfaces\Captcha;
 use SoapClient;
@@ -10,7 +11,7 @@ use SoapClient;
  * 玄武短信发送接口
  * Class XuanwuSms
  */
-class XuanWu implements Captcha
+class XuanWu implements Captcha, MarketingByText
 {
     const SMS_YZM = 'yzm'; //验证码通道
     const SMS_YX = 'yx';  // 营销通道
@@ -53,7 +54,12 @@ class XuanWu implements Captcha
             $code,
             $this->appName
         ], $this->verifyCodeText);
-        return $this->sendSMS($mobile,$text);
+        return $this->sendSMS($mobile, $text);
+    }
+
+    public function sendMarketingByText($mobile, $text)
+    {
+        return $this->sendSMS($mobile, $text, self::SMS_YX);
     }
 
 

@@ -38,7 +38,7 @@ class NoticeSender
         if (!($obj instanceof NoticeByTempId)) {
             return false;
         }
-        return $obj->sendNotice($mobile, $tempId, $tempPara);
+        return $obj->sendNoticeByTempId($mobile, $tempId, $tempPara);
     }
 
 }
