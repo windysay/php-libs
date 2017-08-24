@@ -3,13 +3,14 @@ namespace JMD\Libs\Sms\Tunnels;
 
 use JMD\App\Utils;
 use JMD\Libs\Sms\Interfaces\Captcha;
+use JMD\Libs\Sms\Interfaces\NoticeByTempId;
 
 /**
  * 极光短信
  * Class JSms
  * @package common\components\jpush
  */
-class JPush implements Captcha
+class JPush implements Captcha, NoticeByTempId
 {
     const URL = 'https://api.sms.jpush.cn/v1/';
     const TEMPLATE_CAPTCHA = 138124;  //验证码：{{code}}。请勿告知他人，谨防上当受骗。温馨提示：九秒贷未授权任何个人或机构代客户申请，或收取前期费用！
@@ -60,7 +61,22 @@ class JPush implements Captcha
         return empty($result['body']['msg_id']) ? false : true;
     }
 
-    public static function sendMessage($mobile, $temp_id = self::TEMPLATE_CAPTCHA, array $temp_para = [], $time = null)
+
+    /**
+     * 发送通知短信
+     *
+     * @param string|integer  $mobile   手机号码
+     * @param  string|integer $tempId   模版id
+     * @param array $tempPara   模版参数
+     * @return bool 发送成功返回true否则false
+     */
+    public function sendNotice($mobile, $tempId, $tempPara = [])
+    {
+        return $this->sendMessage($mobile, $tempId, $tempPara);
+    }
+
+
+    public function sendMessage($mobile, $temp_id = self::TEMPLATE_CAPTCHA, array $temp_para = [], $time = null)
     {
         $path = 'messages';
         $body = array(
@@ -73,7 +89,7 @@ class JPush implements Captcha
             $body['send_time'] = $time;
         }
         $url = self::URL . $path;
-        $sms = new JPush();
+        $sms = $this;
         $result = $sms->request('POST', $url, $body);
         return empty($result['body']['msg_id']) ? false : true;
     }
@@ -100,7 +116,8 @@ class JPush implements Captcha
             CURLOPT_CUSTOMREQUEST => $method,
         );
         if (!$this->options['ssl_verify']
-            || (bool)$this->options['disable_ssl']) {
+            || (bool)$this->options['disable_ssl']
+        ) {
             $options[CURLOPT_SSL_VERIFYPEER] = false;
             $options[CURLOPT_SSL_VERIFYHOST] = 0;
         }
@@ -124,9 +141,11 @@ class JPush implements Captcha
                 if (!empty($line)) {
                     if ($i === 0) {
                         $headers[0] = $line;
-                    } else if (strpos($line, ": ")) {
-                        list ($key, $value) = explode(': ', $line);
-                        $headers[$key] = $value;
+                    } else {
+                        if (strpos($line, ": ")) {
+                            list ($key, $value) = explode(': ', $line);
+                            $headers[$key] = $value;
+                        }
                     }
                 }
             }
