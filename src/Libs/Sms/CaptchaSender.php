@@ -47,7 +47,7 @@ class CaptchaSender
     private static function setMobile($mobile)
     {
         // 校验手机号码
-        $mobile = intval($mobile);
+        $mobile = trim($mobile);
         if(!preg_match("/^1[34578]{1}\d{9}$/", $mobile)) {
             return false;
         }
