@@ -18,12 +18,18 @@ class Invoker
     public function execute()
     {
         /** @var Request $command */
-        foreach ($this->commands as $command) {
-            if (!$command->execute()) {
-                return false;
+        foreach ($this->commands as $count => $command) {
+            $data = $command->execute();
+            $format = new DataFormat($data);
+            if ($format->isError()) {
+                return [
+                    'error' => 1,
+                    'msg' => $format->getMsg(),
+                    'currentCount' => $count + 1
+                ];
             }
         }
-        return true;
+        return ['error' => 0, 'msg' => ''];
     }
 
 }
