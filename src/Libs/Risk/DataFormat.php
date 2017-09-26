@@ -13,7 +13,6 @@ class DataFormat
     {
         if (is_string($srcData)) {
             $srcData = json_decode($srcData, true);
-
         }
         $this->srcData = $srcData;
     }
@@ -50,7 +49,7 @@ class DataFormat
             return '';
         }
 
-        return $data['field'];
+        return $data[$field];
 
     }
 

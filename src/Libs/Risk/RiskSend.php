@@ -33,7 +33,7 @@ class RiskSend
         $telephoneCall,
         $userSms
     ) {
-        $accessToken = Authentication::getAccessToken($appKey,$secretKey);
+        $accessToken = Authentication::getAccessToken($appKey, $secretKey);
         $model = new self($accessToken);
         $model->setUser($user);
         $model->setUserInfo($userInfo);
@@ -53,92 +53,87 @@ class RiskSend
 
     public function setUser($data)
     {
-        $request = new BaseRequest();
-        $request->setUrl('send_data/user_bash_info')->setData($data);
-        $this->invoker->setCommands($request);
+        $url = 'send_data/user_bash_info';
+        $this->addBaseRequest($url,$data);
     }
 
     public function setUserContact($data)
     {
-        $request = new BaseRequest();
-        $request->setUrl('send_data/user_contact')->setData($data);
-        $this->invoker->setCommands($request);
+        $url = 'send_data/user_contact';
+        $this->addBaseRequest($url,$data);
     }
 
     public function setPhoneHardware($data)
     {
-        $request = new BaseRequest();
-        $request->setUrl('send_data/phone_hardware')->setData($data);
-        $this->invoker->setCommands($request);
+        $url = 'send_data/phone_hardware';
+        $this->addBaseRequest($url,$data);
     }
 
     public function setBankCard($data)
     {
-        $request = new BaseRequest();
-        $request->setUrl('send_data/bank_card')->setData($data);
-        $this->invoker->setCommands($request);
+        $url = 'send_data/bank_card';
+        $this->addBaseRequest($url,$data);
     }
 
     public function setOrder($data)
     {
-        $request = new BaseRequest();
-        $request->setUrl('send_data/order')->setData($data);
-        $this->invoker->setCommands($request);
+        $url = 'send_data/order';
+        $this->addBaseRequest($url,$data);
     }
 
     public function setRepaymentPlan($data)
     {
-        $request = new BaseRequest();
-        $request->setUrl('send_data/repayment_plan')->setData($data);
-        $this->invoker->setCommands($request);
+        $url = 'send_data/repayment_plan';
+        $this->addBaseRequest($url,$data);
     }
 
     public function setBlackList($data)
     {
-        $request = new BaseRequest();
-        $request->setUrl('send_data/black_list')->setData($data);
-        $this->invoker->setCommands($request);
+        $url = 'send_data/black_list';
+        $this->addBaseRequest($url,$data);
     }
 
     public function setTestUser($data)
     {
-        $request = new BaseRequest();
-        $request->setUrl('send_data/test_user')->setData($data);
-        $this->invoker->setCommands($request);
+        $url = 'send_data/test_user';
+        $this->addBaseRequest($url,$data);
     }
 
     public function setUserRealInfo($data)
     {
-        $request = new BaseRequest();
-        $request->setUrl('send_data/user_real_info')->setData($data);
-        $this->invoker->setCommands($request);
+        $url = 'send_data/user_real_info';
+        $this->addBaseRequest($url,$data);
     }
 
     public function setUserInfo($data)
     {
-        $request = new BaseRequest();
-        $request->setUrl('send_data/user_info')->setData($data);
-        $this->invoker->setCommands($request);
+        $url = 'send_data/user_info';
+        $this->addBaseRequest($url,$data);
     }
 
     public function setUserContactsTelephone($data)
     {
-        $request = new BaseRequest();
-        $request->setUrl('send_data/user_contacts_telephone')->setData($data);
-        $this->invoker->setCommands($request);
+        $url = 'send_data/user_contacts_telephone';
+        $this->addBaseRequest($url,$data);
     }
 
     public function setTelephoneCall($data)
     {
-        $request = new BaseRequest();
-        $request->setUrl('send_data/user_contacts_telephone')->setData($data);
-        $this->invoker->setCommands($request);
+        $url = 'send_data/user_contacts_telephone';
+        $this->addBaseRequest($url,$data);
     }
 
     public function setUserSms($data)
     {
+        $url = 'send_data/user_sms';
+        $this->addBaseRequest($url,$data);
+    }
+
+
+    private function addBaseRequest($url, $data)
+    {
         $request = new BaseRequest();
-        $request->setUrl('send_data/user_sms')->setData($data);
+        $request->setUrl($url)->setData($data)->setAccessToken($this->accessToken);
         $this->invoker->setCommands($request);
     }
 

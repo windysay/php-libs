@@ -11,7 +11,7 @@ class Invoker
 
     public function setCommands(Request $command)
     {
-        $this->commands = $command;
+        $this->commands[] = $command;
     }
 
 
