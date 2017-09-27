@@ -2,6 +2,7 @@
 <?php
 use JMD\Libs\Risk\Authentication;
 use JMD\Libs\Risk\DataFormat;
+use JMD\Libs\Risk\RiskSend;
 
 $data = getopt('q:h:p:P:d:a:s:');
 
@@ -9,7 +10,7 @@ $data = getopt('q:h:p:P:d:a:s:');
 $redis = new Redis();
 $appKey = $data['a'];
 $secretKey = $data['s'];
-if ($appKey || $secretKey) {
+if (!$appKey || !$secretKey) {
     echo('appkey或者secretKey没有设置' . PHP_EOL);
     die(1);
 }
@@ -43,7 +44,7 @@ if (empty($queueName)) {
 
 
 foreach (array(
-             __DIR__ . '/../../../../autoload.php',
+             __DIR__ . '/../../../../../autoload.php',
              __DIR__ . '/../vendor/autoload.php',
              __DIR__ . '/vendor/autoload.php'
          ) as $file) {
@@ -70,26 +71,28 @@ require PHPUNIT_COMPOSER_INSTALL;
 
 
 while (1) {
-    $data = $redis->rPop($queueName, 30);
+    $data = $redis->rPop($queueName);
     if ($data == null) {
-        echo log('无数据');
+        echo logFormat('无数据');
+        sleep(2);
         continue;
     }
-    echo log('接收到数据'.$data[1]);
+    echo logFormat('接收到数据'.$data[1]);
     $accessToken = Authentication::getAccessToken($appKey, $secretKey);
-    $model = new JMD\Libs\Risk\RiskSend($accessToken);
-    $model->setRepaymentPlan(json_decode($data[1], true));
+
+    /** @var RiskSend $model */
+    $model = unserialize($data[1]);
     $data = $model->execute();
     $format = new DataFormat($data);
     if ($format->isError()) {
-        fwrite(STDERR, log($data[1] . '：' . $format->getMsg()));
+        fwrite(STDERR, logFormat($data[1] . '：' . $format->getMsg()));
         $redis->lPush($queueName, $data[1]);
     }
-    echo log('数据处理完毕'.$data[1]);
+    echo logFormat('数据处理完毕'.$data[1]);
 
 }
 
-function log($msg)
+function logFormat($msg)
 {
     return sprintf('[%s] - %s' . PHP_EOL, date('Y-m-d H:i:s'), $msg);
 }

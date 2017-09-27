@@ -193,6 +193,17 @@ class RiskSend
     }
 
 
+    public function pushQueue($queueName, $passWord = null, $host = null, $port = null, $dataBase = 0)
+    {
+        $str = serialize($this);
+        $redis = new \Redis();
+        $redis->connect($host, $port);
+        $redis->auth($passWord);
+        $redis->select($dataBase);
+        $redis->lPush($queueName, $str);
+    }
+
+
     public function execute()
     {
         return $this->request->execute();
