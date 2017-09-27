@@ -1,0 +1,95 @@
+#!/usr/bin/env php
+<?php
+use JMD\Libs\Risk\Authentication;
+use JMD\Libs\Risk\DataFormat;
+
+$data = getopt('q:h:p:P:d:a:s:');
+
+
+$redis = new Redis();
+$appKey = $data['a'];
+$secretKey = $data['s'];
+if ($appKey || $secretKey) {
+    echo('appkey或者secretKey没有设置' . PHP_EOL);
+    die(1);
+}
+
+if ($data['P']) {
+    $redis->auth($data['P']);
+}
+
+$host = $data['h'];
+if (empty($host)) {
+    $host = '127.0.0.1';
+}
+
+$port = $data['p'];
+
+if (empty($port)) {
+    $port = 6379;
+}
+
+
+$redis->connect($host, $port);
+if ($data['d']) {
+    $redis->select($data['d']);
+}
+$queueName = $data['q'];
+
+if (empty($queueName)) {
+    echo('队列名称不能为空！' . PHP_EOL);
+    die(1);
+}
+
+
+foreach (array(
+             __DIR__ . '/../../../../autoload.php',
+             __DIR__ . '/../vendor/autoload.php',
+             __DIR__ . '/vendor/autoload.php'
+         ) as $file) {
+    if (file_exists($file)) {
+        define('PHPUNIT_COMPOSER_INSTALL', $file);
+
+        break;
+    }
+}
+
+unset($file);
+
+if (!defined('PHPUNIT_COMPOSER_INSTALL')) {
+    fwrite(STDERR,
+        'You need to set up the project dependencies using Composer:' . PHP_EOL . PHP_EOL .
+        '    composer install' . PHP_EOL . PHP_EOL .
+        'You can learn all about Composer on https://getcomposer.org/.' . PHP_EOL
+    );
+
+    die(1);
+}
+
+require PHPUNIT_COMPOSER_INSTALL;
+
+
+while (1) {
+    $data = $redis->rPop($queueName, 30);
+    if ($data == null) {
+        echo log('无数据');
+        continue;
+    }
+    echo log('接收到数据'.$data[1]);
+    $accessToken = Authentication::getAccessToken($appKey, $secretKey);
+    $model = new JMD\Libs\Risk\RiskSend($accessToken);
+    $model->setRepaymentPlan(json_decode($data[1], true));
+    $data = $model->execute();
+    $format = new DataFormat($data);
+    if ($format->isError()) {
+        fwrite(STDERR, log($data[1] . '：' . $format->getMsg()));
+        $redis->lPush($queueName, $data[1]);
+    }
+    echo log('数据处理完毕'.$data[1]);
+
+}
+
+function log($msg)
+{
+    return sprintf('[%s] - %s' . PHP_EOL, date('Y-m-d H:i:s'), $msg);
+}

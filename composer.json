@@ -6,6 +6,9 @@
   "require": {
     "php": ">=5.4.0"
   },
+  "bin": [
+    "src/Libs/Risk/UpdateQueue"
+  ],
   "autoload": {
     "psr-4": {
       "JMD\\": "src"
