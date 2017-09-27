@@ -1,17 +1,22 @@
 <?php
 namespace JMD\Libs\Risk;
 
+use JMD\Libs\Risk\Interfaces\Request;
+
 class RiskSend
 {
 
-    public $invoker;
-
     public $accessToken;
+
+    /** @var  Request */
+    public $request;
 
 
     public function __construct($accessToken)
     {
-        $this->invoker = new Invoker();
+        $this->request = new BaseRequest();
+        $this->request->setUrl('send_data/all');
+        $this->request->setAccessToken($accessToken);
         $this->accessToken = $accessToken;
     }
 
@@ -53,94 +58,131 @@ class RiskSend
 
     public function setUser($data)
     {
-        $url = 'send_data/user_bash_info';
-        $this->addBaseRequest($url, $data);
+        $method = 'userBaseInfo';
+        $this->addBaseRequest($method, $data);
     }
 
     public function setUserContact($data)
     {
-        $url = 'send_data/user_contact';
-        $this->addBaseRequest($url, $data);
+        $method = 'userContact';
+        $this->addBaseRequest($method, $data);
     }
 
     public function setPhoneHardware($data)
     {
-        $url = 'send_data/phone_hardware';
-        $this->addBaseRequest($url, $data);
+        $method = 'userPhoneHardware';
+        $this->addBaseRequest($method, $data);
     }
 
     public function setBankCard($data)
     {
-        $url = 'send_data/bank_card';
-        $this->addBaseRequest($url, $data);
+        $method = 'bankCard';
+        $this->addBaseRequest($method, $data);
     }
 
     public function setOrder($data)
     {
-        $url = 'send_data/order';
-        $this->addBaseRequest($url, $data);
+        $method = 'order';
+        $this->addBaseRequest($method, $data);
     }
 
     public function setRepaymentPlan($data)
     {
-        $url = 'send_data/repayment_plan';
-        $this->addBaseRequest($url, $data);
+        $method = 'repaymentPlan';
+        $this->addBaseRequest($method, $data);
     }
 
     public function setBlackList($data)
     {
-        $url = 'send_data/black_list';
-        $this->addBaseRequest($url, $data);
+        $method = 'blackList';
+        $this->addBaseRequest($method, $data);
     }
 
     public function setTestUser($data)
     {
-        $url = 'send_data/test_user';
-        $this->addBaseRequest($url, $data);
+        $method = 'testUser';
+        $this->addBaseRequest($method, $data);
     }
 
     public function setUserRealInfo($data)
     {
-        $url = 'send_data/user_real_info';
-        $this->addBaseRequest($url, $data);
+        $method = 'userRealInfo';
+        $this->addBaseRequest($method, $data);
     }
 
     public function setUserInfo($data)
     {
-        $url = 'send_data/user_info';
-        $this->addBaseRequest($url, $data);
+        $method = 'userInfo';
+        $this->addBaseRequest($method, $data);
     }
 
     public function setUserContactsTelephone($data)
     {
-        $url = 'send_data/user_contacts_telephone';
-        $this->addBaseRequest($url, $data);
+        $method = 'userContactsTelephone';
+        $this->addBaseRequest($method, $data);
     }
 
     public function setTelephoneCall($data)
     {
-        $url = 'send_data/user_contacts_telephone';
-        $this->addBaseRequest($url, $data);
+        $method = 'telephoneCall';
+        $this->addBaseRequest($method, $data);
     }
 
     public function setUserSms($data)
     {
-        $url = 'send_data/user_sms';
-        $this->addBaseRequest($url, $data);
+        $method = 'userSms';
+        $this->addBaseRequest($method, $data);
+    }
+
+    public function setTelephoneSms($data)
+    {
+        $method = 'telephoneSms';
+        $this->addBaseRequest($method, $data);
+    }
+
+    public function setTelephoneBill($data)
+    {
+        $method = 'telephoneBill';
+        $this->addBaseRequest($method, $data);
+    }
+
+    public function setTelephoneUser($data)
+    {
+        $method = 'telephoneUser';
+        $this->addBaseRequest($method, $data);
+    }
+
+    public function setRong360Report($data)
+    {
+        $method = 'rong360Report';
+        $this->addBaseRequest($method, $data);
+    }
+
+    public function setUserApplication($data)
+    {
+        $method = 'userApplication';
+        $this->addBaseRequest($method, $data);
     }
 
 
-    private function addBaseRequest($url, $data)
+    public function setUserPosition($data)
     {
-        $request = new BaseRequest();
-        $request->setUrl($url)->setData($data)->setAccessToken($this->accessToken);
-        $this->invoker->setCommands($request);
+        $method = 'userPosition';
+        $this->addBaseRequest($method, $data);
+    }
+
+
+    private function addBaseRequest($field, $val)
+    {
+        $data = $this->request->data;
+        $data[$field] = $val;
+        $this->request->setData($data);
     }
 
 
     public function execute()
     {
-        return $this->invoker->execute();
+        return $this->request->execute();
     }
 
 }
