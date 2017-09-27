@@ -4,7 +4,8 @@
   "type": "library",
   "license": "apache v2",
   "require": {
-    "php": ">=5.4.0"
+    "php": ">=5.4.0",
+    "jmd-backend/php-libs": "dev-master"
   },
   "bin": [
     "src/Libs/Risk/UpdateQueue"
