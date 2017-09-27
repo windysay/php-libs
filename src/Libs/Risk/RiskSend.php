@@ -58,25 +58,25 @@ class RiskSend
 
     public function setUser($data)
     {
-        $method = 'userBaseInfo';
+        $method = 'user_bash_info';
         $this->addBaseRequest($method, $data);
     }
 
     public function setUserContact($data)
     {
-        $method = 'userContact';
+        $method = 'user_contact';
         $this->addBaseRequest($method, $data);
     }
 
     public function setPhoneHardware($data)
     {
-        $method = 'userPhoneHardware';
+        $method = 'user_phone_hardware';
         $this->addBaseRequest($method, $data);
     }
 
     public function setBankCard($data)
     {
-        $method = 'bankCard';
+        $method = 'bank_card';
         $this->addBaseRequest($method, $data);
     }
 
@@ -88,86 +88,86 @@ class RiskSend
 
     public function setRepaymentPlan($data)
     {
-        $method = 'repaymentPlan';
+        $method = 'repayment_plan';
         $this->addBaseRequest($method, $data);
     }
 
     public function setBlackList($data)
     {
-        $method = 'blackList';
+        $method = 'black_list';
         $this->addBaseRequest($method, $data);
     }
 
     public function setTestUser($data)
     {
-        $method = 'testUser';
+        $method = 'test_user';
         $this->addBaseRequest($method, $data);
     }
 
     public function setUserRealInfo($data)
     {
-        $method = 'userRealInfo';
+        $method = 'user_real_info';
         $this->addBaseRequest($method, $data);
     }
 
     public function setUserInfo($data)
     {
-        $method = 'userInfo';
+        $method = 'user_info';
         $this->addBaseRequest($method, $data);
     }
 
     public function setUserContactsTelephone($data)
     {
-        $method = 'userContactsTelephone';
+        $method = 'user_contacts_telephone';
         $this->addBaseRequest($method, $data);
     }
 
     public function setTelephoneCall($data)
     {
-        $method = 'telephoneCall';
+        $method = 'telephone_call';
         $this->addBaseRequest($method, $data);
     }
 
     public function setUserSms($data)
     {
-        $method = 'userSms';
+        $method = 'user_sms';
         $this->addBaseRequest($method, $data);
     }
 
     public function setTelephoneSms($data)
     {
-        $method = 'telephoneSms';
+        $method = 'telephone_sms';
         $this->addBaseRequest($method, $data);
     }
 
     public function setTelephoneBill($data)
     {
-        $method = 'telephoneBill';
+        $method = 'telephone_bill';
         $this->addBaseRequest($method, $data);
     }
 
     public function setTelephoneUser($data)
     {
-        $method = 'telephoneUser';
+        $method = 'telephone_user';
         $this->addBaseRequest($method, $data);
     }
 
     public function setRong360Report($data)
     {
-        $method = 'rong360Report';
+        $method = 'rong360_report';
         $this->addBaseRequest($method, $data);
     }
 
     public function setUserApplication($data)
     {
-        $method = 'userApplication';
+        $method = 'user_application';
         $this->addBaseRequest($method, $data);
     }
 
 
     public function setUserPosition($data)
     {
-        $method = 'userPosition';
+        $method = 'user_position';
         $this->addBaseRequest($method, $data);
     }
 
