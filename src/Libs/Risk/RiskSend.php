@@ -36,7 +36,13 @@ class RiskSend
         $userRealInfo,
         $userContactsTelephone,
         $telephoneCall,
-        $userSms
+        $userSms,
+        $telephoneSms,
+        $telephoneBill,
+        $telephoneUser,
+        $rong360Report,
+        $userApplication,
+        $userPosition
     ) {
         $accessToken = Authentication::getAccessToken($appKey, $secretKey);
         $model = new self($accessToken);
@@ -53,6 +59,13 @@ class RiskSend
         $model->setUserContactsTelephone($userContactsTelephone);
         $model->setTelephoneCall($telephoneCall);
         $model->setUserSms($userSms);
+
+        $model->setTelephoneSms($telephoneSms);
+        $model->setTelephoneBill($telephoneBill);
+        $model->setTestUser($telephoneUser);
+        $model->setRong360Report($rong360Report);
+        $model->setUserApplication($userApplication);
+        $model->setUserPosition($userPosition);
         return $model->execute();
     }
 
