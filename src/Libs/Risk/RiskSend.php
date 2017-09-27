@@ -22,8 +22,7 @@ class RiskSend
 
 
     public static function send(
-        $appKey,
-        $secretKey,
+        $accessToken,
         $user,
         $userInfo,
         $userContact,
@@ -44,7 +43,6 @@ class RiskSend
         $userApplication,
         $userPosition
     ) {
-        $accessToken = Authentication::getAccessToken($appKey, $secretKey);
         $model = new self($accessToken);
         $model->setUser($user);
         $model->setUserInfo($userInfo);
