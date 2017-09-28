@@ -41,9 +41,15 @@ class RiskSend
         $telephoneUser,
         $rong360Report,
         $userApplication,
-        $userPosition
+        $userPosition,
+        $domain = null
     ) {
         $model = new self($accessToken);
+
+        if ($domain) {
+            $model->request->setDomain($domain);
+        }
+
         $model->setUser($user);
         $model->setUserInfo($userInfo);
         $model->setUserContact($userContact);
@@ -64,6 +70,7 @@ class RiskSend
         $model->setRong360Report($rong360Report);
         $model->setUserApplication($userApplication);
         $model->setUserPosition($userPosition);
+
         return $model->execute();
     }
 
