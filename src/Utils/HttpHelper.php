@@ -81,7 +81,7 @@ class HttpHelper
         curl_setopt($ch, CURLOPT_POST, 1); // 设置为POST方式
         curl_setopt($ch, CURLOPT_TIMEOUT, 10);
         if (!empty($data)) {
-            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data)); // POST数据
+            curl_setopt($ch, CURLOPT_POSTFIELDS, ($data)); // POST数据
         }
         $html = curl_exec($ch);
         curl_close($ch);
