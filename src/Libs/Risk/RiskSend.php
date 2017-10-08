@@ -67,7 +67,7 @@ class RiskSend
 
         $model->setTelephoneSms($telephoneSms);
         $model->setTelephoneBill($telephoneBill);
-        $model->setTestUser($telephoneUser);
+        $model->setTelephoneUser($telephoneUser);
         $model->setRong360Report($rong360Report);
         $model->setUserApplication($userApplication);
         $model->setUserPosition($userPosition);
