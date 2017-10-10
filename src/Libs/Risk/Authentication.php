@@ -27,7 +27,7 @@ class Authentication
         if ($domain) {
             $request->setDomain($domain);
         }
-        $request->setUrl('risk/operator');
+        $request->setUrl('account/access_token_valid');
         $request->setAccessToken($accessToken);
         $request->setMethod(2);
         $data = $request->execute();
