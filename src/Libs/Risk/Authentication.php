@@ -6,7 +6,6 @@ class Authentication
 
     public static function getAccessToken($appKey, $secretKey, $domain = null)
     {
-        //TODO 第一版本，此处有些违反单一职责原则
         $request = new BaseRequest();
         if ($domain) {
             $request->setDomain($domain);
@@ -21,4 +20,19 @@ class Authentication
         return $format->isSuccess() ? $format->getDataField('access_token') : false;
 
     }
+
+    public static function accessTokenIsValid($accessToken, $domain = null)
+    {
+        $request = new BaseRequest();
+        if ($domain) {
+            $request->setDomain($domain);
+        }
+        $request->setUrl('risk/operator');
+        $request->setAccessToken($accessToken);
+        $request->setMethod(2);
+        $data = $request->execute();
+        $format = new DataFormat($data);
+        return $format->isSuccess() ? true : false;
+    }
+
 }
