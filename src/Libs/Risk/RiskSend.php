@@ -71,8 +71,8 @@ class RiskSend
         $model->setRong360Report($rong360Report);
         $model->setUserApplication($userApplication);
         $model->setUserPosition($userPosition);
-
-        return $model->execute();
+        $result = $model->execute();
+        return new DataFormat($result);
     }
 
     public function setUser($data)
