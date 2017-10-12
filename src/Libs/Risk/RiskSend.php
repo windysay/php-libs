@@ -12,10 +12,12 @@ class RiskSend
     public $request;
 
 
-    public function __construct($appKey,$secretKey)
+    public function __construct($appKey,$secretKey,$telephone,$domain)
     {
         $this->request = new BaseRequest($appKey,$secretKey);
         $this->request->setUrl('send_data/all');
+        $this->request->setDomain($domain);
+        $this->addBaseRequest('telephone', $telephone);
 //        $this->request->setAccessToken($accessToken);
     }
 
@@ -45,7 +47,7 @@ class RiskSend
         $telephone,
         $domain = null
     ) {
-        $model = new self($appKey,$secretKey);
+        $model = new self($appKey,$secretKey,$telephone,$domain);
 
         if ($domain) {
             $model->request->setDomain($domain);
@@ -80,6 +82,8 @@ class RiskSend
         $method = 'user_bash_info';
         $this->addBaseRequest($method, $data);
     }
+
+
 
     public function setUserContact($data)
     {
@@ -212,7 +216,7 @@ class RiskSend
 
     public function execute()
     {
-        return new DataFormat($this->request->execute());
+        return  new DataFormat($this->request->execute());
     }
 
 }
