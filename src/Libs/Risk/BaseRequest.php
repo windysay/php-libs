@@ -17,6 +17,18 @@ class BaseRequest implements Request
 
     public $accessToken;
 
+    protected $appKey;
+
+    protected $secretKey;
+
+
+    public function __construct($appKey,$secretKey)
+    {
+        $this->appKey = $appKey;
+        $this->secretKey = $secretKey;
+    }
+
+
     public function setData($data)
     {
         $this->data = $data;
@@ -63,9 +75,11 @@ class BaseRequest implements Request
 
         $url = $this->domain . $this->url;
 
-        if ($this->accessToken) {
-            $url .= '?access_token=' . $this->accessToken;
-        }
+        $this->data['app_key'] = $this->appKey;
+        $this->data['secret_key'] = $this->secretKey;
+        $this->data['timestamp'] = date('Y-m-d');
+        $this->data['sign'] =  md5(json_encode($this->data));
+
         if ($this->method == 1) {
             return HttpHelper::post($url, $this->data);
         } else {

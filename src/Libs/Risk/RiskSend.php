@@ -12,17 +12,17 @@ class RiskSend
     public $request;
 
 
-    public function __construct($accessToken)
+    public function __construct($appKey,$secretKey)
     {
-        $this->request = new BaseRequest();
+        $this->request = new BaseRequest($appKey,$secretKey);
         $this->request->setUrl('send_data/all');
-        $this->request->setAccessToken($accessToken);
-        $this->accessToken = $accessToken;
+//        $this->request->setAccessToken($accessToken);
     }
 
 
     public static function send(
-        $accessToken,
+        $appKey,
+        $secretKey,
         $user,
         $userInfo,
         $userContact,
@@ -45,7 +45,7 @@ class RiskSend
         $telephone,
         $domain = null
     ) {
-        $model = new self($accessToken);
+        $model = new self($appKey,$secretKey);
 
         if ($domain) {
             $model->request->setDomain($domain);
