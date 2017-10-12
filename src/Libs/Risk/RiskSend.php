@@ -72,7 +72,7 @@ class RiskSend
         $model->setUserApplication($userApplication);
         $model->setUserPosition($userPosition);
         $result = $model->execute();
-        return new DataFormat($result);
+        return $result;
     }
 
     public function setUser($data)
@@ -212,7 +212,7 @@ class RiskSend
 
     public function execute()
     {
-        return $this->request->execute();
+        return new DataFormat($this->request->execute());
     }
 
 }
