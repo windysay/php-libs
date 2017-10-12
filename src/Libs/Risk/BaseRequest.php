@@ -77,8 +77,10 @@ class BaseRequest implements Request
 
         $this->data['app_key'] = $this->appKey;
         $this->data['secret_key'] = $this->secretKey;
-        $this->data['timestamp'] = date('Y-m-d');
-        $this->data['sign'] =  md5(json_encode($this->data));
+        $this->data['timestamp'] = date('Y-m-d H:i:s');
+        ksort($this->data);
+        $keys = array_map('strval',$this->data);
+        $this->data['sign'] =  md5(json_encode($keys));
 
         if ($this->method == 1) {
             return HttpHelper::post($url, $this->data);
