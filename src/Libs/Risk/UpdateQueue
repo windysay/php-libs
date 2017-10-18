@@ -8,12 +8,6 @@ $data = getopt('q:h:p:P:d:a:s:');
 
 
 $redis = new Redis();
-$appKey = $data['a'];
-$secretKey = $data['s'];
-if (!$appKey || !$secretKey) {
-    echo('appkey或者secretKey没有设置' . PHP_EOL);
-    die(1);
-}
 
 if ($data['P']) {
     $redis->auth($data['P']);
@@ -38,8 +32,7 @@ if ($data['d']) {
 $queueName = $data['q'];
 
 if (empty($queueName)) {
-    echo('队列名称不能为空！' . PHP_EOL);
-    die(1);
+    $queueName = 'risk_sync_queue';
 }
 
 
@@ -78,7 +71,6 @@ while (1) {
         continue;
     }
     echo logFormat('接收到数据'.$data[1]);
-    $accessToken = Authentication::getAccessToken($appKey, $secretKey);
 
     /** @var RiskSend $model */
     $model = unserialize($data[1]);

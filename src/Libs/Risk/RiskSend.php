@@ -12,9 +12,9 @@ class RiskSend
     public $request;
 
 
-    public function __construct($appKey,$secretKey,$telephone,$domain)
+    public function __construct($appKey, $secretKey, $telephone, $domain)
     {
-        $this->request = new BaseRequest($appKey,$secretKey);
+        $this->request = new BaseRequest($appKey, $secretKey);
         $this->request->setUrl('send_data/all');
         $this->request->setDomain($domain);
         $this->addBaseRequest('telephone', $telephone);
@@ -47,7 +47,7 @@ class RiskSend
         $telephone,
         $domain = null
     ) {
-        $model = new self($appKey,$secretKey,$telephone,$domain);
+        $model = new self($appKey, $secretKey, $telephone, $domain);
 
         if ($domain) {
             $model->request->setDomain($domain);
@@ -84,7 +84,6 @@ class RiskSend
     }
 
 
-
     public function setUserContact($data)
     {
         $method = 'user_contact';
@@ -112,6 +111,12 @@ class RiskSend
     public function setRepaymentPlan($data)
     {
         $method = 'repayment_plan';
+        $this->addBaseRequest($method, $data);
+    }
+
+    public function setContract($data)
+    {
+        $method = 'contract';
         $this->addBaseRequest($method, $data);
     }
 
@@ -203,7 +208,7 @@ class RiskSend
     }
 
 
-    public function pushQueue($queueName, $passWord = null, $host = null, $port = null, $dataBase = 0)
+    public function pushQueue($queueName = null, $passWord = null, $host = "127.0.0.1", $port = 6379, $dataBase = 0)
     {
         $str = serialize($this);
         $redis = new \Redis();
@@ -216,7 +221,7 @@ class RiskSend
 
     public function execute()
     {
-        return  new DataFormat($this->request->execute());
+        return new DataFormat($this->request->execute());
     }
 
 }
