@@ -83,15 +83,7 @@ class BaseRequest implements Request
 //        $keys = array_map('strval',$this->data);
 
         if ($this->method == 1) {
-            if (is_array($this->data)) {
-                foreach ($this->data as &$val) {
-                    if (is_array($val)) {
-                        $val = json_encode($val);
-                    }
-                    $val = strval($val);
-                }
-            }
-            $this->data['sign'] =  md5(json_encode($this->data));
+            $this->data['sign'] = md5(http_build_query($this->data));
             $result= HttpHelper::post($url, $this->data);
             return $result;
         } else {
