@@ -199,6 +199,13 @@ class RiskSend
         $this->addBaseRequest($method, $data);
     }
 
+    public function setPrimaryInfo($data)
+    {
+        $method = 'primary_info';
+        $this->addBaseRequest($method,$data);
+
+    }
+
 
     private function addBaseRequest($field, $val)
     {
