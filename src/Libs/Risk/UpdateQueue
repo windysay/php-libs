@@ -4,7 +4,7 @@ use JMD\Libs\Risk\Authentication;
 use JMD\Libs\Risk\DataFormat;
 use JMD\Libs\Risk\RiskSend;
 
-$data = getopt('q:h:p:P:d:a:s:');
+$data = getopt('q:h:p:P:d:');
 
 
 $redis = new Redis();
@@ -29,10 +29,12 @@ $redis->connect($host, $port);
 if ($data['d']) {
     $redis->select($data['d']);
 }
+
 $queueName = $data['q'];
 
 if (empty($queueName)) {
-    $queueName = 'risk_sync_queue';
+    echo('队列名称不能为空！' . PHP_EOL);
+    die(1);
 }
 
 
@@ -64,10 +66,9 @@ require PHPUNIT_COMPOSER_INSTALL;
 
 
 while (1) {
-    $data = $redis->rPop($queueName);
+    $data = $redis->brPop($queueName,30);
     if ($data == null) {
         echo logFormat('无数据');
-        sleep(2);
         continue;
     }
     echo logFormat('接收到数据'.$data[1]);

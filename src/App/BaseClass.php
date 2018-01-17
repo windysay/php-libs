@@ -2,6 +2,7 @@
 namespace JMD\App;
 
 class BaseClass {
+    public static $class;
     public static $instance = [];
     public static function __callStatic($name, $arguments)
     {

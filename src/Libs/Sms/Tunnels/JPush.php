@@ -1,100 +1,120 @@
 <?php
+
 namespace JMD\Libs\Sms\Tunnels;
 
 use JMD\App\Utils;
-use JMD\Libs\Sms\Interfaces\Captcha;
-use JMD\Libs\Sms\Interfaces\NoticeByTempId;
+use JMD\Libs\Sms\Interfaces\SmsBase;
 
 /**
  * 极光短信
  * Class JSms
  * @package common\components\jpush
  */
-class JPush implements Captcha, NoticeByTempId
+class JPush implements SmsBase
 {
     const URL = 'https://api.sms.jpush.cn/v1/';
-    const TEMPLATE_CAPTCHA = 138124;  //验证码：{{code}}。请勿告知他人，谨防上当受骗。温馨提示：九秒贷未授权任何个人或机构代客户申请，或收取前期费用！
-    const TEMPLATE_LOANED_FAILED = 139097;  //由于打款失败，您的订单{{order_no}} 已取消，请及时更换银行卡，不便之处敬请原谅！
-    const LOANED_MONEY_TO_JMD = 139107;  //提现到内部账户验证码：{{captcha}}(一个小时内有效)
-    const SYSTEM_ORDER_CANCEL = 139150;  //由于系统升级导致当前订单失效，如需继续借款，请前往{{app_name}}APP重新提交订单，给您带来的不便敬请谅解！
-    const TIME_TO_REPAYMENT = 139144;  //尊敬的{{fullname}}，您于{{loan_time}}在{{app_name}}借款{{principal}}元，明天（{{appointment_day}}）是到期还款日。我们将从您尾号为{{bank_no}}的卡上扣除人民币{{repayment_amount}}元，请您务必保证银行卡中余额充足，以免还款逾期产生罚息。
-    const REPAYMENT_FAILED = 139185;  //{{money}}元扣款失败，直接在{{app_name}}APP按照提示就可以自助还款！您也可以通过支付宝主动还款，备注姓名和手机号。<支付宝：jiumiaodai@163.com(刘凤)>。如有疑问，直接拨打{{telephone}}咨询。
-    const OVERDUE_NOTICE = 139127;  //{{fullname}}您好，{{app_nickname}}善意提醒，您{{principal}}元借款已经逾期{{overdays}}天，今天应还款金额为{{repayment_amount}}元，直接在{{app_name}}APP按照提示就可以自助还款！您也可以通过支付宝主动还款，备注姓名和手机号。<支付宝：jiumiaodai@163.com（刘凤）>。如有疑问，直接拨打{{telephone}}咨询。
-    const EXTEND_SUCCESS = 139121;  //尊敬的{{fullname}}您的费用{{money}}元，已经结算。如有疑问，直接拨打{{telephone}}咨询。
-    const REPAYMENT_FINISH = 139120;  //尊敬的{{fullname}}您好，我们已收到您的还款{{money}}元，如有疑问，请给{{wx_name}}微信号留言，或直接拨打{{telephone}}咨询。感谢您对{{app_name}}的信任。
-    const LOAN_SUCCESS = 139112;  //尊敬的{{fullname}}，您{{date}}在{{app_name}}借款{{money}}元已成功汇到您的（{{bank_card}}）银行卡。
 
+    public static $configName = 'jiguang';
     private $appKey;
     private $masterSecret;
     private $options;
 
-    public function __construct(array $options = array())
+    private $mobile;
+    private $params;
+    private $templateId;
+    private $appName;
+
+    /**
+     * JPush constructor.
+     * @param $mobile
+     * @param $sendKey
+     * @param $tplKey
+     * @param $tplParams
+     * @param $appName
+     */
+    public function __construct($mobile, $sendKey, $tplKey, $tplParams, $appName = '')
     {
         $this->appKey = Utils::getParam('jiguang_app_key');
         $this->masterSecret = Utils::getParam('jiguang_sectet_key');
-        $this->options = array_merge([
+        $this->options = [
             'ssl_verify' => true,
             'disable_ssl' => false
-        ], $options);
+        ];
+
+        $this->mobile = $mobile;
+        $this->params = Utils::getKeyToKey($tplKey, $tplParams);
+        $this->templateId = Utils::getTemplateIdByKey(self::$configName, $sendKey);
+        $this->appName = $appName;
     }
 
     /**
      * 发送验证码
-     * 失败返回Array {"headers":{"0":"HTTP\/1.1 403 ","Server":"nginx","Date":"Wed, 09 Aug 2017 03:27:08 GMT","Content-Type":"application\/json;charset=UTF-8","Content-Length":"51","Connection":"keep-alive","X-Application-Context":"sms-messages-web-api:product:9000"},"body":{"error":{"code":50006,"message":"invalid mobile"}},"http_code":403}
-     * 成功返回Array {"headers":{"0":"HTTP\/1.1 200 ","Server":"nginx","Date":"Wed, 09 Aug 2017 03:28:20 GMT","Content-Type":"application\/json","Content-Length":"23","Connection":"keep-alive","X-Application-Context":"sms-messages-web-api:product:9000"},"body":{"msg_id":303799781775},"http_code":200}
      * @param $mobile
+     * @param $sendKey
+     * @param $tplKey
+     * @param $tplParams
      * @param $captcha
-     * @param int $temp_id
-     * @return mixed
+     * @return bool
      */
-    public function sendCaptcha($mobile, $captcha)
+    public function sendCaptcha()
     {
+        return $this->sendNow($this->mobile, $this->templateId, $this->params);
+    }
+
+
+    public function sendNotice()
+    {
+        return $this->sendNow($this->mobile, $this->templateId, $this->params);
+    }
+
+
+    public function sendMarketing()
+    {
+        // TODO: Implement sendNoticeMarketing() method.
+    }
+
+    public static function sendCustom($mobile = [], $content, $appName = '')
+    {
+        // TODO: Implement sendCustom() method.
+    }
+
+    /**
+     * @param $mobile
+     * @param $temp_id
+     * @param array $temp_para
+     * @param null $time
+     * @return bool
+     */
+    public function sendNow($mobile, $tempId, $params)
+    {
+        if (!$tempId) {
+            return false;
+        }
+
         $path = 'messages';
         $body = array(
             'mobile' => $mobile,
-            'temp_id' => self::TEMPLATE_CAPTCHA,
-            'temp_para' => ['code' => $captcha],
+            'temp_id' => $tempId,
+            'temp_para' => $params,
         );
         $url = self::URL . $path;
         $sms = $this;
         $result = $sms->request('POST', $url, $body);
-        return empty($result['body']['msg_id']) ? false : true;
+        if (empty($result['body']['msg_id'])) {
+            Utils::alert('极光短信渠道发送失败', json_encode(['tel' => $mobile, 'templateId' => $tempId, 'params' => $params, 'callback' => $result], 256));
+            return false;
+        }
+
+        return true;
     }
 
 
     /**
-     * 发送通知短信
-     *
-     * @param string|integer  $mobile   手机号码
-     * @param  string|integer $tempId   模版id
-     * @param array $tempPara   模版参数
-     * @return bool 发送成功返回true否则false
+     * @param $method
+     * @param $url
+     * @param array $body
+     * @return bool
      */
-    public function sendNoticeByTempId($mobile, $tempId, $tempPara = [])
-    {
-        return $this->sendMessage($mobile, $tempId, $tempPara);
-    }
-
-
-    public function sendMessage($mobile, $temp_id = self::TEMPLATE_CAPTCHA, array $temp_para = [], $time = null)
-    {
-        $path = 'messages';
-        $body = array(
-            'mobile' => $mobile,
-            'temp_id' => $temp_id,
-            'temp_para' => $temp_para,
-        );
-        if (isset($time)) {
-            $path = 'schedule';
-            $body['send_time'] = $time;
-        }
-        $url = self::URL . $path;
-        $sms = $this;
-        $result = $sms->request('POST', $url, $body);
-        return empty($result['body']['msg_id']) ? false : true;
-    }
-
-
     private function request($method, $url, $body = [])
     {
         $ch = curl_init();
@@ -128,7 +148,7 @@ class JPush implements Captcha, NoticeByTempId
         $output = curl_exec($ch);
 
         if ($output === false) {
-            Utils::alert("极光短信推送失败 =》 Error Code:" . curl_errno($ch) . ", Error Message:" . curl_error($ch));
+//            Utils::alert("极光短信推送失败 =》 Error Code:" . curl_errno($ch) . ", Error Message:" . curl_error($ch));
             return false;
         } else {
             $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -149,7 +169,6 @@ class JPush implements Captcha, NoticeByTempId
                     }
                 }
             }
-
             $response['headers'] = $headers;
             $response['body'] = json_decode($body, true);
             $response['http_code'] = $httpCode;

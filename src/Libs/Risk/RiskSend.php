@@ -12,12 +12,15 @@ class RiskSend
     public $request;
 
 
-    public function __construct($appKey, $secretKey, $telephone, $domain)
+    public function __construct($appKey, $secretKey, $telephone, $domain, $userId = null)
     {
         $this->request = new BaseRequest($appKey, $secretKey);
         $this->request->setUrl('send_data/all');
         $this->request->setDomain($domain);
         $this->addBaseRequest('telephone', $telephone);
+        if (!empty($userId)) {
+            $this->addBaseRequest('user_id', $userId);
+        }
 //        $this->request->setAccessToken($accessToken);
     }
 
@@ -114,12 +117,6 @@ class RiskSend
         $this->addBaseRequest($method, $data);
     }
 
-    public function setContract($data)
-    {
-        $method = 'contract';
-        $this->addBaseRequest($method, $data);
-    }
-
     public function setBlackList($data)
     {
         $method = 'black_list';
@@ -199,11 +196,30 @@ class RiskSend
         $this->addBaseRequest($method, $data);
     }
 
+    public function setContract($data)
+    {
+        $method = 'contract';
+        $this->addBaseRequest($method, $data);
+    }
+
     public function setPrimaryInfo($data)
     {
         $method = 'primary_info';
-        $this->addBaseRequest($method,$data);
+        $this->addBaseRequest($method, $data);
 
+    }
+
+    public function setOrderRecordNew($data)
+    {
+        $method = 'order_record_new';
+        $this->addBaseRequest($method, $data);
+    }
+
+
+    public function setYzOrder($data)
+    {
+        $method = 'yz_order';
+        $this->addBaseRequest($method, $data);
     }
 
 
@@ -215,7 +231,7 @@ class RiskSend
     }
 
 
-    public function pushQueue($queueName = null, $passWord = null, $host = "127.0.0.1", $port = 6379, $dataBase = 0)
+    public function pushQueue($queueName, $passWord = null, $host = null, $port = null, $dataBase = 0)
     {
         $str = serialize($this);
         $redis = new \Redis();

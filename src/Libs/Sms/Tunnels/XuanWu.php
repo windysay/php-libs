@@ -3,125 +3,151 @@
 namespace JMD\Libs\Sms\Tunnels;
 
 use JMD\App\Utils;
+use JMD\Common\Template;
 use JMD\Libs\Sms\Interfaces\Captcha;
-use JMD\Libs\Sms\Interfaces\MarketingByText;
+use JMD\Libs\Sms\Interfaces\Marketing;
+use JMD\Libs\Sms\Interfaces\NoticeByTemplate;
+use JMD\Libs\Sms\Interfaces\SmsBase;
+use JMD\Libs\Sms\Sms;
 use SoapClient;
 
 /**
  * 玄武短信发送接口
  * Class XuanwuSms
  */
-class XuanWu implements Captcha, MarketingByText
+class XuanWu implements SmsBase
 {
-    const SMS_YZM = 'yzm'; //验证码通道
-    const SMS_YX = 'yx';  // 营销通道
 
-    private $config = [
-        'yzm' => [
-            'wsdl' => 'http://211.147.239.62/Service/WebService.asmx?wsdl',
-            'account' => 'SZJQB@SZJQB',
-            'password' => '16FLv5To',
-            'log' => '/data/log/sms/xuanwu/',
-        ],
-        /**
-         * 玄武营销短信
-         */
-        'yx' => [
-            'wsdl' => 'http://211.147.239.62/Service/WebService.asmx?wsdl',
-            'account' => 'SZJQB1@SZJQB',
-            'password' => 'bLfAn6TC',
-            'log' => '/data/log/sms/xuanwu/',
-        ]
-    ];
+//    const SMS_YZM = [
+//        'username' => 'SZJQB@SZJQB',
+//        'password' => '16FLv5To',
+//        'msgtype' => 1,
+//    ]; //验证码通道
 
-    private $appName = '';
+//    const SMS_YX = [
+//        'username' => 'SZJQB1@SZJQB',
+//        'password' => 'bLfAn6TC',
+//        'msgtype' => 4,
+//        'subid' => '',
+//    ];  // 营销通道1
+//
+//    const SMS_YX2 = [
+//        'username' => 'SZJQB1@SZJQB1',
+//        'password' => 'ned0NVTs',
+//        'msgtype' => 4,
+//        'subid' => '',
+//    ];  // 营销通道2
 
+    const MAX_SEND_NUM = 10000; //批量发最大发送数量
+    const URL = 'http://211.147.239.62:9050/cgi-bin/sendsms?';
 
-    public $verifyCodeText = "验证码：{captcha}。请勿告知他人，谨防上当受骗。温馨提示：{appname}未授权任何个人或机构代客户申请，或收取前期费用!!!";
+    private $mobile;
+    private $content;
+    private $config;
+    private $appName;
+    public static $configName = 'sms_xuanwu_config';
+    public static $captchaAndNoticeName = 'sms_xuanwu_captcha_notice';
+    public static $marketingConfigName = 'sms_xuanwu_marketing_config';
 
-
-    public function __construct()
+    public function __construct($mobile, $sendKey, $tplKey, $tplParams, $appName = '')
     {
-        $this->appName = strval(Utils::getParam('app_name'));
+        $this->mobile = $mobile;
+        //判断是否渠道是否可以发送，针对多app时，有些app不支持,检查是否有配置，配置说明支持，没有配置说明不支持
+        $this->config = Utils::getParam(Sms::SMS_CONFIG);
+        $params = Utils::getKeyToKey($tplKey, $tplParams);
+        $this->content = Utils::getTextTemplate($sendKey, $params);
+        $this->appName = $appName;
     }
 
-    public function sendCaptcha($mobile, $code)
+
+    public function sendCaptcha()
     {
-        $text = str_replace([
-            '{captcha}',
-            '{appname}'
-        ], [
-            $code,
-            $this->appName
-        ], $this->verifyCodeText);
-        return $this->sendSMS($mobile, $text);
+        if (!isset($this->config[Sms::TUNNELS_CONFIG][self::$configName][self::$captchaAndNoticeName])) {
+            return false;
+        }
+        $config = $this->config[Sms::TUNNELS_CONFIG][self::$configName][self::$captchaAndNoticeName];
+        return self::sendMessage($this->mobile, $this->content, $config);
     }
 
-    public function sendMarketingByText($mobile, $text)
+    public function sendNotice()
     {
-        return $this->sendSMS($mobile, $text, self::SMS_YX);
+        if (!isset($this->config[Sms::TUNNELS_CONFIG][self::$configName][self::$captchaAndNoticeName])) {
+            return false;
+        }
+        $config = $this->config[Sms::TUNNELS_CONFIG][self::$configName][self::$captchaAndNoticeName];
+        return self::sendMessage($this->mobile, $this->content, $config);
     }
 
+    public function sendMarketing()
+    {
+        // TODO: Implement sendNoticeMarketing() method.
+    }
 
     /**
-     * @param $mobile
-     * @param string $text
+     * @param array $mobile
+     * @param $content
+     * @param string $appName
      * @return mixed
      */
-    private function sendSMS($mobile, $text, $channel = self::SMS_YZM)
+    public static function sendCustom($mobile = [], $content, $appName = '')
     {
-        $config = $this->config[$channel] ?: $this->config[self::SMS_YZM];
-
-        $wsdl = $config['wsdl'];
-        $client = new SoapClient($wsdl, ['connection_timeout' => 300, 'keep_alive' => false]);
-        $uuid = self::guid();
-        $messageData = array(
-            'Phone' => $mobile,
-            'Content' => $text,
-            'vipFlag' => 'false',
-            'customMsgID' => '',
-            'customNum' => ''
-        );
-        $mtpacktmp = array(
-            'uuid' => $uuid,
-            'batchID' => $uuid,
-            'batchName' => date('Y-m-d'),
-            'sendType' => '1',
-            'msgType' => '1',
-            'msgs' => array('MessageData' => $messageData),
-            'bizType' => '',
-            'distinctFlag' => '',
-            'scheduleTime' => '',
-            'deadline' => ''
-        );
-        $result = $client->Post(array(
-            'account' => $config['account'],
-            'password' => $config['password'],
-            'mtpack' => $mtpacktmp
-        ));
-
-        $flag = true;
-        if ($result->PostResult->result != 0 || $result->PostResult->message != '成功') {
-            $flag = false;
-            $con = ['tel' => $mobile, 'text' => $text, 'callback' => $result];
-            Utils::alert('玄武短信发送失败，请检查', json_encode($con, 256));
-        }
-        return $flag;
+        $config = Utils::getParam(Sms::SMS_CONFIG)[Sms::TUNNELS_CONFIG][self::$configName][self::$marketingConfigName];
+        return self::sendMessage($mobile, $content, $config);
     }
 
+
     /**
-     * 生成uuid的方法，客户如有其他方法生成，可使用其他方法。
+     * 发送短信
+     * @param $mobile
+     * @param $text
+     * @param array $channel
+     * @return bool
      */
-    public static function guid()
+    private static function sendMessage($mobile, $text, $channel = [])
     {
-        mt_srand((double)microtime() * 10000);//optional for php 4.2.0 and up.
-        $charid = strtoupper(md5(uniqid(rand(), true)));
-        $hyphen = chr(45);// "-"
-        $uuid = substr($charid, 0, 8) . $hyphen
-            . substr($charid, 8, 4) . $hyphen
-            . substr($charid, 12, 4) . $hyphen
-            . substr($charid, 16, 4) . $hyphen
-            . substr($charid, 20, 12);
-        return $uuid;
+        if (empty($channel)) {
+            return false;
+        }
+
+        if (is_array($mobile)) {
+            $mobile = implode(',', $mobile);
+        }
+
+        //TODO 检测是否替换完变量
+
+        // 检测文案是否消耗两、三条短信
+        Utils::smsTextStrlen($text, '玄武');
+
+        $data = array_merge(['to' => $mobile, 'text' => rawurlencode(mb_convert_encoding($text, 'gbk', 'utf-8'))], $channel);
+
+        // 参数拼接
+        $params = self::urlJoin($data);
+
+        $res = Utils::curlGet(self::URL . $params);
+        if ($res != 0) {
+            Utils::alert('玄武短信通道发送失败->' . $mobile, json_encode(['params' => $params, 'return' => $res], 256));
+            return false;
+        }
+        if ($res == '-12') {
+            Utils::alert('【余额不足】玄武短信通道余额不足，请尽快充值！' . $mobile, json_encode(['params' => $params, 'return' => $res], 256));
+            return false;
+        }
+        return true;
+    }
+
+    private static function urlJoin($params = [])
+    {
+        ksort($params);
+
+        $sign = '';
+        foreach ($params as $key => $val) {
+            if ($key != '' && $val != '') {
+                $sign .= $key . '=' . $val . '&';
+            }
+        }
+
+        $sign = rtrim($sign, '&');
+
+        return $sign;
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace JMD\Libs\Risk;
 
 use JMD\Libs\Risk\Interfaces\Request;
@@ -22,7 +23,7 @@ class BaseRequest implements Request
     protected $secretKey;
 
 
-    public function __construct($appKey,$secretKey)
+    public function __construct($appKey, $secretKey)
     {
         $this->appKey = $appKey;
         $this->secretKey = $secretKey;
@@ -91,8 +92,8 @@ class BaseRequest implements Request
                     $val = strval($val);
                 }
             }
-            $this->data['sign'] =  md5(json_encode($this->data));
-            $result= HttpHelper::post($url, $this->data);
+            $this->data['sign'] = md5(json_encode($this->data));
+            $result = HttpHelper::post($url, $this->data, 5 * 60);
             return $result;
         } else {
             return HttpHelper::get($url);

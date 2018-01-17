@@ -1,5 +1,8 @@
 <?php
+
 namespace JMD\Utils;
+
+use JMD\Libs\Risk\Exception\RiskCurlException;
 
 class HttpHelper
 {
@@ -46,7 +49,7 @@ class HttpHelper
             curl_setopt($ch, CURLOPT_POST, 1); // 设置为POST方式
         }
         if (!empty($post)) {
-            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post)); // POST数据
+            curl_setopt($ch, CURLOPT_POSTFIELDS, (http_build_query($post))); // POST数据
         }
         curl_setopt($ch, CURLOPT_HTTPHEADER, array_values($headers));
         $html = curl_exec($ch);
@@ -63,7 +66,8 @@ class HttpHelper
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_HEADER, false);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 5.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.111 Safari/537.36');
+        curl_setopt($ch, CURLOPT_USERAGENT,
+            'Mozilla/5.0 (Windows NT 5.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.111 Safari/537.36');
         curl_setopt($ch, CURLOPT_POST, 0);
         curl_setopt($ch, CURLOPT_TIMEOUT, 10);
 
@@ -72,26 +76,33 @@ class HttpHelper
         return $html;
     }
 
-    public static function post($url, $data = null)
+    public static function post($url, $data = null, $timeOut = 30)
     {
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_HEADER, false);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 5.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.111 Safari/537.36');
+        curl_setopt($ch, CURLOPT_USERAGENT,
+            'Mozilla/5.0 (Windows NT 5.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.111 Safari/537.36');
         curl_setopt($ch, CURLOPT_POST, 1); // 设置为POST方式
-        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+        curl_setopt($ch, CURLOPT_TIMEOUT, $timeOut);
         if (!empty($data)) {
             curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data)); // POST数据
         }
         $html = curl_exec($ch);
+        if ($errorno = curl_errno($ch)) {
+            throw new RiskCurlException(curl_error($ch) . json_encode(curl_getinfo($ch), JSON_UNESCAPED_UNICODE), $errorno);
+        }
+
+
         curl_close($ch);
         return $html;
     }
 
     public static function stringCookies($cookies)
     {
-        if (is_string($cookies))
+        if (is_string($cookies)) {
             return $cookies;
+        }
         $str = '';
         foreach ($cookies as $cookie) {
             $str .= $cookie['name'] . '=' . $cookie['value'] . ';';

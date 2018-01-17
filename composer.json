@@ -4,12 +4,8 @@
   "type": "library",
   "license": "apache v2",
   "require": {
-    "php": ">=5.4.0",
-    "jmd-backend/php-libs": "dev-master"
+    "php": ">=5.4.0"
   },
-  "bin": [
-    "src/Libs/Risk/UpdateQueue"
-  ],
   "autoload": {
     "psr-4": {
       "JMD\\": "src"

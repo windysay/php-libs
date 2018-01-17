@@ -27,7 +27,7 @@ class Utils implements \JMD\App\Interfaces\Utils {
 
     public static function alert($title, $content = null, $sendTo = 'develop-alert@jiumiaodai.com', $sendName = '系统告警', $sendFrom = 'auto-send@jiumiaodai.com')
     {
-        self::logError($title . ':' . $content);
+//        self::logError($title . ':' . $content);
         if ($content === null) {
             $content = $title;
         }
