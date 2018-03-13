@@ -10,7 +10,7 @@ class DomainConfig
     public static function base_domain()
     {
 
-        if (Configs::isProEnv()==='prod') {//正式、预发布
+        if (Configs::isProEnv()) {//正式、预发布
             return [
                 'login_redirect_url' => Utils::getParam('login_redirect_url_prod'),
                 'http_sso_check' => Utils::getParam('http_sso_check_prod'),
