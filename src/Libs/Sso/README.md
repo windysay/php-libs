@@ -10,10 +10,10 @@
 <?php
 
 return [
-    'login_redirect_url_prod' => env('LOGIN_REDIRECT_URL_PROD', 'smtp'),
-    'http_sso_check_prod' => env('HTTP_SSO_CHECK_PROD', 'smtp.mxhichina.com'),
-    'cookie_clean_domain_prod' => env('COOKIE_CLEAN_DOMAIN_PROD', 465),
-    'ticket_cookie_name_prod' => ['address' => 'TICKET_COOKIE_NAME_PROD','name' => '发件人']
+    'login_redirect_url_prod' => env('LOGIN_REDIRECT_URL_PROD', 'https://sso.jiumiaodai.com/sso/login'),
+    'http_sso_check_prod' => env('HTTP_SSO_CHECK_PROD', 'https://sso.jiumiaodai.com/sso/token'),
+    'cookie_clean_domain_prod' => env('COOKIE_CLEAN_DOMAIN_PROD', '.jiumiaodai.com'),
+    'ticket_cookie_name_prod' => env('TICKET_COOKIE_NAME_PROD', 'ticket_prod'),
 ];
 
 ```
