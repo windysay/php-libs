@@ -11,4 +11,6 @@ interface Utils {
     public static function logError($log);
 
     public static function alert($title, $content = null);
+
+    public static function redis($dataBase = 1);
 }

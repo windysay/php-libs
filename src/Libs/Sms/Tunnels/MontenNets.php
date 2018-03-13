@@ -1,4 +1,5 @@
 <?php
+
 namespace JMD\Libs\Sms\Tunnels;
 
 use JMD\Libs\Sms\Interfaces\VoiceSmsBase;
@@ -21,6 +22,8 @@ class MontenNets implements VoiceSmsBase
 
     protected $reqUrl = 'http://61.145.229.28:5001/voice/v2/std/template_send';
 
+    public static $configName = 'MontenNets';
+
 
     public function __construct($mobile)
     {
@@ -38,17 +41,37 @@ class MontenNets implements VoiceSmsBase
     public function sendVoiceCaptcha($code = null)
     {
         $code = Sms::getRandomCaptcha($code);
+
+        $bool = $this->send(100004, $this->userName, $this->passWord, 1, $code);
+
+        if (!$bool) {
+            return false;
+        }
+
+        return $code;
+    }
+
+    public function sendVoiceNotice($tmpId)
+    {
+        return $this->send($tmpId, 'YY0286', '159367', 3);
+    }
+
+
+    public function send($tmpId, $userid, $pwd, $msgType, $content = '')
+    {
         $params = [
-            'userid' => 'YY0004',
-            'content' => $code,
-            'pwd' => '159366',
+            'userid' => $userid,
+            'pwd' => $pwd,
             'mobile' => $this->mobile,
             'timestamp' => date('mdHis'),
             'exno' => '',
             'cusid' => time(),
-            'tmplid' => '100004',
-            'msgtype' => 1
+            'tmplid' => $tmpId,
+            'msgtype' => $msgType
         ];
+        if ($content) {
+            $params['contnet'] = $content;
+        }
 
 
         $pwd = "{$params['userid']}00000000{$params['pwd']}{$params['timestamp']}";
@@ -61,11 +84,14 @@ class MontenNets implements VoiceSmsBase
         $bool = $this->isSuccess();
         if (!$bool) {
             $errors = $this->parseSendError();
-            Utils::alert('梦网科技语言验证码发送失败->' . $this->mobile, json_encode($errors, 256));
-            return $bool;
-        }
+            if($msgType == 1){
+                Utils::alert('梦网科技语音验证码发送失败->' . $this->mobile, json_encode($errors, 256));
+            } else {
+                Utils::alert('梦网科技语音通知发送失败->' . $this->mobile, json_encode($errors, 256));
+            }
 
-        return $code;
+        }
+        return $bool;
     }
 
 
@@ -123,7 +149,6 @@ class MontenNets implements VoiceSmsBase
             }
 
         }
-
 
 
         return $returns;

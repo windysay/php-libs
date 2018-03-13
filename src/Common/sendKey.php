@@ -18,6 +18,8 @@ interface sendKey
     const REPAYMENT_FINISH_ONE = 'REPAYMENT_FINISH_ONE';
     const REPAYMENT_FINISH_TWO = 'REPAYMENT_FINISH_TWO';
     const LOAN_SUCCESS = 'LOAN_SUCCESS';
+    const APPLY_PASS = 'APPLY_PASS'; //初审通过
+    const TIME_OUT_CANCEL_APPLY = 'TIME_OUT_CANCEL_APPLY'; //放款周期过长，系统自动取消借款申请
 
     //+++++++++++++++++
     //| 白名单[营销渠道]
@@ -38,4 +40,11 @@ interface sendKey
     const SIGN_CANCEL = 'SIGN_NO_APPLY';
     # 老用户召回
     const OLD_USER_RECALL = 'OLD_USER_RECALL';
+
+    # 语音验证码即将到期提醒
+    const VOICE_NOTICE_WILL_EXPIRED = 'VOICE_NOTICE_WILL_EXPIRED';
+
+    # 语音验证码到期
+    const VOICE_NOTICE_EXPIRED = 'VOICE_NOTICE_EXPIRED';
+    const VOICE_NOTICE_OVERDUE = 'VOICE_NOTICE_OVERDUE';
 }

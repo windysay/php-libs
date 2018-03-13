@@ -5,6 +5,7 @@ namespace JMD\Libs\Sms;
 
 use common\helpers\EmailHelper;
 use JMD\App\Utils;
+use JMD\App\Yii\Configs;
 use JMD\Common\sendKey;
 use JMD\Libs\Sms\Interfaces\SmsBase;
 use JMD\Libs\Sms\Interfaces\VoiceSmsBase;
@@ -13,6 +14,7 @@ use JMD\Libs\Sms\Tunnels\JPush;
 use JMD\Libs\Sms\Tunnels\SuDun;
 use JMD\Libs\Sms\Tunnels\TianRuiYun;
 use JMD\Libs\Sms\Tunnels\Winic;
+use JMD\Libs\Sms\Tunnels\MontenNets;
 use JMD\Libs\Sms\Tunnels\XingYunXiang;
 use JMD\Libs\Sms\Tunnels\XuanWu;
 use phpDocumentor\Reflection\Types\Self_;
@@ -39,6 +41,9 @@ class Sms implements sendKey
         ],
         self::TUNNELS_VOICE_CAPTCHA => [
             Winic::class
+        ],
+        self::TUNNELS_VOICE_NOTICE => [
+            MontenNets::class
         ],
         self::TUNNELS_NOTICE => [
 //            JPush::class,  // 模板更换等待审核完成
@@ -72,6 +77,7 @@ class Sms implements sendKey
     //+-----------------------
     const TUNNELS_CAPTCHA = 'sendCaptcha';
     const TUNNELS_VOICE_CAPTCHA = 'sendVoiceCaptcha';
+    const TUNNELS_VOICE_NOTICE = 'sendVoiceNotice';
     const TUNNELS_NOTICE = 'sendNotice';
     const TUNNELS_MARKETNG = 'sendMarketing';
     const TUNNELS_CUSTOM = 'sendCustom';  //自定义文案
@@ -98,6 +104,11 @@ class Sms implements sendKey
      */
     public static function send($mobile, $sendKey, $tplKey = [], $tplParams = [], $appName = '')
     {
+        /** 测试环境不发送短信 */
+        if (!Configs::isProEnv()) {
+            return true;
+        }
+
         $config = Utils::getParam(self::SMS_CONFIG);
 
         // 检查是否定义了模板ID
@@ -233,6 +244,7 @@ class Sms implements sendKey
         $tunnelType = self::TUNNELS_VOICE_CAPTCHA;
         $tunnels = self::$tunnels[$tunnelType];
 
+        
         if (empty($tunnels)) {
             return false;
         }
@@ -252,6 +264,34 @@ class Sms implements sendKey
         } while (!$flag && $times < $tunnelNum);
 
         return $flag;
+    }
+    
+    public static function sendVoiceByTpl($mobile,$key)
+    {
+        $tunnelType = self::TUNNELS_VOICE_NOTICE;
+        $tunnels = self::$tunnels[$tunnelType];
+
+        $config = Utils::getParam(self::SMS_CONFIG)[self::TUNNELS_CONFIG];
+        if (empty($tunnels)) {
+            return false;
+        }
+
+        $flag = false;
+        foreach ($tunnels as $obj) {
+            $tplid = $config[$obj::$configName][$key];
+            $obj = new $obj($mobile);
+            $flag = $obj->$tunnelType($tplid);
+            #成功直接返回否则切换通道继续尝试发送
+            if ($flag == true) {
+                return true;
+            }
+        }
+
+        // 如果所有通道都false会走到这一步
+        Utils::alert('所有短信渠道发送失败',
+            json_encode(['tel' => $mobile, 'flag' => $flag, 'send_tunnels' => $tunnelType],
+                256));
+        return false;
     }
 
     /**

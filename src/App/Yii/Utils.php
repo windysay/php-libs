@@ -41,4 +41,12 @@ class Utils implements \JMD\App\Interfaces\Utils {
                 ->send()
             : true;
     }
+
+    public static function redis($dataBase = 1)
+    {
+        $redis = Yii::$app->redis;
+        $redis->executeCommand('select', [$dataBase]);
+        $redis->database = $dataBase;
+        return $redis;
+    }
 }
