@@ -29,6 +29,7 @@ class SsoUser
         $ticket = $_COOKIE[$load_domain_config['ticket_cookie_name']];
         $ip = Basic::getIp();
         $redis = Utils::redis();
+        $userKey = 'sso_staff:flag:' . md5($ticket);
         if (empty($redis->exists('sso_staff:flag:' . md5($ticket))) || $actionId == 'index/logout') {
             //执行时间
             $start = microtime(true) * 1000;
@@ -46,8 +47,9 @@ class SsoUser
             if ($response_data->code == '1001') {
                 return $response_data;
             }
+
             //默认设置缓存 30分钟
-            $redis->set('sso_staff:flag:' . md5($ticket), $body);
+            $redis->set('sso_staff:flag:' . md5($ticket), json_encode($response_data));
             $ticket_local_cache = is_null($ticket_local_cache) ? self::TICKET_LOCAL_CACHE : $ticket_local_cache;
             $redis->expire('sso_staff:flag:' . md5($ticket), $ticket_local_cache);
         }
