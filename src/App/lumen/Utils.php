@@ -1,14 +1,16 @@
 <?php
+
 namespace JMD\App\Yii;
 
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Mail;
 
-class Utils implements \JMD\App\Interfaces\Utils {
+class Utils implements \JMD\App\Interfaces\Utils
+{
 
     public static function getParam($key)
     {
-        return config('domain.'.$key, '');
+        return config('domain.' . $key, '');
     }
 
     public static function getCache($key)
@@ -18,7 +20,7 @@ class Utils implements \JMD\App\Interfaces\Utils {
 
     public static function setCache($key, $value, $duration = null)
     {
-        return Redis::set($key,$value);
+        return Redis::set($key, $value);
     }
 
     public static function logError($log)
@@ -32,9 +34,9 @@ class Utils implements \JMD\App\Interfaces\Utils {
             $content = $title;
         }
 
-        $flag = Mail::raw($content, function ($message) use ($sendTo, $title,$sendName,$sendFrom) {
+        $flag = Mail::raw($content, function ($message) use ($sendTo, $title, $sendName, $sendFrom) {
             $message->from($sendFrom, $name = $sendName);
-            $message ->to($sendTo)->subject($title);
+            $message->to($sendTo)->subject($title);
         });
 
         if (!$flag)

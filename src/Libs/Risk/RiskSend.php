@@ -223,6 +223,13 @@ class RiskSend
     }
 
 
+    public function setVipOrder($data)
+    {
+        $method = 'vip_order';
+        $this->addBaseRequest($method, $data);
+    }
+
+
     private function addBaseRequest($field, $val)
     {
         $data = $this->request->data;

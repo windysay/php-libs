@@ -9,14 +9,14 @@ class Basic implements SsoIdentity
 {
 
     private $app_id = 'unvfY8hG';
-    private $app_secret ='be3508150dedfdca158d2697c6645043';
+    private $app_secret = 'be3508150dedfdca158d2697c6645043';
 
     public function __construct($app_id = '', $app_secret = '')
     {
-        if($app_id){
+        if ($app_id) {
             $this->app_id = $app_id;
         }
-        if($app_secret){
+        if ($app_secret) {
             $this->app_secret = $app_secret;
         }
     }

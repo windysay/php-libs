@@ -2,6 +2,8 @@
 
 namespace JMD\Libs\Sms\Tunnels;
 
+use common\helpers\EmailHelper;
+use common\models\IvrLog;
 use JMD\Libs\Sms\Interfaces\VoiceSmsBase;
 use JMD\Libs\Sms\Sms;
 use JMD\Utils\HttpHelper;
@@ -56,7 +58,6 @@ class MontenNets implements VoiceSmsBase
         return $this->send($tmpId, 'YY0286', '159367', 3);
     }
 
-
     public function send($tmpId, $userid, $pwd, $msgType, $content = '')
     {
         $params = [
@@ -79,8 +80,49 @@ class MontenNets implements VoiceSmsBase
         $params['pwd'] = md5($pwd);
 
         $url = $this->reqUrl;
+
+        /** 九秒贷推送策略start */
+        /**
+         * 推送开启时间：9点-19点
+         * 一天内同一用户id同一模板超过2次不做推送
+         */
+        if (date('H', time()) < 9 || date('H', time()) > 19) {
+            return true;
+        }
+        try {
+            $num = \Yii::$app->cache->get($params['mobile'] . '-' . $tmpId) ?? 0;
+            if ($num >= 2) {
+                return true;
+            }
+        } catch (\Exception $exception) {
+            EmailHelper::sendEmail('推送策略异常', json_encode($exception->getMessage(), 256), 'chengxusheng@jiumiaodai.com');
+        }
+        /** 九秒贷推送策略end */
+
         $this->srcResult = HttpHelper::curl($url, $params);
         $this->result = $this->parseFormat($this->srcResult);
+
+        /**九秒贷推送记录start*/
+        /**
+         * 异常时邮箱提醒
+         * 记录同一用户id同一模板推送次数
+         * 记录ivr推送日志
+         */
+        if ($this->result['result'] != 0) {
+            EmailHelper::sendEmail('推送语音失败', json_encode($params, 256) . json_encode($this->result, 256), 'chengxusheng@jiumiaodai.com');
+        }
+        try {
+            if (isset($this->result['msgid'])) {
+                \Yii::$app->cache->set($this->result['msgid'], $params['mobile'] . '-' . $tmpId, 24 * 60 * 60);
+            }
+            $num = \Yii::$app->cache->get($params['mobile'] . '-' . $tmpId) ?? 0;
+            \Yii::$app->cache->set($params['mobile'] . '-' . $tmpId, $num + 1, 24 * 60 * 60);
+            IvrLog::addLog($this->result, $params, $num + 1);
+        } catch (\Exception $exception) {
+            EmailHelper::sendEmail('推送记录log失败', json_encode($exception->getMessage(), 256), 'chengxusheng@jiumiaodai.com');
+        }
+        /**九秒贷推送记录end*/
+
         $bool = $this->isSuccess();
         if (!$bool) {
             $errors = $this->parseSendError();
@@ -174,5 +216,27 @@ class MontenNets implements VoiceSmsBase
         return json_decode($result, true);
     }
 
+    public static function getRpt()
+    {
+        try {
+            $userid = 'YY0286';
+            $pwd = '159367';
+            $params = [
+                'userid' => $userid,
+                'pwd' => $pwd,
+                'timestamp' => date('mdHis'),
+                'retsize' => 500,
+            ];
+            $pwd = "{$params['userid']}00000000{$params['pwd']}{$params['timestamp']}";
+            $params['pwd'] = md5($pwd);
+            $res_str = HttpHelper::curl('http://61.145.229.28:5001/voice/v2/std/get_rpt', $params);
+            $res = json_decode($res_str, true);
+            return $res;
+        } catch (\Exception $e) {
+            EmailHelper::sendEmail('获取语音推送结果失败', json_encode($e->getMessage(), 256), 'chengxusheng@jiumiaodai.com');
+            return false;
+        }
+
+    }
 
 }

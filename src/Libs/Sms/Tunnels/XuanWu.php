@@ -85,21 +85,23 @@ class XuanWu implements SmsBase
 
     /**
      * @param array $mobile
-     * @param $content
+     * @param        $content
      * @param string $appName
      * @return mixed
      */
     public static function sendCustom($mobile = [], $content, $appName = '')
     {
         $config = Utils::getParam(Sms::SMS_CONFIG)[Sms::TUNNELS_CONFIG][self::$configName][self::$marketingConfigName];
+        // 玄武营销短信后面需要回N退订，否则会被拦截发不出去
+        $content = $content . '回N退订';
         return self::sendMessage($mobile, $content, $config);
     }
 
 
     /**
      * 发送短信
-     * @param $mobile
-     * @param $text
+     * @param       $mobile
+     * @param       $text
      * @param array $channel
      * @return bool
      */

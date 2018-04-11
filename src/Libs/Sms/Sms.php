@@ -279,6 +279,9 @@ class Sms implements sendKey
         $flag = false;
         foreach ($tunnels as $obj) {
             $tplid = $config[$obj::$configName][$key];
+            if (!$tplid) {
+                EmailHelper::sendEmail('语音推送模板不存在', $key, 'chengxusheng@jiumiaodai.com');
+            }
             $obj = new $obj($mobile);
             $flag = $obj->$tunnelType($tplid);
             #成功直接返回否则切换通道继续尝试发送
