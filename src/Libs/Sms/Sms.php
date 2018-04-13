@@ -2,19 +2,14 @@
 
 namespace JMD\Libs\Sms;
 
-
-use common\helpers\EmailHelper;
-use JMD\App\Utils;
 use JMD\App\Configs;
+use JMD\App\Utils;
 use JMD\Common\sendKey;
 use JMD\Libs\Sms\Interfaces\SmsBase;
-use JMD\Libs\Sms\Interfaces\VoiceSmsBase;
-use JMD\Libs\Sms\Tunnels\Guodu;
 use JMD\Libs\Sms\Tunnels\JPush;
-use JMD\Libs\Sms\Tunnels\SuDun;
+use JMD\Libs\Sms\Tunnels\MontenNets;
 use JMD\Libs\Sms\Tunnels\TianRuiYun;
 use JMD\Libs\Sms\Tunnels\Winic;
-use JMD\Libs\Sms\Tunnels\MontenNets;
 use JMD\Libs\Sms\Tunnels\XingYunXiang;
 use JMD\Libs\Sms\Tunnels\XuanWu;
 use phpDocumentor\Reflection\Types\Self_;
@@ -280,7 +275,7 @@ class Sms implements sendKey
         foreach ($tunnels as $obj) {
             $tplid = $config[$obj::$configName][$key];
             if (!$tplid) {
-                EmailHelper::sendEmail('语音推送模板不存在', $key, 'chengxusheng@jiumiaodai.com');
+                Utils::alert('语音推送模板不存在', $key);
             }
             $obj = new $obj($mobile);
             $flag = $obj->$tunnelType($tplid);
