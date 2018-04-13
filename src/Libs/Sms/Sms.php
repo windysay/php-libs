@@ -208,7 +208,7 @@ class Sms implements sendKey
                         $tunnel = new $className($mobile, $sendKey, $tplKey, $tplParams, $appName);
                         $flag = $tunnel->$tunnelType();
                     } else {
-                        EmailHelper::sendEmail('短信渠道异常', "tunnelType-{$tunnelType}/tunnelIndex-{$tunnelIndex}/appName-{$appName}");
+                        Utils::alert('短信渠道异常', "tunnelType-{$tunnelType}/tunnelIndex-{$tunnelIndex}/appName-{$appName}");
                     }
                     $tunnelIndex++;
                     $times++;
