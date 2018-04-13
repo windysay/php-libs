@@ -1,6 +1,6 @@
 <?php
 
-namespace JMD\App\Yii;
+namespace JMD\App\lumen;
 
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Mail;

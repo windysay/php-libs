@@ -5,7 +5,7 @@ namespace JMD\Libs\Sms;
 
 use common\helpers\EmailHelper;
 use JMD\App\Utils;
-use JMD\App\Yii\Configs;
+use JMD\App\Configs;
 use JMD\Common\sendKey;
 use JMD\Libs\Sms\Interfaces\SmsBase;
 use JMD\Libs\Sms\Interfaces\VoiceSmsBase;
@@ -112,7 +112,7 @@ class Sms implements sendKey
         $config = Utils::getParam(self::SMS_CONFIG);
 
         // 检查是否定义了模板ID
-        if (!isset($config[self::SMS_TUNNELS][$sendKey])) {
+        if (!isset($config[self::TEXT_TEMPLATE][$sendKey])) {
             return false;
         }
 
