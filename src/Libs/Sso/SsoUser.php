@@ -42,8 +42,8 @@ class SsoUser
             if ($redis->ttl('sso_curl') == -1) {
                 $redis->expire('sso_curl', 3600 * 6);
             }
-            $response_data = json_decode($body);
-            if ($response_data->code == '1001') {
+            $response_data = json_decode($body, true);
+            if ($response_data['code'] == '1001') {
                 return $response_data;
             }
             //默认设置缓存 30分钟
