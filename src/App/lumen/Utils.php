@@ -1,6 +1,6 @@
 <?php
 
-namespace JMD\App\lumen;
+namespace JMD\App\Yii;
 
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Mail;
@@ -43,7 +43,7 @@ class Utils implements \JMD\App\Interfaces\Utils
             \Log::info('发送邮件失败！');
     }
 
-    public static function redis($dataBase = 1)
+    public static function redis($dataBase = 0)
     {
         $redis = Redis::command('select', [$dataBase]);
         return $redis;
