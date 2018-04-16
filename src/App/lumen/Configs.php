@@ -1,6 +1,6 @@
 <?php
 
-namespace JMD\App\Lumen;
+namespace JMD\App\lumen;
 
 class Configs implements \JMD\App\Interfaces\Configs
 {
