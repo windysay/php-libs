@@ -71,4 +71,10 @@ interface sendKey
     const VOICE_NOTICE_INFO_PERFACT = 'VOICE_NOTICE_INFO_PERFACT';
     #邀请完善资料
     const VOICE_NOTICE_INVITE_LOAN = 'VOICE_NOTICE_INVITE_LOAN';
+
+    #渠道标识
+    const CHANNEL_JPUSH = 'JPUSH';
+    const CHANNEL_TIAN_RUI_YUN = 'TIAN_RUI_YUN';
+    const CHANNEL_XING_YUN_XIANG = 'XING_YUN_XIANG';
+    const CHANNEL_XUAN_WU = 'XUAN_WU';
 }

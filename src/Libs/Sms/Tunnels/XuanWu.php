@@ -49,7 +49,7 @@ class XuanWu implements SmsBase
     public static $captchaAndNoticeName = 'sms_xuanwu_captcha_notice';
     public static $marketingConfigName = 'sms_xuanwu_marketing_config';
 
-    public function __construct($mobile, $sendKey, $tplKey, $tplParams, $appName = '')
+    public function __construct($mobile, $sendKey, $tplKey, $tplParams, $appName = '', $callBackFun = '')
     {
         $this->mobile = $mobile;
         //判断是否渠道是否可以发送，针对多app时，有些app不支持,检查是否有配置，配置说明支持，没有配置说明不支持

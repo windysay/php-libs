@@ -3,6 +3,7 @@
 namespace JMD\Libs\Sms\Tunnels;
 
 use JMD\App\Utils;
+use JMD\Common\sendKey;
 use JMD\Libs\Sms\Interfaces\SmsBase;
 
 /**
@@ -23,6 +24,7 @@ class JPush implements SmsBase
     private $params;
     private $templateId;
     private $appName;
+    private $callBackFun;
 
     /**
      * JPush constructor.
@@ -30,21 +32,23 @@ class JPush implements SmsBase
      * @param $sendKey
      * @param $tplKey
      * @param $tplParams
-     * @param $appName
+     * @param string $appName
+     * @param string $callBackFun
      */
-    public function __construct($mobile, $sendKey, $tplKey, $tplParams, $appName = '')
+    public function __construct($mobile, $sendKey, $tplKey, $tplParams, $appName = '', $callBackFun = '')
     {
         $this->appKey = Utils::getParam('jiguang_app_key');
         $this->masterSecret = Utils::getParam('jiguang_sectet_key');
         $this->options = [
             'ssl_verify' => true,
-            'disable_ssl' => false
+            'disable_ssl' => true //关闭ssl验证
         ];
 
         $this->mobile = $mobile;
         $this->params = Utils::getKeyToKey($tplKey, $tplParams);
         $this->templateId = Utils::getTemplateIdByKey(self::$configName, $sendKey);
         $this->appName = $appName;
+        $this->callBackFun = $callBackFun;
     }
 
     /**
@@ -104,6 +108,9 @@ class JPush implements SmsBase
             Utils::alert('极光短信渠道发送失败', json_encode(['tel' => $mobile, 'templateId' => $tempId, 'params' => $params, 'callback' => $result], 256));
             return false;
         }
+
+        $fun = $this->callBackFun;
+        $fun && $fun($result['body']['msg_id'], sendKey::CHANNEL_JPUSH);
 
         return true;
     }

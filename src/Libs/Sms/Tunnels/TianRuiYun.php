@@ -3,6 +3,7 @@
 namespace JMD\Libs\Sms\Tunnels;
 
 use JMD\App\Utils;
+use JMD\Common\sendKey;
 use JMD\Libs\Sms\Interfaces\Captcha;
 use JMD\Libs\Sms\Interfaces\Marketing;
 use JMD\Libs\Sms\Interfaces\NoticeByTemplate;
@@ -40,14 +41,16 @@ class TianRuiYun implements SmsBase
     private $tplKey;
     private $tplParams;
     private static $appName;
+    private static $callBackFun;
 
-    public function __construct($mobile, $sendKey, $tplKey, $tplParams, $appName = '')
+    public function __construct($mobile, $sendKey, $tplKey, $tplParams, $appName = '', $callBackFun = '')
     {
         $this->mobile = $mobile;
         $this->sendKey = $sendKey;
         $this->tplKey = $tplKey;
         $this->tplParams = $tplParams;
         self::$appName = $appName ?: Utils::getParam('app_name');
+        self::$callBackFun = $callBackFun;
     }
 
     public function sendCaptcha()
@@ -127,6 +130,8 @@ class TianRuiYun implements SmsBase
         $res = Utils::curlPost($config, self::URL);
         $result = json_decode($res, true);
         if ($result['code'] == 0) {
+            $fun = self::$callBackFun;
+            $fun && $fun($result['batchId'], sendKey::CHANNEL_TIAN_RUI_YUN);
             return true;
         }
 

@@ -4,7 +4,7 @@ namespace JMD\Libs\Sms\Interfaces;
 
 interface SmsBase
 {
-    public function __construct($mobile, $sendKey, $tplKey, $tplParams, $appName = '');
+    public function __construct($mobile, $sendKey, $tplKey, $tplParams, $appName = '', $callBackFun = '');
 
     public function sendCaptcha();
 
