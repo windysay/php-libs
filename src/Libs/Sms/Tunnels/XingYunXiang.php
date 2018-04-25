@@ -3,6 +3,7 @@
 namespace JMD\Libs\Sms\Tunnels;
 
 use JMD\App\Utils;
+use JMD\Common\sendKey;
 use JMD\Libs\Sms\Interfaces\SmsBase;
 
 /**
@@ -39,14 +40,16 @@ class XingYunXiang implements SmsBase
     private $tplKey;
     private $tplParams;
     private static $appName;
+    private static $callBackFun;
 
-    public function __construct($mobile, $sendKey, $tplKey, $tplParams, $appName = '')
+    public function __construct($mobile, $sendKey, $tplKey, $tplParams, $appName = '', $callBackFun = '')
     {
         $this->mobile = $mobile;
         $this->sendKey = $sendKey;
         $this->tplKey = $tplKey;
         $this->tplParams = $tplParams;
         self::$appName = $appName ?: Utils::getParam('app_name');
+        self::$callBackFun = $callBackFun;
     }
 
     public function sendCaptcha()
@@ -126,6 +129,8 @@ class XingYunXiang implements SmsBase
         $xmlData = Utils::object_to_array(Utils::parseResponseAsSimpleXmlElement($res));
 
         if (isset($xmlData['returnstatus']) && $xmlData['returnstatus'] == 'Success') {
+            $fun = self::$callBackFun;
+            $fun && $fun($xmlData['taskID'], sendKey::CHANNEL_XING_YUN_XIANG);
             return true;
         }
 

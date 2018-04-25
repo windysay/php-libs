@@ -95,9 +95,12 @@ class Sms implements sendKey
      * @param array $tplKey
      * @param array $tplParams
      * @param string $appName
+     * @param string $callBackFun 用于发送成功处理业务逻辑，如果不需要回调，留空即可。
+     *                      2018-04-25 目前只对 JPush、XingYunXiang、TianRuiYun三种做了兼容，其他类传callBackFun无效
+     *                      原型： function($batchId, $channel) 标识和渠道名
      * @return bool
      */
-    public static function send($mobile, $sendKey, $tplKey = [], $tplParams = [], $appName = '')
+    public static function send($mobile, $sendKey, $tplKey = [], $tplParams = [], $appName = '', $callBackFun = '')
     {
         /** 测试环境不发送短信 */
         if (!Configs::isProEnv()) {
@@ -143,7 +146,7 @@ class Sms implements sendKey
                             return false;
                         }
                         #发送
-                        $tunnel = new $item($operator[$key], $sendKey, $tplKey, $tplParams, $appName);
+                        $tunnel = new $item($operator[$key], $sendKey, $tplKey, $tplParams, $appName, $callBackFun);
                         $flag = $tunnel->$tunnelType();
                         $result[] = $flag; // 记录结果
                         #成功直接结束循环，否则切换通道继续尝试发送
@@ -205,7 +208,7 @@ class Sms implements sendKey
                 do {
                     $className = self::$tunnels[$tunnelType][$tunnelIndex % $tunnelNum];
                     if (class_exists($className)) {
-                        $tunnel = new $className($mobile, $sendKey, $tplKey, $tplParams, $appName);
+                        $tunnel = new $className($mobile, $sendKey, $tplKey, $tplParams, $appName, $callBackFun);
                         $flag = $tunnel->$tunnelType();
                     } else {
                         Utils::alert('短信渠道异常', "tunnelType-{$tunnelType}/tunnelIndex-{$tunnelIndex}/appName-{$appName}");
@@ -261,7 +264,7 @@ class Sms implements sendKey
         return $flag;
     }
     
-    public static function sendVoiceByTpl($mobile,$key)
+    public static function sendVoiceByTpl($mobile,$key, $callBackFun = '')
     {
         $tunnelType = self::TUNNELS_VOICE_NOTICE;
         $tunnels = self::$tunnels[$tunnelType];
@@ -277,7 +280,7 @@ class Sms implements sendKey
             if (!$tplid) {
                 Utils::alert('语音推送模板不存在', $key);
             }
-            $obj = new $obj($mobile);
+            $obj = new $obj($mobile, $callBackFun);
             $flag = $obj->$tunnelType($tplid);
             #成功直接返回否则切换通道继续尝试发送
             if ($flag == true) {
