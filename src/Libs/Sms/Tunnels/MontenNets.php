@@ -22,14 +22,17 @@ class MontenNets implements VoiceSmsBase
 
     protected $reqUrl = 'http://61.145.229.28:5001/voice/v2/std/template_send';
 
+    protected $callBackFun;
+
     public static $configName = 'MontenNets';
 
 
-    public function __construct($mobile)
+    public function __construct($mobile, $callBackFun = '')
     {
         $this->userName = Utils::getParam('montent_nets_userid');
         $this->passWord = Utils::getParam('montent_nets_pwd');
         $this->mobile = $mobile;
+        $this->callBackFun = $callBackFun;
     }
 
     /**
@@ -112,6 +115,8 @@ class MontenNets implements VoiceSmsBase
         try {
             if (isset($this->result['msgid'])) {
                 Utils::setCache($this->result['msgid'], $params['mobile'] . '-' . $tmpId, 24 * 60 * 60);
+                $fun = $this->callBackFun;
+                $fun && $fun($this->result['custid'], sendKey::CHANNEL_MENG_WANG);
             }
             $num = Utils::getCache($params['mobile'] . '-' . $tmpId) ?? 0;
             Utils::setCache($params['mobile'] . '-' . $tmpId, $num + 1, 24 * 60 * 60);
@@ -214,7 +219,7 @@ class MontenNets implements VoiceSmsBase
         return json_decode($result, true);
     }
 
-    public static function getRpt()
+    public static function getRpt($statusNum = 500)
     {
         try {
             $userid = 'YY0286';
@@ -223,7 +228,7 @@ class MontenNets implements VoiceSmsBase
                 'userid' => $userid,
                 'pwd' => $pwd,
                 'timestamp' => date('mdHis'),
-                'retsize' => 500,
+                'retsize' => $statusNum,
             ];
             $pwd = "{$params['userid']}00000000{$params['pwd']}{$params['timestamp']}";
             $params['pwd'] = md5($pwd);

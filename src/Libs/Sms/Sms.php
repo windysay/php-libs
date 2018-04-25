@@ -264,7 +264,7 @@ class Sms implements sendKey
         return $flag;
     }
     
-    public static function sendVoiceByTpl($mobile,$key)
+    public static function sendVoiceByTpl($mobile,$key, $callBackFun = '')
     {
         $tunnelType = self::TUNNELS_VOICE_NOTICE;
         $tunnels = self::$tunnels[$tunnelType];
@@ -280,7 +280,7 @@ class Sms implements sendKey
             if (!$tplid) {
                 Utils::alert('语音推送模板不存在', $key);
             }
-            $obj = new $obj($mobile);
+            $obj = new $obj($mobile, $callBackFun);
             $flag = $obj->$tunnelType($tplid);
             #成功直接返回否则切换通道继续尝试发送
             if ($flag == true) {
