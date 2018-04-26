@@ -17,7 +17,8 @@ class SsoUser
      */
     public static function get_user_info($actionId, $ticket_local_cache = null)
     {
-        $http_type = isset($_SERVER['HTTPS']) ? 'https://' : 'http://';
+//        $http_type = isset($_SERVER['HTTPS']) ? 'https://' : 'http://';
+        $http_type = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')) ? 'https://' : 'http://';
 
         $load_domain_config = DomainConfig::base_domain();
         if (empty($_COOKIE[$load_domain_config['ticket_cookie_name']])) {
