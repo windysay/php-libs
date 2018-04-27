@@ -2,6 +2,7 @@
 
 namespace JMD\Libs\Sms\Tunnels;
 
+use JMD\Common\sendKey;
 use JMD\Libs\Sms\Interfaces\VoiceSmsBase;
 use JMD\Libs\Sms\Sms;
 use JMD\Utils\HttpHelper;
