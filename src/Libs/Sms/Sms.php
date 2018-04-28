@@ -28,7 +28,7 @@ class Sms implements sendKey
     //+--------------------------
     private static $tunnels = [
         self::TUNNELS_CAPTCHA => [
-            JPush::class,
+//            JPush::class, //待充值
             XuanWu::class,
             XingYunXiang::class,
             TianRuiYun::class,
