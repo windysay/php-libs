@@ -12,7 +12,7 @@ class BaseRequest implements Request
 
     public $url;
 
-    public $domain = 'http://jmd-service.com/';
+    public $domain = 'http://risk.api.jiumiaodai.com/';
 
     public $method = 1; //1 post 2 get
 
