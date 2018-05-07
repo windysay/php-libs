@@ -8,5 +8,8 @@ class JMD {
         if (isset($options['projectType'])) {
             Configs::setProjectType($options['projectType']);
         }
+        if (isset($options['tunnels'])) {
+            Configs::setTunnels($options['tunnels']);
+        }
     }
 }

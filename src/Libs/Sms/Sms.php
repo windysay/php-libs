@@ -2,6 +2,7 @@
 
 namespace JMD\Libs\Sms;
 
+use JMD\Common\Configs as CommonConfigs;
 use JMD\App\Configs;
 use JMD\App\Utils;
 use JMD\Common\sendKey;
@@ -118,6 +119,11 @@ class Sms implements sendKey
         $tunnelType = $config[self::SMS_TUNNELS][$sendKey];
         if (!$tunnelType) {
             return false;
+        }
+
+        //检查是否指定短信渠道,如果指定，覆盖默认定义通道
+        if(!empty(CommonConfigs::$tunnels)){
+            self::$tunnels = CommonConfigs::$tunnels;
         }
 
         // 检查是否有可用的短信渠道
