@@ -1,4 +1,5 @@
 <?php
+
 namespace JMD\Libs\Risk;
 
 use JMD\Libs\Risk\Interfaces\Request;
@@ -226,6 +227,18 @@ class RiskSend
     public function setVipOrder($data)
     {
         $method = 'vip_order';
+        $this->addBaseRequest($method, $data);
+    }
+
+    public function setRiskSystem($data)
+    {
+        $method = 'risk_system';
+        $this->addBaseRequest($method, $data);
+    }
+
+    public function setUserFace($data)
+    {
+        $method = 'user_face';
         $this->addBaseRequest($method, $data);
     }
 

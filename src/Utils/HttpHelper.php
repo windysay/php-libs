@@ -85,6 +85,7 @@ class HttpHelper
             'Mozilla/5.0 (Windows NT 5.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.111 Safari/537.36');
         curl_setopt($ch, CURLOPT_POST, 1); // 设置为POST方式
         curl_setopt($ch, CURLOPT_TIMEOUT, $timeOut);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Expect:'));
         if (!empty($data)) {
             curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data)); // POST数据
         }
