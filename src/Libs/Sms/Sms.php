@@ -13,6 +13,7 @@ use JMD\Libs\Sms\Tunnels\TianRuiYun;
 use JMD\Libs\Sms\Tunnels\Winic;
 use JMD\Libs\Sms\Tunnels\XingYunXiang;
 use JMD\Libs\Sms\Tunnels\XuanWu;
+use JMD\Libs\Sms\Tunnels\XuanWuVoice;
 use phpDocumentor\Reflection\Types\Self_;
 
 /**
@@ -39,7 +40,8 @@ class Sms implements sendKey
             Winic::class
         ],
         self::TUNNELS_VOICE_NOTICE => [
-            MontenNets::class
+            XuanWuVoice::class
+            //MontenNets::class
         ],
         self::TUNNELS_NOTICE => [
 //            JPush::class,  // 模板更换等待审核完成
