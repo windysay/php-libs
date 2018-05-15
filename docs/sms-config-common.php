@@ -95,6 +95,25 @@ return $commonConfig = [
 
             \JMD\Common\sendKey::VOICE_NOTICE_INFO_PERFACT => 200357, //完善资料召回
             \JMD\Common\sendKey::VOICE_NOTICE_INVITE_LOAN => 200358, //完善资料召回
+        ],
+        \JMD\Libs\Sms\Tunnels\XuanWuVoice::$configName => [
+            \JMD\Common\sendKey::VOICE_NOTICE_EXPIRED => 20450, //到期语音通知模板
+            \JMD\Common\sendKey::VOICE_NOTICE_WILL_EXPIRED => 20451,
+            \JMD\Common\sendKey::VOICE_NOTICE_OVERDUE => 20452, //逾期语音通知模板
+            \JMD\Common\sendKey::VOICE_NOTICE_LENDING_SUCCESS => 20453, //放款成功语音通知模版
+            \JMD\Common\sendKey::VOICE_NOTICE_BATCH_IVR => 20454, //批量ivr
+
+            \JMD\Common\sendKey::VOICE_NOTICE_USER_RECALL => 20455, //召回用户
+            \JMD\Common\sendKey::VOICE_NOTICE_INVITE_APPLY => 20456, //批量推送认证邀请
+
+            \JMD\Common\sendKey::VOICE_NOTICE_ORDER_CREATE => 20457, //订单创建召回
+            \JMD\Common\sendKey::VOICE_NOTICE_ORDER_SYSTEM => 20458, //订单确认召回
+            \JMD\Common\sendKey::VOICE_NOTICE_ORDER_FINISH => 20459, //订单完成召回
+
+            \JMD\Common\sendKey::VOICE_NOTICE_INFO_PERFACT => 20460, //完善资料召回
+            \JMD\Common\sendKey::VOICE_NOTICE_INVITE_LOAN => 20461, //完善资料召回
+
+            \JMD\Common\sendKey::VOICE_NOTICE_BUY_MEMBER => 20462, //购买会员营销
         ]
     ],
 

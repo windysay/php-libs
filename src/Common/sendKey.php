@@ -71,6 +71,8 @@ interface sendKey
     const VOICE_NOTICE_INFO_PERFACT = 'VOICE_NOTICE_INFO_PERFACT';
     #邀请完善资料
     const VOICE_NOTICE_INVITE_LOAN = 'VOICE_NOTICE_INVITE_LOAN';
+    #购买会员营销
+    const VOICE_NOTICE_BUY_MEMBER = 'VOICE_NOTICE_BUY_MEMBER';
 
     #渠道标识
     const CHANNEL_JPUSH = 'JPUSH';

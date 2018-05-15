@@ -3,12 +3,12 @@
 namespace JMD\Libs\Sms\Tunnels;
 
 use JMD\Libs\Sms\Interfaces\VoiceSmsBase;
-use common\models\IvrLog;
+//use common\models\IvrLog;
 use JMD\Libs\Sms\Sms;
 use JMD\Utils\HttpHelper;
-use common\helpers\EmailHelper;
+//use common\helpers\EmailHelper;
 use JMD\App\Utils;
-use common\helpers\DateTime;
+//use common\helpers\DateTime;
 
 class XuanWuVoice
 {
@@ -81,12 +81,14 @@ class XuanWuVoice
             return true;
         }
         try {
-            $num = \Yii::$app->cache->get($this->mobile . '-' . $templateID) ?? 0;
+            //$num = \Yii::$app->cache->get($this->mobile . '-' . $templateID) ?? 0;
+            $num = Utils::getCache($this->mobile . '-' . $templateID) ?? 0;
             if ($num >= 2) {
                 return true;
             }
         } catch (\Exception $exception) {
-            EmailHelper::sendEmail('推送策略异常', json_encode($exception->getMessage(), 256), 'zhengzaoping@jiumiaodai.com');
+            //EmailHelper::sendEmail('推送策略异常', json_encode($exception->getMessage(), 256), 'zhengzaoping@jiumiaodai.com');
+            Utils::alert('推送策略异常', json_encode($exception->getMessage(), 256));
         }
         $timestamp = $this->getTimeStamp();
         $sig = $this->getSig($timestamp);
@@ -97,15 +99,18 @@ class XuanWuVoice
         $this->result = $this->parseFormat($this->srcResult);
         $bool = $this->isSuccess();
         try {
-            $num = \Yii::$app->cache->get($this->mobile . '-' . $templateID) ?? 0;
-            \Yii::$app->cache->set($this->mobile . '-' . $templateID, $num + 1, 24 * 60 * 60);
-            IvrLog::addLogXuanWu(intval($bool), $templateID, $this->mobile, $num + 1, $is_manual, 3);
+            //$num = \Yii::$app->cache->get($this->mobile . '-' . $templateID) ?? 0;
+            $num = Utils::getCache($this->mobile . '-' . $templateID) ?? 0;
+            //\Yii::$app->cache->set($this->mobile . '-' . $templateID, $num + 1, 24 * 60 * 60);
+            Utils::setCache($this->mobile . '-' . $templateID, $num + 1, 24 * 60 * 60);
+            //IvrLog::addLogXuanWu(intval($bool), $templateID, $this->mobile, $num + 1, $is_manual, 3);
         } catch (\Exception $exception) {
-            EmailHelper::sendEmail('推送记录log失败', json_encode($exception->getMessage(), 256), 'zhengzaoping@jiumiaodai.com');
+            //EmailHelper::sendEmail('推送记录log失败', json_encode($exception->getMessage(), 256), 'zhengzaoping@jiumiaodai.com');
+            Utils::alert('推送记录log失败', json_encode($exception->getMessage(), 256));
         }
         if (!$bool) {
             $errors = $this->parseSendError();
-            EmailHelper::sendEmail('推送语音失败', json_encode($errors, 256) . json_encode($this->result, 256), 'zhengzaoping@jiumiaodai.com');
+            //EmailHelper::sendEmail('推送语音失败', json_encode($errors, 256) . json_encode($this->result, 256), 'zhengzaoping@jiumiaodai.com');
             Utils::alert('玄武语音通知发送失败->' . $this->mobile, json_encode($errors, 256));
             return $bool;
         }
@@ -122,7 +127,8 @@ class XuanWuVoice
         $subject['templateID'] = (string)$templateID;
         $subject['playTimes'] = (int)$playTimes;
         $subject['params'] = [];
-        $timestamp = DateTime::timeMs();
+        //$timestamp = DateTime::timeMs();
+        $timestamp = time()*1000;
         return ['info' => $info, 'subject' => $subject, 'timestamp' => (string)$timestamp];
     }
 
