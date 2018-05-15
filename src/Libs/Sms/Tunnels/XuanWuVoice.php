@@ -81,32 +81,36 @@ class XuanWuVoice
     public function sendVoiceNotice($templateID, $is_manual = 0)
     {
         //晚上7点到第二天早上9点不推送
-        if (date('H', time()) < 9 || date('H', time()) > 19) {
-            return true;
-        }
-        try {
-            //$num = \Yii::$app->cache->get($this->mobile . '-' . $templateID) ?? 0;
-            $num = Utils::getCache($this->mobile . '-' . $templateID) ?? 0;
-            if ($num >= 2) {
-                return true;
-            }
-        } catch (\Exception $exception) {
-            //EmailHelper::sendEmail('推送策略异常', json_encode($exception->getMessage(), 256), 'zhengzaoping@jiumiaodai.com');
-            Utils::alert('推送策略异常', json_encode($exception->getMessage(), 256));
-        }
+//        if (date('H', time()) < 9 || date('H', time()) > 19) {
+//            return true;
+//        }
+//        try {
+//            //$num = \Yii::$app->cache->get($this->mobile . '-' . $templateID) ?? 0;
+//            $num = Utils::getCache($this->mobile . '-' . $templateID) ?? 0;
+//            if ($num >= 2) {
+//                return true;
+//            }
+//        } catch (\Exception $exception) {
+//            //EmailHelper::sendEmail('推送策略异常', json_encode($exception->getMessage(), 256), 'zhengzaoping@jiumiaodai.com');
+//            Utils::alert('推送策略异常', json_encode($exception->getMessage(), 256));
+//        }
         $timestamp = $this->getTimeStamp();
         $sig = $this->getSig($timestamp);
         $url = $this->getUrl($this->notificationUrl, $sig);
         $authorization = $this->getAuthorization($timestamp);
-        $data = $this->getData($templateID, 3, '');
+        $playTimes = 3;
+        if($templateID=='20462'){
+            $playTimes = 2;
+        }
+        $data = $this->getData($templateID, $playTimes, '');
         $this->srcResult = $this->curlPost($url, $authorization, json_encode($data));
         $this->result = $this->parseFormat($this->srcResult);
         $bool = $this->isSuccess();
         try {
             //$num = \Yii::$app->cache->get($this->mobile . '-' . $templateID) ?? 0;
-            $num = Utils::getCache($this->mobile . '-' . $templateID) ?? 0;
+            //$num = Utils::getCache($this->mobile . '-' . $templateID) ?? 0;
             //\Yii::$app->cache->set($this->mobile . '-' . $templateID, $num + 1, 24 * 60 * 60);
-            Utils::setCache($this->mobile . '-' . $templateID, $num + 1, 24 * 60 * 60);
+            //Utils::setCache($this->mobile . '-' . $templateID, $num + 1, 24 * 60 * 60);
             //IvrLog::addLogXuanWu(intval($bool), $templateID, $this->mobile, $num + 1, $is_manual, 3);
             $fun = $this->callBackFun;
             $fun && $fun($this->result['info']['callID'], sendKey::CHANNEL_XUAN_WU);
