@@ -55,6 +55,7 @@ return [
             ],
 
             \JMD\Libs\Sms\Tunnels\MontenNets::$configName => $commonConfig[\JMD\Libs\Sms\Sms::TUNNELS_CONFIG][\JMD\Libs\Sms\Tunnels\MontenNets::$configName],
+            \JMD\Libs\Sms\Tunnels\XuanWuVoice::$configName => $commonConfig[\JMD\Libs\Sms\Sms::TUNNELS_CONFIG][\JMD\Libs\Sms\Tunnels\XuanWuVoice::$configName],
         ],
     ]
 ];
