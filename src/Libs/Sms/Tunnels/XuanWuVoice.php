@@ -2,6 +2,7 @@
 
 namespace JMD\Libs\Sms\Tunnels;
 
+use JMD\Common\sendKey;
 use JMD\Libs\Sms\Interfaces\VoiceSmsBase;
 //use common\models\IvrLog;
 use JMD\Libs\Sms\Sms;
@@ -36,12 +37,15 @@ class XuanWuVoice
 
     public static $configName = 'XuanWuVoice';
 
-    public function __construct($mobile)
+    protected $callBackFun;
+
+    public function __construct($mobile, $callBackFun = '')
     {
 
         $this->accountSid = '01841472566a7b7e918c8a50e652a918';
         $this->authToken = '38a0395343d15ac737ceba00c32b003c';
         $this->mobile = $mobile;
+        $this->callBackFun = $callBackFun;
     }
 
     /**
@@ -104,6 +108,8 @@ class XuanWuVoice
             //\Yii::$app->cache->set($this->mobile . '-' . $templateID, $num + 1, 24 * 60 * 60);
             Utils::setCache($this->mobile . '-' . $templateID, $num + 1, 24 * 60 * 60);
             //IvrLog::addLogXuanWu(intval($bool), $templateID, $this->mobile, $num + 1, $is_manual, 3);
+            $fun = $this->callBackFun;
+            $fun && $fun($this->result['info']['callID'], sendKey::CHANNEL_XUAN_WU);
         } catch (\Exception $exception) {
             //EmailHelper::sendEmail('推送记录log失败', json_encode($exception->getMessage(), 256), 'zhengzaoping@jiumiaodai.com');
             Utils::alert('推送记录log失败', json_encode($exception->getMessage(), 256));
