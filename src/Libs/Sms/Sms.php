@@ -28,6 +28,27 @@ class Sms implements sendKey
     //| PS:从上到下发送。越靠前优先级越高，根据需求可调整。
     //| update_time：2017-09-28 14:04
     //+--------------------------
+    const TUNNELS_CAPTCHA = 'sendCaptcha';
+
+    //+-----------------------
+    //|     短信通道配置
+    //| PS:无需修改
+    //| update_time:2017-09-28 14:04
+    //+-----------------------
+    const TUNNELS_VOICE_CAPTCHA = 'sendVoiceCaptcha';
+    const TUNNELS_VOICE_NOTICE = 'sendVoiceNotice';
+    const TUNNELS_NOTICE = 'sendNotice';
+    const TUNNELS_MARKETNG = 'sendMarketing';
+    const TUNNELS_CUSTOM = 'sendCustom';
+    const SMS_CONFIG = 'smsConfig';  //自定义文案
+
+    //+-----------------------
+    //| 系统配置，一般不需要修改
+    //+-----------------------
+    const SMS_TUNNELS = 'smsTunnels';
+    const TEXT_TEMPLATE = 'textTemplate';
+    const TUNNELS_CONFIG = 'tunnels_config';
+    const SEND_TUNNELS_CONFIG = 'send_tunnels_config';
     private static $tunnels = [
         self::TUNNELS_CAPTCHA => [
             JPush::class,  //待充值
@@ -68,27 +89,6 @@ class Sms implements sendKey
         ]
     ];
 
-    //+-----------------------
-    //|     短信通道配置
-    //| PS:无需修改
-    //| update_time:2017-09-28 14:04
-    //+-----------------------
-    const TUNNELS_CAPTCHA = 'sendCaptcha';
-    const TUNNELS_VOICE_CAPTCHA = 'sendVoiceCaptcha';
-    const TUNNELS_VOICE_NOTICE = 'sendVoiceNotice';
-    const TUNNELS_NOTICE = 'sendNotice';
-    const TUNNELS_MARKETNG = 'sendMarketing';
-    const TUNNELS_CUSTOM = 'sendCustom';  //自定义文案
-
-    //+-----------------------
-    //| 系统配置，一般不需要修改
-    //+-----------------------
-    const SMS_CONFIG = 'smsConfig';
-    const SMS_TUNNELS = 'smsTunnels';
-    const TEXT_TEMPLATE = 'textTemplate';
-    const TUNNELS_CONFIG = 'tunnels_config';
-    const SEND_TUNNELS_CONFIG = 'send_tunnels_config';
-
     ########################  ☝上面是主要配置，☟以下是实现方法 #######################
 
     /**
@@ -124,7 +124,7 @@ class Sms implements sendKey
         }
 
         //检查是否指定短信渠道,如果指定，覆盖默认定义通道
-        if(!empty(CommonConfigs::$tunnels)){
+        if (!empty(CommonConfigs::$tunnels)) {
             self::$tunnels = CommonConfigs::$tunnels;
         }
 
@@ -245,12 +245,47 @@ class Sms implements sendKey
         return false;
     }
 
+    /**
+     * 根据手机运营商对手机号码进行分组
+     * @param array|string|int $mobile
+     * @return array
+     */
+    private static function filterTel($mobile = [])
+    {
+        # 如果不是字符串则转换
+        if (!is_array($mobile)) {
+            $mobile = explode(',', $mobile);
+        }
+
+        $telArr[Utils::DIANXIN] = [];
+        $telArr[Utils::YIDONG] = [];
+        $telArr[Utils::LIANTONG] = [];
+
+        foreach ($mobile as $value) {
+            switch (Utils::getOperator($value)) {
+                case Utils::DIANXIN:
+                    // TODO 电信运营商不允许发送营销短信，暂不做处理
+                    $telArr[Utils::DIANXIN][] = $value;
+                    break;
+                case Utils::YIDONG:
+                    // TODO 使用国都
+                    $telArr[Utils::YIDONG][] = $value;
+                    break;
+                case Utils::LIANTONG:
+                    $telArr[Utils::LIANTONG][] = $value;
+                    break;
+            }
+        }
+
+        return $telArr;
+    }
+
     public static function sendVoiceCaptcha($mobile)
     {
         $tunnelType = self::TUNNELS_VOICE_CAPTCHA;
         $tunnels = self::$tunnels[$tunnelType];
 
-        
+
         if (empty($tunnels)) {
             return false;
         }
@@ -272,7 +307,7 @@ class Sms implements sendKey
         return $flag;
     }
 
-    public static function sendVoiceByTpl($mobile,$key, $callBackFun = '')
+    public static function sendVoiceByTpl($mobile, $key, $callBackFun = '')
     {
         $tunnelType = self::TUNNELS_VOICE_NOTICE;
         $tunnels = self::$tunnels[$tunnelType];
@@ -355,38 +390,13 @@ class Sms implements sendKey
         return sprintf('%04s', mt_rand(0, 9999));
     }
 
-    /**
-     * 根据手机运营商对手机号码进行分组
-     * @param array|string|int $mobile
-     * @return array
-     */
-    private static function filterTel($mobile = [])
+    /*获取渠道配置*/
+
+    public static function getTunnels($tunnels = null)
     {
-        # 如果不是字符串则转换
-        if (!is_array($mobile)) {
-            $mobile = explode(',', $mobile);
+        if ($tunnels === null) {
+            return self::$tunnels;
         }
-
-        $telArr[Utils::DIANXIN] = [];
-        $telArr[Utils::YIDONG] = [];
-        $telArr[Utils::LIANTONG] = [];
-
-        foreach ($mobile as $value) {
-            switch (Utils::getOperator($value)) {
-                case Utils::DIANXIN:
-                    // TODO 电信运营商不允许发送营销短信，暂不做处理
-                    $telArr[Utils::DIANXIN][] = $value;
-                    break;
-                case Utils::YIDONG:
-                    // TODO 使用国都
-                    $telArr[Utils::YIDONG][] = $value;
-                    break;
-                case Utils::LIANTONG:
-                    $telArr[Utils::LIANTONG][] = $value;
-                    break;
-            }
-        }
-
-        return $telArr;
+        return self::$tunnels[$tunnels] ?? false;
     }
 }
