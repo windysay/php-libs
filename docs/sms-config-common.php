@@ -95,6 +95,7 @@ return $commonConfig = [
 
             \JMD\Common\sendKey::VOICE_NOTICE_INFO_PERFACT => 200357, //完善资料召回
             \JMD\Common\sendKey::VOICE_NOTICE_INVITE_LOAN => 200358, //完善资料召回
+            \JMD\Common\sendKey::VOICE_NOTICE_BUY_MEMBER => 200401,//购买会员营销
         ],
         \JMD\Libs\Sms\Tunnels\XuanWuVoice::$configName => [
             \JMD\Common\sendKey::VOICE_NOTICE_EXPIRED => 20450, //到期语音通知模板
