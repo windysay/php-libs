@@ -61,8 +61,8 @@ class Sms implements sendKey
             Winic::class
         ],
         self::TUNNELS_VOICE_NOTICE => [
+            XuanWuVoice::class,
             MontenNets::class,
-            XuanWuVoice::class
         ],
         self::TUNNELS_NOTICE => [
 //            JPush::class,  // 模板更换等待审核完成
