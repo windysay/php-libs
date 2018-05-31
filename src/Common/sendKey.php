@@ -73,6 +73,8 @@ interface sendKey
     const VOICE_NOTICE_INVITE_LOAN = 'VOICE_NOTICE_INVITE_LOAN';
     #购买会员营销
     const VOICE_NOTICE_BUY_MEMBER = 'VOICE_NOTICE_BUY_MEMBER';
+    #新网通道切换取消用户召回
+    const VOICE_NOTICE_XINWANG_FINISH = 'VOICE_NOTICE_XINWANG_FINISH';
 
     #渠道标识
     const CHANNEL_JPUSH = 'JPUSH';
