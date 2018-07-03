@@ -2,8 +2,6 @@
 
 namespace JMD\Utils;
 
-use JMD\Libs\Risk\Exception\RiskCurlException;
-
 class HttpHelper
 {
 
@@ -91,7 +89,7 @@ class HttpHelper
         }
         $html = curl_exec($ch);
         if ($errorno = curl_errno($ch)) {
-            throw new RiskCurlException(curl_error($ch) . json_encode(curl_getinfo($ch), JSON_UNESCAPED_UNICODE), $errorno);
+            throw new \Exception(curl_error($ch) . json_encode(curl_getinfo($ch), JSON_UNESCAPED_UNICODE), $errorno);
         }
 
 
