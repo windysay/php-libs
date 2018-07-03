@@ -9,7 +9,7 @@ use JMD\Utils\HttpHelper;
 
 class BaseRequest implements Request
 {
-    const CONFIG_NAME = 'base_services_config';
+    const CONFIG_NAME = 'public_services_config'; //公共服务配置
 
     public $data;
 
@@ -24,10 +24,8 @@ class BaseRequest implements Request
 
     /**
      * BaseRequest constructor.
-     * @param $appKey
-     * @param $secretKey
      */
-    public function __construct($appKey, $secretKey)
+    public function __construct()
     {
         $config = Utils::getParam(self::CONFIG_NAME);
         $this->appKey = $config['app_key'];
