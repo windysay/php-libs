@@ -44,4 +44,13 @@ class Exception
         $this->request->setData($data);
     }
 
+    /**
+     * @return DataFormat
+     * @throws \Exception
+     */
+    public function execute()
+    {
+        return new DataFormat($this->request->execute());
+    }
+
 }

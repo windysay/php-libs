@@ -4,7 +4,7 @@ namespace JMD\Libs\Services;
 
 use JMD\App\Configs;
 use JMD\App\Utils;
-use JMD\Libs\Risk\Interfaces\Request;
+use JMD\Libs\Services\Interfaces\Request;
 use JMD\Utils\HttpHelper;
 
 class BaseRequest implements Request
