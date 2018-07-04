@@ -18,8 +18,6 @@ class Exception
      * @param null $remoteAddr | 请求IP
      */
     public function __construct(
-        $appKey,
-        $secretKey,
         $exception,
         $requestUri = null,
         $requsetMethod = 'GET',
