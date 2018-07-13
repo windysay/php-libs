@@ -232,9 +232,30 @@ class Utils extends BaseClass
         }
         // 检测文案是否消耗三条短信
         if ($strlen > 134) {
-            Utils::alert('发现[' . $channel . ']消耗短信条数等于【3】的文案->' . $mobile, $text);
+            Utils::alert('发现[' . $channel . ']消耗短信条数等于【3】的文案->', $text);
         }
 
         return true;
+    }
+
+    /**
+     * 生成随机字符串
+     * @param int $length
+     * @return bool|string
+     * @throws \Exception
+     */
+    public static function random($length = 16)
+    {
+        $string = '';
+
+        while (($len = strlen($string)) < $length) {
+            $size = $length - $len;
+
+            $bytes = random_bytes($size);
+
+            $string .= substr(str_replace(['/', '+', '='], '', base64_encode($bytes)), 0, $size);
+        }
+
+        return $string;
     }
 }

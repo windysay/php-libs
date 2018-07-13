@@ -2,6 +2,7 @@
 
 namespace JMD\Libs\Services;
 
+use App\Helper\Api\SignHelper;
 use JMD\App\Configs;
 use JMD\App\Utils;
 use JMD\Libs\Services\Interfaces\Request;
@@ -57,28 +58,21 @@ class BaseRequest implements Request
     }
 
     /**
+     * @param bool $isPost
      * @return mixed
      * @throws \Exception
      */
-    public function execute()
+    public function execute($isPost = true)
     {
         $url = $this->domain . $this->url;
 
         $this->data['app_key'] = $this->appKey;
-        $this->data['secret_key'] = $this->secretKey;
-        $this->data['timestamp'] = date('Y-m-d H:i:s');
-        ksort($this->data);
-
-        if (is_array($this->data)) {
-            foreach ($this->data as &$val) {
-                if (is_array($val)) {
-                    $val = json_encode($val);
-                }
-                $val = strval($val);
-            }
+        $this->data['sign'] = SignHelper::sign($this->data, $this->secretKey);
+        if ($isPost) {
+            $result = HttpHelper::post($url, $this->data, 60);
+        } else {
+            $result = HttpHelper::get($url);
         }
-        $this->data['sign'] = md5(json_encode($this->data));
-        $result = HttpHelper::post($url, $this->data, 60);
         return $result;
     }
 
