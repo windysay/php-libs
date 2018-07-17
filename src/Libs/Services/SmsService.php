@@ -136,7 +136,7 @@ class SmsService
     public static function sendVoiceCaptcha($mobile, $code)
     {
         $request = new BaseRequest();
-        $url = 'send/voice-captcha';
+        $url = 'api/send/voice-captcha';
         $request->setUrl($url);
         if(is_array($mobile)){
             $mobile = implode(',', $mobile);
