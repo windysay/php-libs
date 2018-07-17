@@ -2,6 +2,7 @@
 
 namespace JMD\Libs\Services;
 
+use JMD\App\Configs;
 /**
  * 短信入口
  * Class Sms
@@ -9,7 +10,7 @@ namespace JMD\Libs\Services;
  */
 class SmsService
 {
-    public static $url = 'http://sms-chengxs.dev.jiumiaodai.com/api/send';
+    public static $url = 'http://sms-chengxs.dev.jiumiaodai.com/';
 
     ########################  推送接口方法 Start #######################
 
@@ -23,7 +24,7 @@ class SmsService
     public static function sendCaptcha($mobile, $code, $app = '')
     {
         $request = new BaseRequest();
-        $url = '/send/sms-captcha';
+        $url = 'api/send/sms-captcha';
         $request->setUrl($url);
         if(is_array($mobile)){
             $mobile = implode(',', $mobile);
@@ -34,7 +35,9 @@ class SmsService
             'app' => $app,
         ];
         $request->setData($post_data);
-        $request->domain = self::$url;
+        if(!Configs::isProEnv()){
+            $request->domain = self::$url;
+        }
         return json_decode($request->execute(), 256);
     }
 
@@ -50,7 +53,7 @@ class SmsService
     public static function sendTpl($mobile, $sendKey, $tplKey = [], $tplParams = [], $appName = '')
     {
         $request = new BaseRequest();
-        $url = '/send/sms-tpl';
+        $url = 'api/send/sms-tpl';
         $request->setUrl($url);
         if(is_array($mobile)){
             $mobile = implode(',', $mobile);
@@ -63,7 +66,9 @@ class SmsService
             'appName' => $appName,
         ];
         $request->setData($post_data);
-        $request->domain = self::$url;
+        if(!Configs::isProEnv()){
+            $request->domain = self::$url;
+        }
         return json_decode($request->execute(), 256);
     }
 
@@ -77,7 +82,7 @@ class SmsService
     public static function sendCustom($mobile, $content, $appName = '')
     {
         $request = new BaseRequest();
-        $url = '/send/sms-custom';
+        $url = 'api/send/sms-custom';
         $request->setUrl($url);
         if(is_array($mobile)){
             $mobile = implode(',', $mobile);
@@ -88,7 +93,9 @@ class SmsService
             'appName' => $appName,
         ];
         $request->setData($post_data);
-        $request->domain = self::$url;
+        if(!Configs::isProEnv()){
+            $request->domain = self::$url;
+        }
         return json_decode($request->execute(), 256);
     }
 
@@ -102,7 +109,7 @@ class SmsService
     public static function sendVoiceByTpl($mobile, $key, $appName = '')
     {
         $request = new BaseRequest();
-        $url = '/send/voice-tpl';
+        $url = 'api/send/voice-tpl';
         $request->setUrl($url);
         if(is_array($mobile)){
             $mobile = implode(',', $mobile);
@@ -113,7 +120,9 @@ class SmsService
             'appName' => $appName,
         ];
         $request->setData($post_data);
-        $request->domain = self::$url;
+        if(!Configs::isProEnv()){
+            $request->domain = self::$url;
+        }
         return json_decode($request->execute(), 256);
     }
 
@@ -127,7 +136,7 @@ class SmsService
     public static function sendVoiceCaptcha($mobile, $code)
     {
         $request = new BaseRequest();
-        $url = '/send/voice-captcha';
+        $url = 'send/voice-captcha';
         $request->setUrl($url);
         if(is_array($mobile)){
             $mobile = implode(',', $mobile);
@@ -137,7 +146,9 @@ class SmsService
             'code' => $code,
         ];
         $request->setData($post_data);
-        $request->domain = self::$url;
+        if(!Configs::isProEnv()){
+            $request->domain = self::$url;
+        }
         return json_decode($request->execute(), 256);
     }
 
