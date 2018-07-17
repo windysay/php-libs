@@ -1,8 +1,6 @@
 <?php
 
-namespace JMD\Libs\Sms;
-
-use JMD\Libs\Services\BaseRequest;
+namespace JMD\Libs\Services;
 
 /**
  * 短信入口
@@ -25,7 +23,7 @@ class SmsService
     public static function sendCaptcha($mobile, $code, $app = '')
     {
         $request = new BaseRequest();
-        $url = '/send/captcha';
+        $url = '/send/sms-captcha';
         $request->setUrl($url);
         if(is_array($mobile)){
             $mobile = implode(',', $mobile);
@@ -52,7 +50,7 @@ class SmsService
     public static function sendTpl($mobile, $sendKey, $tplKey = [], $tplParams = [], $appName = '')
     {
         $request = new BaseRequest();
-        $url = '/send/tpl';
+        $url = '/send/sms-tpl';
         $request->setUrl($url);
         if(is_array($mobile)){
             $mobile = implode(',', $mobile);
@@ -79,7 +77,7 @@ class SmsService
     public static function sendCustom($mobile, $content, $appName = '')
     {
         $request = new BaseRequest();
-        $url = '/send/custom';
+        $url = '/send/sms-custom';
         $request->setUrl($url);
         if(is_array($mobile)){
             $mobile = implode(',', $mobile);
@@ -104,7 +102,7 @@ class SmsService
     public static function sendVoiceByTpl($mobile, $key, $appName = '')
     {
         $request = new BaseRequest();
-        $url = '/send/voice';
+        $url = '/send/voice-tpl';
         $request->setUrl($url);
         if(is_array($mobile)){
             $mobile = implode(',', $mobile);
