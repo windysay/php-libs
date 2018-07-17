@@ -16,7 +16,7 @@ class BaseRequest implements Request
 
     public $url;
 
-    public $domain = 'http://services.api.dev.jiumiaodai.com/';
+    public $domain = 'http://api.services.dev.jiumiaodai.com/';
 
     protected $appKey;
 
@@ -32,7 +32,7 @@ class BaseRequest implements Request
         $this->appKey = $config['app_key'];
         $this->secretKey = $config['app_secret_key'];
         if (Configs::isProEnv()) {
-            $this->domain = 'http://services.api.jiumiaodai.com';
+            $this->domain = 'http://api.services.jiumiaodai.com/';
         }
     }
 
