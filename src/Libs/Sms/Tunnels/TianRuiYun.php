@@ -98,9 +98,10 @@ class TianRuiYun implements SmsBase
      * @param $content
      * @param string $appName
      */
-    public static function sendCustom($mobile = [], $content, $appName = '')
+    public static function sendCustom($mobile = [], $content, $appName = '', $callBackFun = '')
     {
         self::$appName = $appName ?: Utils::getParam('app_name');
+        self::$callBackFun = $callBackFun;
         return self::sendContent($mobile, $content . '回T退订', self::$configMarketing);
     }
 

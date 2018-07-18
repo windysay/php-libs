@@ -1,9 +1,8 @@
 <?php
 
-namespace JMD\Libs\Sms;
+namespace JMD\Libs\Services;
 
-use JMD\Libs\Services\BaseRequest;
-
+use JMD\App\Configs;
 /**
  * 短信入口
  * Class Sms
@@ -11,7 +10,7 @@ use JMD\Libs\Services\BaseRequest;
  */
 class SmsService
 {
-    public static $url = 'http://sms-chengxs.dev.jiumiaodai.com/api/send';
+    public static $url = 'http://sms-chengxs.dev.jiumiaodai.com/';
 
     ########################  推送接口方法 Start #######################
 
@@ -19,13 +18,13 @@ class SmsService
      * 短信验证码发送
      * @param $mobile
      * @param $code
-     * @param $appName
+     * @param $app_name
      * @return mixed
      */
-    public static function sendCaptcha($mobile, $code, $app = '')
+    public static function sendCaptcha($mobile, $code, $app_name = '')
     {
         $request = new BaseRequest();
-        $url = '/send/captcha';
+        $url = 'api/send/sms-captcha';
         $request->setUrl($url);
         if(is_array($mobile)){
             $mobile = implode(',', $mobile);
@@ -33,10 +32,12 @@ class SmsService
         $post_data = [
             'mobile' => $mobile,
             'code' => $code,
-            'app' => $app,
+            'app_name' => $app_name,
         ];
         $request->setData($post_data);
-        $request->domain = self::$url;
+        if(!Configs::isProEnv()){
+            $request->domain = self::$url;
+        }
         return json_decode($request->execute(), 256);
     }
 
@@ -46,13 +47,13 @@ class SmsService
      * @param $sendKey
      * @param array $tplKey
      * @param array $tplParams
-     * @param string $appName
+     * @param string $app_name
      * @return mixed
      */
-    public static function sendTpl($mobile, $sendKey, $tplKey = [], $tplParams = [], $appName = '')
+    public static function sendTpl($mobile, $sendKey, $tplKey = [], $tplParams = [], $app_name = '')
     {
         $request = new BaseRequest();
-        $url = '/send/tpl';
+        $url = 'api/send/sms-tpl';
         $request->setUrl($url);
         if(is_array($mobile)){
             $mobile = implode(',', $mobile);
@@ -62,10 +63,12 @@ class SmsService
             'sendKey' => $sendKey,
             'tplKey' => $tplKey,
             'tplParams' => $tplParams,
-            'appName' => $appName,
+            'app_name' => $app_name,
         ];
         $request->setData($post_data);
-        $request->domain = self::$url;
+        if(!Configs::isProEnv()){
+            $request->domain = self::$url;
+        }
         return json_decode($request->execute(), 256);
     }
 
@@ -73,13 +76,13 @@ class SmsService
      * 自定义短信发送
      * @param $mobile
      * @param $content
-     * @param string $appName
+     * @param string $app_name
      * @return mixed
      */
-    public static function sendCustom($mobile, $content, $appName = '')
+    public static function sendCustom($mobile, $content, $app_name = '')
     {
         $request = new BaseRequest();
-        $url = '/send/custom';
+        $url = 'api/send/sms-custom';
         $request->setUrl($url);
         if(is_array($mobile)){
             $mobile = implode(',', $mobile);
@@ -87,10 +90,12 @@ class SmsService
         $post_data = [
             'mobile' => $mobile,
             'content' => $content,
-            'appName' => $appName,
+            'app_name' => $app_name,
         ];
         $request->setData($post_data);
-        $request->domain = self::$url;
+        if(!Configs::isProEnv()){
+            $request->domain = self::$url;
+        }
         return json_decode($request->execute(), 256);
     }
 
@@ -98,13 +103,12 @@ class SmsService
      * 语音短信发送
      * @param $mobile
      * @param $key
-     * @param string $appName
      * @return mixed
      */
-    public static function sendVoiceByTpl($mobile, $key, $appName = '')
+    public static function sendVoiceByTpl($mobile, $key)
     {
         $request = new BaseRequest();
-        $url = '/send/voice';
+        $url = 'api/send/voice-tpl';
         $request->setUrl($url);
         if(is_array($mobile)){
             $mobile = implode(',', $mobile);
@@ -112,10 +116,11 @@ class SmsService
         $post_data = [
             'mobile' => $mobile,
             'key' => $key,
-            'appName' => $appName,
         ];
         $request->setData($post_data);
-        $request->domain = self::$url;
+        if(!Configs::isProEnv()){
+            $request->domain = self::$url;
+        }
         return json_decode($request->execute(), 256);
     }
 
@@ -123,13 +128,12 @@ class SmsService
      * 语音验证码发送
      * @param $mobile
      * @param $code
-     * @param $appName
      * @return mixed
      */
     public static function sendVoiceCaptcha($mobile, $code)
     {
         $request = new BaseRequest();
-        $url = '/send/voice-captcha';
+        $url = 'api/send/voice-captcha';
         $request->setUrl($url);
         if(is_array($mobile)){
             $mobile = implode(',', $mobile);
@@ -139,7 +143,9 @@ class SmsService
             'code' => $code,
         ];
         $request->setData($post_data);
-        $request->domain = self::$url;
+        if(!Configs::isProEnv()){
+            $request->domain = self::$url;
+        }
         return json_decode($request->execute(), 256);
     }
 
