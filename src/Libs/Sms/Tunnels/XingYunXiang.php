@@ -86,13 +86,14 @@ class XingYunXiang implements SmsBase
         return self::sendSms($this->mobile, $content, self::$configMarketing, self::$configMarketingAdmin);
     }
 
-    public static function sendCustom($mobile = [], $content, $appName = '')
+    public static function sendCustom($mobile = [], $content, $appName = '', $callBackFun = '')
     {
         if(!$appName){
             return false;
         }
 
         self::$appName = $appName;
+        self::$callBackFun = $callBackFun;
         return self::sendSms($mobile, $content, self::$configMarketing, self::$configMarketingAdmin);
     }
 
