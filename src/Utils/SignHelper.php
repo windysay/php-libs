@@ -6,7 +6,7 @@
  * Time: 11:40
  */
 
-namespace App\Helper\Api;
+namespace JMD\Utils;
 
 use JMD\App\Utils;
 

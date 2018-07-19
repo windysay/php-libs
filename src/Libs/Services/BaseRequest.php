@@ -2,11 +2,11 @@
 
 namespace JMD\Libs\Services;
 
-use App\Helper\Api\SignHelper;
 use JMD\App\Configs;
 use JMD\App\Utils;
 use JMD\Libs\Services\Interfaces\Request;
 use JMD\Utils\HttpHelper;
+use JMD\Utils\SignHelper;
 
 class BaseRequest implements Request
 {
