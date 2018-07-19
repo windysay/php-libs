@@ -347,8 +347,9 @@ class Sms implements sendKey
      * @param $appName
      * @return bool
      */
-    public static function sendCustom($mobile = [], $content, $appName = '')
+    public static function sendCustom($mobile, $content, $appName = '', $callBackFun = '')
     {
+        JMD::init(['projectType' => 'lumen']);
         $tunnelType = self::TUNNELS_CUSTOM;
         $tunnels = self::$tunnels[$tunnelType];
 
@@ -363,7 +364,7 @@ class Sms implements sendKey
                 return false;
             }
             #发送
-            $flag = $obj::$tunnelType($mobile, $content, $appName);
+            $flag = $obj::$tunnelType($mobile, $content, $appName, $callBackFun);
             #成功直接返回否则切换通道继续尝试发送
             if ($flag == true) {
                 return true;
