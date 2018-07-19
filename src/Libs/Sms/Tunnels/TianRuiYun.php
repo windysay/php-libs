@@ -164,7 +164,10 @@ class TianRuiYun implements SmsBase
 
         $res = Utils::curlPost($config, self::URL);
         $result = json_decode($res, true);
+
         if ($result['code'] == 0) {
+            $fun = self::$callBackFun;
+            $fun && $fun($result['batchId'], sendKey::CHANNEL_TIAN_RUI_YUN);
             return true;
         }
 
