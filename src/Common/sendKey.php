@@ -82,4 +82,5 @@ interface sendKey
     const CHANNEL_XING_YUN_XIANG = 'XING_YUN_XIANG';
     const CHANNEL_XUAN_WU = 'XUAN_WU';
     const CHANNEL_MENG_WANG = 'MENG_WANG';
+    const CHANNEL_JQB_SERVICE = 'JQB_SERVICE';//微服务标识
 }
