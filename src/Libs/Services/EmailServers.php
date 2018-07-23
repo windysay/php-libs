@@ -27,7 +27,7 @@ class EmailServers
         $queue = false
     ) {
         $request = new BaseRequest();
-        $url = 'queue/send';
+        $url = 'email/send';
         $sendData = [
             'to' => $to,
             'form' => $from,
