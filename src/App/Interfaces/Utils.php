@@ -1,7 +1,9 @@
 <?php
+
 namespace JMD\App\Interfaces;
 
-interface Utils {
+interface Utils
+{
     public static function getParam($key);
 
     public static function getCache($key);

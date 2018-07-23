@@ -1,8 +1,11 @@
 <?php
+
 namespace JMD;
 
 use JMD\Common\Configs;
-class JMD {
+
+class JMD
+{
     static function init($options = [])
     {
         if (isset($options['projectType'])) {

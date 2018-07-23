@@ -2,8 +2,8 @@
 
 namespace JMD\App\lumen;
 
-use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Redis;
 
 class Utils implements \JMD\App\Interfaces\Utils
 {
@@ -28,8 +28,13 @@ class Utils implements \JMD\App\Interfaces\Utils
         \Log::error($log);
     }
 
-    public static function alert($title, $content = null, $sendTo = 'develop-alert@jiumiaodai.com', $sendName = '系统告警', $sendFrom = 'auto-send@jiumiaodai.com')
-    {
+    public static function alert(
+        $title,
+        $content = null,
+        $sendTo = 'develop-alert@jiumiaodai.com',
+        $sendName = '系统告警',
+        $sendFrom = 'auto-send@jiumiaodai.com'
+    ) {
         if ($content === null) {
             $content = $title;
         }
@@ -39,8 +44,9 @@ class Utils implements \JMD\App\Interfaces\Utils
             $message->to($sendTo)->subject($title);
         });
 
-        if (!$flag)
+        if (!$flag) {
             \Log::info('发送邮件失败！');
+        }
     }
 
     public static function redis($dataBase = 0)

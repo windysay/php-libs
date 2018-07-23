@@ -1,7 +1,9 @@
 <?php
+
 namespace JMD\Common;
 
-class Configs {
+class Configs
+{
 
     static public $projectType = 'Yii';
 

@@ -1,6 +1,8 @@
 <?php
+
 namespace JMD\App\Interfaces;
 
-interface Configs {
+interface Configs
+{
     public static function isProEnv();
 }
