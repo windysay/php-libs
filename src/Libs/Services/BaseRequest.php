@@ -30,8 +30,8 @@ class BaseRequest implements Request
     {
         $config = Utils::getParam(self::CONFIG_NAME);
 
-        $this->appKey = $config['public_services_config']['app_key'];
-        $this->secretKey = $config['public_services_config']['app_secret_key'];
+        $this->appKey = $config['app_key'];
+        $this->secretKey = $config['app_secret_key'];
         if (Configs::isProEnv()) {
             $this->domain = 'http://services.jiumiaodai.com/';
         }
