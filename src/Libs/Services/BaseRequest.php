@@ -16,7 +16,7 @@ class BaseRequest implements Request
 
     public $url;
 
-    public $domain = 'http://api.services.dev.jiumiaodai.com/';
+    public $domain = 'http://api.services.dev23.jiumiaodai.com/';
 
     protected $appKey;
 
