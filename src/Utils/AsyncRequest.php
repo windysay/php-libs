@@ -1,11 +1,13 @@
 <?php
+
 namespace JMD\Utils;
 
 /**
  * Class AsyncRequest 异步请求
  * @package JMD\Utils
  */
-class AsyncRequest {
+class AsyncRequest
+{
     const METHOD_GET = 'GET';
     const METHOD_POST = 'POST';
 
@@ -28,19 +30,19 @@ class AsyncRequest {
 
         // 防止空格转化为+号
         $params = http_build_query($params, '', '&', PHP_QUERY_RFC3986);
-        if($method === self::METHOD_GET && strlen($params) > 0) {
+        if ($method === self::METHOD_GET && strlen($params) > 0) {
             $path .= '?' . $params;
         }
 
         $fp = fsockopen($host, $port, $error_code, $error_info, 1);
-        try{
-            if($fp === false) {
+        try {
+            if ($fp === false) {
                 throw new \Exception('fsockopen error code: ' . $error_code . ', error info: ' . $error_info);
             } else {
-                $http  = "$method $path HTTP/1.1\r\n";
+                $http = "$method $path HTTP/1.1\r\n";
                 $http .= "Host: $host\r\n";
                 $connection_close = "Connection:close\r\n\r\n";
-                if($method === self::METHOD_POST) {
+                if ($method === self::METHOD_POST) {
                     // 拼接 post 数据
                     $http .= "Content-type: application/x-www-form-urlencoded\r\n";
                     $http .= "Content-Length: " . strlen($params) . "\r\n";

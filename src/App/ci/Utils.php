@@ -1,9 +1,9 @@
 <?php
+
 namespace JMD\App\ci;
 
-use JMD\App\Configs;
-
-class Utils implements \JMD\App\Interfaces\Utils {
+class Utils implements \JMD\App\Interfaces\Utils
+{
     private static $redis;
 
     public static function getParam($key)
@@ -26,8 +26,13 @@ class Utils implements \JMD\App\Interfaces\Utils {
         log_message('error', $log);
     }
 
-    public static function alert($title, $content = null, $sendTo = 'develop-alert@jiumiaodai.com', $sendName = '系统告警', $sendFrom = 'auto-send@jiumiaodai.com')
-    {
+    public static function alert(
+        $title,
+        $content = null,
+        $sendTo = 'develop-alert@jiumiaodai.com',
+        $sendName = '系统告警',
+        $sendFrom = 'auto-send@jiumiaodai.com'
+    ) {
         log_message('error', $content);
         return true;
     }

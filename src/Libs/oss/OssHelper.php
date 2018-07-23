@@ -8,9 +8,9 @@
 
 namespace JMD\Libs\Oss;
 
+use OSS\Core\OssException;
 use OSS\Core\OssUtil;
 use OSS\OssClient;
-use OSS\Core\OssException;
 
 class OssHelper
 {
@@ -62,7 +62,9 @@ class OssHelper
      */
     public static function uploadObject($object, $file)
     {
-        if (!OssUtil::validateObject($object)) return self::result(1, '路径不能以/开头');
+        if (!OssUtil::validateObject($object)) {
+            return self::result(1, '路径不能以/开头');
+        }
         //判断base64，并转换
         if (preg_match('/^(data:\s*image\/(\w+);base64,)/', $file, $result)) {
             if (strstr($file, ",")) {
@@ -92,8 +94,12 @@ class OssHelper
      */
     public static function uploadFile($object, $file)
     {
-        if (!OssUtil::validateObject($object)) return self::result(1, '路径不能以/开头');
-        if (!file_exists($file)) return self::result(1, '文件不存在');
+        if (!OssUtil::validateObject($object)) {
+            return self::result(1, '路径不能以/开头');
+        }
+        if (!file_exists($file)) {
+            return self::result(1, '文件不存在');
+        }
         $bucketName = self::getBucketName();
         $ossClient = self::getOssClient(true);
         try {
@@ -117,7 +123,9 @@ class OssHelper
      */
     public static function picTokenUrl($object, $height = 400, $is_internal = false, $use_cdn = false)
     {
-        if (!OssUtil::validateObject($object)) return '';
+        if (!OssUtil::validateObject($object)) {
+            return '';
+        }
         $ossClient = self::getOssClient($is_internal);
         $bucketName = self::getBucketName();
 
@@ -149,7 +157,9 @@ class OssHelper
      */
     public static function getFile($object, $localfile, $height = 400)
     {
-        if (!OssUtil::validateObject($object)) return self::result(1, '路径不能以/开头');
+        if (!OssUtil::validateObject($object)) {
+            return self::result(1, '路径不能以/开头');
+        }
         $bucketName = self::getBucketName();
         $ossClient = self::getOssClient();
 

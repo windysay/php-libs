@@ -90,7 +90,8 @@ class HttpHelper
         $html = curl_exec($ch);
         if ($errorno = curl_errno($ch)) {
             // throw new \Exception(curl_error($ch) . json_encode(curl_getinfo($ch), JSON_UNESCAPED_UNICODE), $errorno);
-            var_dump($url, curl_error($ch) . json_encode(curl_getinfo($ch), JSON_UNESCAPED_UNICODE), $errorno);
+            Utils::alert('php-libs请求异常',
+                json_encode(['url' => $url, 'content' => curl_getinfo($ch), 'callback' => curl_error($ch)], 256));
         }
 
 
