@@ -10,7 +10,7 @@ use JMD\App\Configs;
  */
 class SmsService
 {
-    public static $url = 'http://sms-chengxs.dev.jiumiaodai.com/';
+    public static $url = 'http://sms-chengxs.dev23.jiumiaodai.com/';
 
     ########################  推送接口方法 Start #######################
 

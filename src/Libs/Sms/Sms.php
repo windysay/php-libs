@@ -6,6 +6,7 @@ use JMD\Common\Configs as CommonConfigs;
 use JMD\App\Configs;
 use JMD\App\Utils;
 use JMD\Common\sendKey;
+use JMD\Libs\Services\SmsService;
 use JMD\Libs\Sms\Interfaces\SmsBase;
 use JMD\Libs\Sms\Tunnels\JPush;
 use JMD\Libs\Sms\Tunnels\MontenNets;
@@ -349,7 +350,28 @@ class Sms implements sendKey
      */
     public static function sendCustom($mobile, $content, $appName = '', $callBackFun = '')
     {
-        JMD::init(['projectType' => 'lumen']);
+
+        /** 加入微服务逻辑Start */
+        if(is_array($mobile)){
+            $mobile_to_service = implode(',', $mobile);
+        }else{
+            $mobile_to_service = $mobile;
+        }
+        try{
+            $res = SmsService::sendCustom($mobile_to_service, $content, $appName);
+            if(isset($res['code']) && $res['code'] == 18000){
+                return true;
+            }
+            Utils::alert('微服务短信渠道发送失败',
+                json_encode(['tel' => $mobile, 'content' => $content],
+                    256));
+        } catch (\Exception $e) {
+            Utils::alert('微服务短信渠道发送异常',
+                json_encode(['tel' => $mobile, 'content' => $content, 'e' => $e->getMessage()],
+                    256));
+        }
+        /** 加入微服务逻辑End */
+
         $tunnelType = self::TUNNELS_CUSTOM;
         $tunnels = self::$tunnels[$tunnelType];
 
