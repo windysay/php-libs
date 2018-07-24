@@ -20,19 +20,11 @@ class ExceptionServices
      * @param null $remoteAddr | 请求IP
      */
     public function __construct(
-        $exception,
-        $requestUri = null,
-        $requsetMethod = 'GET',
-        $remoteAddr = null
+        $data
     ) {
         $this->request = new BaseRequest();
         $this->request->setUrl('api/exception');
-        $this->addBaseRequest('data', [
-            'exception' => $exception,
-            'request_uri' => $requestUri,
-            'request_method' => $requsetMethod,
-            'remote_addr' => $remoteAddr
-        ]);
+        $this->addBaseRequest('data', $data);
     }
 
     /**
