@@ -1,50 +1,54 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Administrator
- * Date: 2018/7/17
- * Time: 9:30
- */
 
 namespace JMD\Libs\Services;
 
-
+/**
+ * 发送邮件微服务组件
+ * Class EmailServers
+ * @package JMD\Libs\Services
+ */
 class EmailServers
 {
-    public static $url = 'http://wserver/api/queue/';
-
-    public static function publish($data)
-    {
+    /**
+     * 发送邮件
+     * @param $content
+     * @param null $title
+     * @param $to
+     * @param $from
+     * @param bool $queue | true异步发送 false同步发送
+     * @return mixed
+     * @throws \Exception
+     */
+    public static function sendEmail(
+        $content,
+        $title = '无主题',
+        $to = 'develop-alert@jiumiaodai.com',
+        $from = 'auto-send@jiumiaodai.com',
+        $queue = false
+    ) {
         $request = new BaseRequest();
-        $url = 'queue/push';
-        $request->setUrl($url);
-        $request->setData($data);
-        $request->domain = self::$url;
-        return json_decode($request->execute(), true);
-    }
-
-    public static function getQueue()
-    {
-        $request = new BaseRequest();
-        $url = 'queue/get-queue';
-        $request->setUrl($url);
-        $request->domain = self::$url;
-        return json_decode($request->execute(false), true);
-    }
-
-    public static function sendEmail($data)
-    {
-        $request = new BaseRequest();
-        $url = 'queue/send';
+        $url = 'api/email/send';
         $sendData = [
-            'to' => $data['to'],
-            'form' => $data['from'],
-            'title' => $data['title'],
-            'message' => $data['message'],
-            'queue' => $data['queue'],
+            'to' => $to,
+            'form' => $from,
+            'title' => $title,
+            'message' => self::arrayToJson($content),
+            'queue' => $queue,
         ];
         $request->setUrl($url);
         $request->setData($sendData);
         return json_decode($request->execute(), true);
+    }
+
+    /**
+     * @param $body
+     * @return string
+     */
+    private static function arrayToJson($body)
+    {
+        if (is_array($body)) {
+            return json_encode($body, 256);
+        }
+        return $body;
     }
 }

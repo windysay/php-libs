@@ -47,7 +47,8 @@ class Utils extends BaseClass
             return self::DIANXIN;
         } elseif (preg_match("/^(130|131|132|155|156|185|186|176)\d{8}$/", $telephone)) {
             return self::LIANTONG;
-        } elseif (preg_match("/^(134|135|136|137|138|139|147|150|151|152|157|158|159|187|188|178)\d{8}$/", $telephone)) {
+        } elseif (preg_match("/^(134|135|136|137|138|139|147|150|151|152|157|158|159|187|188|178)\d{8}$/",
+            $telephone)) {
             return self::YIDONG;
         }
 
@@ -105,13 +106,13 @@ class Utils extends BaseClass
     public static function curlPost($data, $url, $header = [], $timeout = 60)
     {
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-        curl_setopt($ch, CURLOPT_HEADER, FALSE);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE); //不自动输出任何内容到浏览器
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_HEADER, false);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); //不自动输出任何内容到浏览器
         curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);   //只需要设置一个秒的数量就可以
         curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-        curl_setopt($ch, CURLOPT_POST, TRUE);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
         // 设置header头
         if ($header) {
@@ -131,9 +132,9 @@ class Utils extends BaseClass
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_URL, $url);
         //设置头文件的信息作为数据流输出
-        curl_setopt($curl, CURLOPT_HEADER, FALSE);
+        curl_setopt($curl, CURLOPT_HEADER, false);
         //设置获取的信息以文件流的形式返回，而不是直接输出。
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         $data = curl_exec($curl);
         curl_close($curl);
         return $data;
@@ -152,13 +153,14 @@ class Utils extends BaseClass
         //  warning: simplexml_load_string(): Entity: line 1: parser error : Unsupported encoding GBK
 
         $encoding = null;
-        $response = preg_replace_callback('/(<\?xml.+?encoding\s*=\s*["\'])([^"\']+)(.+\?>)/', function ($matches) use (&$encoding) {
-            // $matches[1] is the encoding, something like 'GBK', 'gbk'
-            $encoding = strtolower($matches[2]);
+        $response = preg_replace_callback('/(<\?xml.+?encoding\s*=\s*["\'])([^"\']+)(.+\?>)/',
+            function ($matches) use (&$encoding) {
+                // $matches[1] is the encoding, something like 'GBK', 'gbk'
+                $encoding = strtolower($matches[2]);
 
-            // replace the encoding so that simplexml_load_string() can work
-            return $matches[1] . 'utf-8' . $matches[3];
-        }, $response, 1);
+                // replace the encoding so that simplexml_load_string() can work
+                return $matches[1] . 'utf-8' . $matches[3];
+            }, $response, 1);
 
         // convert the encoding
         if (!empty($encoding)) {

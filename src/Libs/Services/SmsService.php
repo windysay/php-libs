@@ -3,6 +3,7 @@
 namespace JMD\Libs\Services;
 
 use JMD\App\Configs;
+
 /**
  * 短信入口
  * Class Sms
@@ -26,7 +27,7 @@ class SmsService
         $request = new BaseRequest();
         $url = 'api/send/sms-captcha';
         $request->setUrl($url);
-        if(is_array($mobile)){
+        if (is_array($mobile)) {
             $mobile = implode(',', $mobile);
         }
         $post_data = [
@@ -35,7 +36,7 @@ class SmsService
             'app_name' => $app_name,
         ];
         $request->setData($post_data);
-        if(!Configs::isProEnv()){
+        if (!Configs::isProEnv()) {
             $request->domain = self::$url;
         }
         return json_decode($request->execute(), 256);
@@ -55,7 +56,7 @@ class SmsService
         $request = new BaseRequest();
         $url = 'api/send/sms-tpl';
         $request->setUrl($url);
-        if(is_array($mobile)){
+        if (is_array($mobile)) {
             $mobile = implode(',', $mobile);
         }
         $post_data = [
@@ -66,7 +67,7 @@ class SmsService
             'app_name' => $app_name,
         ];
         $request->setData($post_data);
-        if(!Configs::isProEnv()){
+        if (!Configs::isProEnv()) {
             $request->domain = self::$url;
         }
         return json_decode($request->execute(), 256);
@@ -84,7 +85,7 @@ class SmsService
         $request = new BaseRequest();
         $url = 'api/send/sms-custom';
         $request->setUrl($url);
-        if(is_array($mobile)){
+        if (is_array($mobile)) {
             $mobile = implode(',', $mobile);
         }
         $post_data = [
@@ -93,7 +94,7 @@ class SmsService
             'app_name' => $app_name,
         ];
         $request->setData($post_data);
-        if(!Configs::isProEnv()){
+        if (!Configs::isProEnv()) {
             $request->domain = self::$url;
         }
         return json_decode($request->execute(), 256);
@@ -110,7 +111,7 @@ class SmsService
         $request = new BaseRequest();
         $url = 'api/send/voice-tpl';
         $request->setUrl($url);
-        if(is_array($mobile)){
+        if (is_array($mobile)) {
             $mobile = implode(',', $mobile);
         }
         $post_data = [
@@ -118,7 +119,7 @@ class SmsService
             'key' => $key,
         ];
         $request->setData($post_data);
-        if(!Configs::isProEnv()){
+        if (!Configs::isProEnv()) {
             $request->domain = self::$url;
         }
         return json_decode($request->execute(), 256);
@@ -135,7 +136,7 @@ class SmsService
         $request = new BaseRequest();
         $url = 'api/send/voice-captcha';
         $request->setUrl($url);
-        if(is_array($mobile)){
+        if (is_array($mobile)) {
             $mobile = implode(',', $mobile);
         }
         $post_data = [
@@ -143,7 +144,7 @@ class SmsService
             'code' => $code,
         ];
         $request->setData($post_data);
-        if(!Configs::isProEnv()){
+        if (!Configs::isProEnv()) {
             $request->domain = self::$url;
         }
         return json_decode($request->execute(), 256);
