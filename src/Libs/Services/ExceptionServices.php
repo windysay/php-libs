@@ -11,20 +11,26 @@ class ExceptionServices
 
     /**
      * Exception constructor.
-     * @param $appKey
-     * @param $secretKey
-     * @param $exception | 异常内容
-     * @param null $requestUri | 请求uri
-     * @param null $httpHost | 请求方式
-     * @param null $requsetMethod | 请求方式
-     * @param null $remoteAddr | 请求IP
+     *
+     * @param \Exception $exception       异常内容
+     * @param null       $requestUri      请求uri
+     * @param string       $requsetMethod 请求方式
+     * @param string       $remoteAddr    请求IP
      */
     public function __construct(
-        $data
+        $exception,
+        $requestUri = null,
+        $requsetMethod = 'GET',
+        $remoteAddr = null
     ) {
         $this->request = new BaseRequest();
         $this->request->setUrl('api/exception');
-        $this->addBaseRequest('data', $data);
+        $this->addBaseRequest('data', [
+            'exception' => $exception,
+            'request_uri' => $requestUri,
+            'request_method' => $requsetMethod,
+            'remote_addr' => $remoteAddr
+        ]);
     }
 
     /**
