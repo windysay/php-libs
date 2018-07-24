@@ -26,11 +26,13 @@ class ExceptionServices
         $remoteAddr = null
     ) {
         $this->request = new BaseRequest();
-        $this->request->setUrl('api/log/log/another');
-        $this->addBaseRequest('exception', $exception);
-        $this->addBaseRequest('request_uri', $requestUri);
-        $this->addBaseRequest('request_method', $requsetMethod);
-        $this->addBaseRequest('remote_addr', $remoteAddr);
+        $this->request->setUrl('api/exception');
+        $this->addBaseRequest('data', [
+            'exception' => $exception,
+            'request_uri' => $requestUri,
+            'request_method' => $requsetMethod,
+            'remote_addr' => $remoteAddr
+        ]);
     }
 
     /**
