@@ -39,7 +39,7 @@ class SmsService
         if (!Configs::isProEnv()) {
             $request->domain = self::$url;
         }
-        return json_decode($request->execute(), 256);
+        return $request->execute();
     }
 
     /**
@@ -70,7 +70,7 @@ class SmsService
         if (!Configs::isProEnv()) {
             $request->domain = self::$url;
         }
-        return json_decode($request->execute(), 256);
+        return $request->execute();
     }
 
     /**
@@ -97,7 +97,7 @@ class SmsService
         if (!Configs::isProEnv()) {
             $request->domain = self::$url;
         }
-        return json_decode($request->execute(), 256);
+        return $request->execute();
     }
 
     /**
@@ -122,7 +122,7 @@ class SmsService
         if (!Configs::isProEnv()) {
             $request->domain = self::$url;
         }
-        return json_decode($request->execute(), 256);
+        return $request->execute();
     }
 
     /**
@@ -147,7 +147,7 @@ class SmsService
         if (!Configs::isProEnv()) {
             $request->domain = self::$url;
         }
-        return json_decode($request->execute(), 256);
+        return $request->execute();
     }
 
     ########################  推送接口方法 End #######################

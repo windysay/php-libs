@@ -74,7 +74,7 @@ class BaseRequest implements Request
         } else {
             $result = HttpHelper::get($url);
         }
-        return $result;
+        return new DataFormat($result);
     }
 
 }

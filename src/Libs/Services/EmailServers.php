@@ -37,7 +37,7 @@ class EmailServers
         ];
         $request->setUrl($url);
         $request->setData($sendData);
-        return json_decode($request->execute(), true);
+        return $request->execute();
     }
 
     /**
