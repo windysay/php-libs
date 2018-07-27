@@ -3,6 +3,7 @@
 namespace JMD\Libs\Sms\Tunnels;
 
 use JMD\App\Utils;
+use JMD\Common\sendKey;
 use JMD\Common\Template;
 use JMD\Libs\Sms\Interfaces\Captcha;
 use JMD\Libs\Sms\Interfaces\Marketing;
@@ -48,6 +49,7 @@ class XuanWu implements SmsBase
     public static $configName = 'sms_xuanwu_config';
     public static $captchaAndNoticeName = 'sms_xuanwu_captcha_notice';
     public static $marketingConfigName = 'sms_xuanwu_marketing_config';
+    private static $callBackFun;
 
     public function __construct($mobile, $sendKey, $tplKey, $tplParams, $appName = '', $callBackFun = '')
     {
@@ -57,6 +59,7 @@ class XuanWu implements SmsBase
         $params = Utils::getKeyToKey($tplKey, $tplParams);
         $this->content = Utils::getTextTemplate($sendKey, $params);
         $this->appName = $appName;
+        self::$callBackFun = $callBackFun;
     }
 
 
@@ -89,11 +92,12 @@ class XuanWu implements SmsBase
      * @param string $appName
      * @return mixed
      */
-    public static function sendCustom($mobile = [], $content, $appName = '')
+    public static function sendCustom($mobile = [], $content, $appName = '', $callBackFun = '')
     {
         $config = Utils::getParam(Sms::SMS_CONFIG)[Sms::TUNNELS_CONFIG][self::$configName][self::$marketingConfigName];
         // 玄武营销短信后面需要回N退订，否则会被拦截发不出去
         $content = $content . '回N退订';
+        self::$callBackFun = $callBackFun;
         return self::sendMessage($mobile, $content, $config);
     }
 
@@ -127,13 +131,18 @@ class XuanWu implements SmsBase
 
         $res = Utils::curlGet(self::URL . $params);
         if ($res != 0) {
-            Utils::alert('玄武短信通道发送失败->' . $mobile, json_encode(['params' => $params, 'return' => $res], 256));
+            Utils::alert('【失败】玄武短信通道发送失败->' . $mobile, json_encode(['params' => $params, 'return' => $res], 256));
             return false;
         }
         if ($res == '-12') {
             Utils::alert('【余额不足】玄武短信通道余额不足，请尽快充值！' . $mobile, json_encode(['params' => $params, 'return' => $res], 256));
             return false;
         }
+
+        /** 玄武没有回调 仅记录渠道 */
+        $fun = self::$callBackFun;
+        $fun && $fun(0, sendKey::CHANNEL_TIAN_RUI_YUN);
+
         return true;
     }
 
