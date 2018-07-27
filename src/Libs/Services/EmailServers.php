@@ -16,7 +16,7 @@ class EmailServers
      * @param $to
      * @param $from
      * @param bool $queue | true异步发送 false同步发送
-     * @return mixed
+     * @return DataFormat
      * @throws \Exception
      */
     public static function sendEmail(

@@ -10,7 +10,7 @@ class ExceptionServices
      * @param null $requestUri
      * @param string $requsetMethod
      * @param null $remoteAddr
-     * @return mixed
+     * @return DataFormat
      * @throws \Exception
      */
     public static function send(

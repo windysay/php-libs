@@ -20,7 +20,8 @@ class SmsService
      * @param $mobile
      * @param $code
      * @param $app_name
-     * @return mixed
+     * @return DataFormat
+     * @throws \Exception
      */
     public static function sendCaptcha($mobile, $code, $app_name = '')
     {
@@ -49,7 +50,8 @@ class SmsService
      * @param array $tplKey
      * @param array $tplParams
      * @param string $app_name
-     * @return mixed
+     * @return DataFormat
+     * @throws \Exception
      */
     public static function sendTpl($mobile, $sendKey, $tplKey = [], $tplParams = [], $app_name = '')
     {
@@ -78,7 +80,8 @@ class SmsService
      * @param $mobile
      * @param $content
      * @param string $app_name
-     * @return mixed
+     * @return DataFormat
+     * @throws \Exception
      */
     public static function sendCustom($mobile, $content, $app_name = '')
     {
@@ -104,7 +107,8 @@ class SmsService
      * 语音短信发送
      * @param $mobile
      * @param $key
-     * @return mixed
+     * @return DataFormat
+     * @throws \Exception
      */
     public static function sendVoiceByTpl($mobile, $key)
     {
@@ -129,7 +133,8 @@ class SmsService
      * 语音验证码发送
      * @param $mobile
      * @param $code
-     * @return mixed
+     * @return DataFormat
+     * @throws \Exception
      */
     public static function sendVoiceCaptcha($mobile, $code)
     {

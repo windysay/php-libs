@@ -60,7 +60,7 @@ class BaseRequest implements Request
 
     /**
      * @param bool $isPost
-     * @return mixed
+     * @return DataFormat
      * @throws \Exception
      */
     public function execute($isPost = true)

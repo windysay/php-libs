@@ -10,6 +10,10 @@ class DataFormat
 
     const OUTPUT_ERROR = 13000;
 
+    /**
+     * DataFormat constructor.
+     * @param $srcData
+     */
     public function __construct($srcData)
     {
         if (is_string($srcData)) {
@@ -18,26 +22,42 @@ class DataFormat
         $this->srcData = $srcData;
     }
 
+    /**
+     * @return bool
+     */
     public function isSuccess()
     {
         return $this->srcData['code'] == self::OUTPUT_SUCCESS;
     }
 
+    /**
+     * @return bool
+     */
     public function isError()
     {
         return $this->srcData['code'] == self::OUTPUT_ERROR;
     }
 
+    /**
+     * @return mixed
+     */
     public function getMsg()
     {
         return $this->srcData['msg'];
     }
 
+    /**
+     * @return mixed
+     */
     public function getData()
     {
         return $this->srcData['data'];
     }
 
+    /**
+     * @param $field
+     * @return mixed|string
+     */
     public function getDataField($field)
     {
         $data = $this->srcData['data'];
