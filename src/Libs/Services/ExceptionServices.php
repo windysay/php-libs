@@ -2,8 +2,6 @@
 
 namespace JMD\Libs\Services;
 
-use JMD\Libs\Risk\DataFormat;
-
 class ExceptionServices
 {
     /** @var BaseRequest */
