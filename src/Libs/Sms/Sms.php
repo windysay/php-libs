@@ -15,7 +15,6 @@ use JMD\Libs\Sms\Tunnels\Winic;
 use JMD\Libs\Sms\Tunnels\XingYunXiang;
 use JMD\Libs\Sms\Tunnels\XuanWu;
 use JMD\Libs\Sms\Tunnels\XuanWuVoice;
-use phpDocumentor\Reflection\Types\Self_;
 
 /**
  * 短信入口
@@ -29,30 +28,9 @@ class Sms implements sendKey
     //| PS:从上到下发送。越靠前优先级越高，根据需求可调整。
     //| update_time：2017-09-28 14:04
     //+--------------------------
-    const TUNNELS_CAPTCHA = 'sendCaptcha';
-
-    //+-----------------------
-    //|     短信通道配置
-    //| PS:无需修改
-    //| update_time:2017-09-28 14:04
-    //+-----------------------
-    const TUNNELS_VOICE_CAPTCHA = 'sendVoiceCaptcha';
-    const TUNNELS_VOICE_NOTICE = 'sendVoiceNotice';
-    const TUNNELS_NOTICE = 'sendNotice';
-    const TUNNELS_MARKETNG = 'sendMarketing';
-    const TUNNELS_CUSTOM = 'sendCustom';
-    const SMS_CONFIG = 'smsConfig';  //自定义文案
-
-    //+-----------------------
-    //| 系统配置，一般不需要修改
-    //+-----------------------
-    const SMS_TUNNELS = 'smsTunnels';
-    const TEXT_TEMPLATE = 'textTemplate';
-    const TUNNELS_CONFIG = 'tunnels_config';
-    const SEND_TUNNELS_CONFIG = 'send_tunnels_config';
     private static $tunnels = [
         self::TUNNELS_CAPTCHA => [
-            JPush::class,  //待充值
+            JPush::class,
             XuanWu::class,
             XingYunXiang::class,
             TianRuiYun::class,
@@ -67,8 +45,8 @@ class Sms implements sendKey
         ],
         self::TUNNELS_NOTICE => [
 //            JPush::class,  // 模板更换等待审核完成
-            XuanWu::class,
             TianRuiYun::class,
+            XuanWu::class,
         ],
         # 营销渠道，按运营商通道发送
         self::TUNNELS_MARKETNG => [
@@ -80,7 +58,9 @@ class Sms implements sendKey
                 TianRuiYun::class,
                 XingYunXiang::class,
             ],
-            Utils::DIANXIN => []
+            Utils::DIANXIN => [
+                TianRuiYun::class,
+            ]
         ],
         # 自定义短信文案发送
         self::TUNNELS_CUSTOM => [
@@ -89,6 +69,27 @@ class Sms implements sendKey
             XingYunXiang::class,
         ]
     ];
+
+    //+-----------------------
+    //|     短信通道配置
+    //| PS:无需修改
+    //| update_time:2017-09-28 14:04
+    //+-----------------------
+    const TUNNELS_CAPTCHA = 'sendCaptcha';
+    const TUNNELS_VOICE_CAPTCHA = 'sendVoiceCaptcha';
+    const TUNNELS_VOICE_NOTICE = 'sendVoiceNotice';
+    const TUNNELS_NOTICE = 'sendNotice';
+    const TUNNELS_MARKETNG = 'sendMarketing';
+    const TUNNELS_CUSTOM = 'sendCustom';  //自定义文案
+
+    //+-----------------------
+    //| 系统配置，一般不需要修改
+    //+-----------------------
+    const SMS_CONFIG = 'smsConfig';
+    const SMS_TUNNELS = 'smsTunnels';
+    const TEXT_TEMPLATE = 'textTemplate';
+    const TUNNELS_CONFIG = 'tunnels_config';
+    const SEND_TUNNELS_CONFIG = 'send_tunnels_config';
 
     ########################  ☝上面是主要配置，☟以下是实现方法 #######################
 
@@ -110,6 +111,45 @@ class Sms implements sendKey
         if (!Configs::isProEnv()) {
             return true;
         }
+
+        /** 加入微服务逻辑Start */
+        //参数转逗号分隔
+        if (is_array($mobile)) {
+            $mobile_to_service = implode(',', $mobile);
+        } else {
+            $mobile_to_service = $mobile;
+        }
+        try {
+            //某些渠道必填app_name
+            if ($appName == '') {
+                $appName = '九秒贷';
+            }
+            $res = SmsService::sendTpl($mobile_to_service, $sendKey, $tplKey, $tplParams, $appName);
+            if ($res->isSuccess()) {
+                return true;
+            }
+            $res = '微服务请求失败';
+            Utils::alert('【失败】微服务短信渠道发送失败-九秒贷-模板短信',
+                json_encode([
+                    'tel' => $mobile,
+                    'sendKey' => $sendKey,
+                    'tplKey' => $tplKey,
+                    'tplParams' => $tplParams,
+                    'res' => $res
+                ],
+                    256));
+        } catch (\Exception $e) {
+            Utils::alert('【异常】微服务短信渠道发送异常-九秒贷-模板短信',
+                json_encode([
+                    'tel' => $mobile,
+                    'sendKey' => $sendKey,
+                    'tplKey' => $tplKey,
+                    'tplParams' => $tplParams,
+                    'e' => $e->getMessage(),
+                ],
+                    256));
+        }
+        /** 加入微服务逻辑End */
 
         $config = Utils::getParam(self::SMS_CONFIG);
 
@@ -220,7 +260,8 @@ class Sms implements sendKey
                         $tunnel = new $className($mobile, $sendKey, $tplKey, $tplParams, $appName, $callBackFun);
                         $flag = $tunnel->$tunnelType();
                     } else {
-                        Utils::alert('短信渠道异常', "tunnelType-{$tunnelType}/tunnelIndex-{$tunnelIndex}/appName-{$appName}");
+                        Utils::alert('短信渠道异常',
+                            "tunnelType-{$tunnelType}/tunnelIndex-{$tunnelIndex}/appName-{$appName}");
                     }
                     $tunnelIndex++;
                     $times++;
@@ -244,41 +285,6 @@ class Sms implements sendKey
         }
 
         return false;
-    }
-
-    /**
-     * 根据手机运营商对手机号码进行分组
-     * @param array|string|int $mobile
-     * @return array
-     */
-    private static function filterTel($mobile = [])
-    {
-        # 如果不是字符串则转换
-        if (!is_array($mobile)) {
-            $mobile = explode(',', $mobile);
-        }
-
-        $telArr[Utils::DIANXIN] = [];
-        $telArr[Utils::YIDONG] = [];
-        $telArr[Utils::LIANTONG] = [];
-
-        foreach ($mobile as $value) {
-            switch (Utils::getOperator($value)) {
-                case Utils::DIANXIN:
-                    // TODO 电信运营商不允许发送营销短信，暂不做处理
-                    $telArr[Utils::DIANXIN][] = $value;
-                    break;
-                case Utils::YIDONG:
-                    // TODO 使用国都
-                    $telArr[Utils::YIDONG][] = $value;
-                    break;
-                case Utils::LIANTONG:
-                    $telArr[Utils::LIANTONG][] = $value;
-                    break;
-            }
-        }
-
-        return $telArr;
     }
 
     public static function sendVoiceCaptcha($mobile)
@@ -310,6 +316,30 @@ class Sms implements sendKey
 
     public static function sendVoiceByTpl($mobile, $key, $callBackFun = '')
     {
+
+        /** 加入微服务逻辑Start */
+        //参数转逗号分隔
+        if (is_array($mobile)) {
+            $mobile_to_service = implode(',', $mobile);
+        } else {
+            $mobile_to_service = $mobile;
+        }
+        try {
+            $res = SmsService::sendVoiceByTpl($mobile_to_service, $key);
+            if ($res->isSuccess()) {
+                return true;
+            }
+            $res = '微服务请求失败';
+            Utils::alert('【失败】微服务短信渠道发送失败-九秒贷-自定义短信',
+                json_encode(['tel' => $mobile, 'key' => $key, 'res' => $res],
+                    256));
+        } catch (\Exception $e) {
+            Utils::alert('【异常】微服务短信渠道发送异常-九秒贷-自定义短信',
+                json_encode(['tel' => $mobile, 'key' => $key, 'e' => $e->getMessage()],
+                    256));
+        }
+        /** 加入微服务逻辑End */
+
         $tunnelType = self::TUNNELS_VOICE_NOTICE;
         $tunnels = self::$tunnels[$tunnelType];
 
@@ -350,23 +380,27 @@ class Sms implements sendKey
      */
     public static function sendCustom($mobile, $content, $appName = '', $callBackFun = '')
     {
-
         /** 加入微服务逻辑Start */
-        if(is_array($mobile)){
+        if (is_array($mobile)) {
             $mobile_to_service = implode(',', $mobile);
-        }else{
+        } else {
             $mobile_to_service = $mobile;
         }
-        try{
+        try {
+            //某些渠道必填app_name
+            if ($appName == '') {
+                $appName = '九秒贷';
+            }
             $res = SmsService::sendCustom($mobile_to_service, $content, $appName);
-            if(isset($res['code']) && $res['code'] == 18000){
+            if ($res->isSuccess()) {
                 return true;
             }
-            Utils::alert('微服务短信渠道发送失败',
-                json_encode(['tel' => $mobile, 'content' => $content],
+            $res = '微服务请求失败';
+            Utils::alert('【失败】微服务短信渠道发送失败-九秒贷-自定义短信',
+                json_encode(['tel' => $mobile, 'content' => $content, 'res' => $res],
                     256));
         } catch (\Exception $e) {
-            Utils::alert('微服务短信渠道发送异常',
+            Utils::alert('【异常】微服务短信渠道发送异常-九秒贷-自定义短信',
                 json_encode(['tel' => $mobile, 'content' => $content, 'e' => $e->getMessage()],
                     256));
         }
@@ -411,6 +445,41 @@ class Sms implements sendKey
             return $captcha;
         }
         return sprintf('%04s', mt_rand(0, 9999));
+    }
+
+    /**
+     * 根据手机运营商对手机号码进行分组
+     * @param array|string|int $mobile
+     * @return array
+     */
+    private static function filterTel($mobile = [])
+    {
+        # 如果不是字符串则转换
+        if (!is_array($mobile)) {
+            $mobile = explode(',', $mobile);
+        }
+
+        $telArr[Utils::DIANXIN] = [];
+        $telArr[Utils::YIDONG] = [];
+        $telArr[Utils::LIANTONG] = [];
+
+        foreach ($mobile as $value) {
+            switch (Utils::getOperator($value)) {
+                case Utils::DIANXIN:
+                    // TODO 电信运营商不允许发送营销短信，暂不做处理
+                    $telArr[Utils::DIANXIN][] = $value;
+                    break;
+                case Utils::YIDONG:
+                    // TODO 使用国都
+                    $telArr[Utils::YIDONG][] = $value;
+                    break;
+                case Utils::LIANTONG:
+                    $telArr[Utils::LIANTONG][] = $value;
+                    break;
+            }
+        }
+
+        return $telArr;
     }
 
     /*获取渠道配置*/
