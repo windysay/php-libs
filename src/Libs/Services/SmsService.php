@@ -155,6 +155,29 @@ class SmsService
         return $request->execute();
     }
 
+    /**
+     * 通过报告id获取报告结果
+     * @param $report_ids
+     * @return mixed
+     */
+    public static function getReport($report_ids)
+    {
+        $request = new BaseRequest();
+        $url = 'api/send/get-report';
+        $request->setUrl($url);
+        if(is_array($report_ids)){
+            $report_ids = implode(',', $report_ids);
+        }
+        $post_data = [
+            'report_ids' => $report_ids,
+        ];
+        $request->setData($post_data);
+        if(!Configs::isProEnv()){
+            $request->domain = self::$url;
+        }
+        return $request->execute();
+    }
+
     ########################  推送接口方法 End #######################
 
 }
