@@ -7,17 +7,17 @@ class ExceptionServices
     /**
      * 异常抛送
      * @param $exception
-     * @param null $requestUri
+     * @param string $requestUri
      * @param string $requsetMethod
-     * @param null $remoteAddr
+     * @param string $remoteAddr
      * @return DataFormat
      * @throws \Exception
      */
     public static function send(
         $exception,
-        $requestUri = null,
+        $requestUri = '/',
         $requsetMethod = 'GET',
-        $remoteAddr = null
+        $remoteAddr = '127.0.0.1'
     ) {
         $request = new BaseRequest();
         $url = 'api/exception';
