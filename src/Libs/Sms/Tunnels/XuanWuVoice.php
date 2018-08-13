@@ -2,14 +2,9 @@
 
 namespace JMD\Libs\Sms\Tunnels;
 
-use JMD\Common\sendKey;
-use JMD\Libs\Sms\Interfaces\VoiceSmsBase;
-//use common\models\IvrLog;
-use JMD\Libs\Sms\Sms;
-use JMD\Utils\HttpHelper;
-//use common\helpers\EmailHelper;
 use JMD\App\Utils;
-//use common\helpers\DateTime;
+use JMD\Common\sendKey;
+use JMD\Libs\Sms\Sms;
 
 class XuanWuVoice
 {
@@ -159,7 +154,7 @@ class XuanWuVoice
 
         $html = curl_exec($ch);
         if ($errorno = curl_errno($ch)) {
-            throw new RiskCurlException(curl_error($ch) . json_encode(curl_getinfo($ch), JSON_UNESCAPED_UNICODE), $errorno);
+            throw new \Exception(curl_error($ch) . json_encode(curl_getinfo($ch), JSON_UNESCAPED_UNICODE), $errorno);
         }
         curl_close($ch);
         return $html;
