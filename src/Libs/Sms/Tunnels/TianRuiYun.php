@@ -136,7 +136,7 @@ class TianRuiYun implements SmsBase
             return true;
         }
 
-        Utils::alert('天瑞云短信渠道发送失败', json_encode(['post' => $config, 'error' => $result]));
+        Utils::alert('天瑞云短信渠道发送失败', json_encode(['post' => $config, 'error' => $result], JSON_UNESCAPED_UNICODE));
         return false;
     }
 
@@ -171,7 +171,7 @@ class TianRuiYun implements SmsBase
             return true;
         }
 
-        Utils::alert('天瑞云短信渠道发送失败', json_encode(['post' => $config, 'error' => $result]));
+        Utils::alert('天瑞云短信渠道发送失败', json_encode(['post' => $config, 'error' => $result], JSON_UNESCAPED_UNICODE));
         return false;
     }
 }
