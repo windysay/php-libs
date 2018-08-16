@@ -178,6 +178,35 @@ class SmsService
         return $request->execute();
     }
 
+    /**
+     * 通过事件推送 调用试例 EventDemo/Event.php
+     * @param $mobile
+     * @param $event_id
+     * @param $vals
+     * @param string $appName
+     * @return DataFormat
+     */
+    public static function sendEvent($mobile, $event_id, $vals, $appName = '')
+    {
+        $request = new BaseRequest();
+        $url = 'api/send/push-event';
+        $request->setUrl($url);
+        if (is_array($mobile)) {
+            $mobile = implode(',', $mobile);
+        }
+        $post_data = [
+            'mobile' => $mobile,
+            'event_id' => $event_id,
+            'vals' => $vals,
+            'appName' => $appName,
+        ];
+        $request->setData($post_data);
+        if (!Configs::isProEnv()) {
+            $request->domain = self::$url;
+        }
+        return $request->execute();
+    }
+
     ########################  推送接口方法 End #######################
 
 }
