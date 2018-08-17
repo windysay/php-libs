@@ -198,7 +198,7 @@ class SmsService
             'mobile' => $mobile,
             'event_id' => $event_id,
             'vals' => $vals,
-            'appName' => $appName,
+            'app_name' => $appName,
         ];
         $request->setData($post_data);
         if (!Configs::isProEnv()) {
