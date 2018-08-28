@@ -2,6 +2,8 @@
 
 namespace JMD\Utils;
 
+use JMD\App\Utils;
+
 class HttpHelper
 {
 
