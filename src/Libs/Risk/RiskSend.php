@@ -250,6 +250,11 @@ class RiskSend
         $this->request->setData($data);
     }
 
+    public function setUserCallRecords($data)
+    {
+        $method = 'user_call_records';
+        $this->addBaseRequest($method, $data);
+    }
 
     public function pushQueue($queueName, $passWord = null, $host = null, $port = null, $dataBase = 0)
     {

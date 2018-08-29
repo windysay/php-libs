@@ -207,6 +207,15 @@ class SmsService
         return $request->execute();
     }
 
+    public static function getEventList()
+    {
+        $request = new BaseRequest();
+        $url = 'api/send/get-event-list';
+        $request->setUrl($url);
+        if (!Configs::isProEnv()) {
+            $request->domain = self::$url;
+        }
+        return $request->execute();
+    }
     ########################  推送接口方法 End #######################
-
 }
