@@ -43,7 +43,7 @@ class DataFormat
      */
     public function getMsg()
     {
-        return $this->srcData['msg'];
+        return $this->srcData['msg'] ?? 'msg获取异常';
     }
 
     /**
@@ -51,7 +51,15 @@ class DataFormat
      */
     public function getData()
     {
-        return $this->srcData['data'];
+        return $this->srcData['data'] ?? null;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAll()
+    {
+        return $this->srcData;
     }
 
     /**

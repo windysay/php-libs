@@ -2,9 +2,9 @@
 
 namespace JMD\Libs\Sms;
 
-use JMD\Common\Configs as CommonConfigs;
 use JMD\App\Configs;
 use JMD\App\Utils;
+use JMD\Common\Configs as CommonConfigs;
 use JMD\Common\sendKey;
 use JMD\Libs\Services\SmsService;
 use JMD\Libs\Sms\Interfaces\SmsBase;
@@ -128,16 +128,15 @@ class Sms implements sendKey
             if ($res->isSuccess()) {
                 return true;
             }
-            $res = '微服务请求失败';
             Utils::alert('【失败】微服务短信渠道发送失败-九秒贷-模板短信',
                 json_encode([
                     'tel' => $mobile,
                     'sendKey' => $sendKey,
                     'tplKey' => $tplKey,
                     'tplParams' => $tplParams,
-                    'res' => $res
+                    'res' => $res->getAll()
                 ],
-                    256));
+                    JSON_UNESCAPED_UNICODE));
         } catch (\Exception $e) {
             Utils::alert('【异常】微服务短信渠道发送异常-九秒贷-模板短信',
                 json_encode([
@@ -147,7 +146,7 @@ class Sms implements sendKey
                     'tplParams' => $tplParams,
                     'e' => $e->getMessage(),
                 ],
-                    256));
+                    JSON_UNESCAPED_UNICODE));
         }
         /** 加入微服务逻辑End */
 
@@ -211,7 +210,7 @@ class Sms implements sendKey
                                 'tplParam' => $tplParams,
                                 'flag' => $flag,
                                 'send_tunnels' => self::$tunnels[$tunnelType]
-                            ], 256));
+                            ], JSON_UNESCAPED_UNICODE));
                             continue;
                         }
                     }
@@ -241,7 +240,7 @@ class Sms implements sendKey
 //                    if ($flag == true) {
 //                        return true;
 //                    }else{
-//                        Utils::alert('【'.$obj.'】短信渠道发送失败，请检查，已自动切换备用渠道。', json_encode(['tel' => $mobile, 'sendKey' => $sendKey, 'tplKey' => $tplKey, 'tplParam' => $tplParams, 'flag' => $flag, 'send_tunnels' => self::$tunnels[$tunnelType]], 256));
+//                        Utils::alert('【'.$obj.'】短信渠道发送失败，请检查，已自动切换备用渠道。', json_encode(['tel' => $mobile, 'sendKey' => $sendKey, 'tplKey' => $tplKey, 'tplParam' => $tplParams, 'flag' => $flag, 'send_tunnels' => self::$tunnels[$tunnelType]], JSON_UNESCAPED_UNICODE));
 //                    }
 //                }
 
@@ -277,7 +276,7 @@ class Sms implements sendKey
                         'tplParam' => $tplParams,
                         'flag' => $flag,
                         'send_tunnels' => self::$tunnels[$tunnelType]
-                    ], 256));
+                    ], JSON_UNESCAPED_UNICODE));
                 } else {
                     return true;
                 }
@@ -329,14 +328,13 @@ class Sms implements sendKey
             if ($res->isSuccess()) {
                 return true;
             }
-            $res = '微服务请求失败';
             Utils::alert('【失败】微服务短信渠道发送失败-九秒贷-自定义短信',
-                json_encode(['tel' => $mobile, 'key' => $key, 'res' => $res],
-                    256));
+                json_encode(['tel' => $mobile, 'key' => $key, 'res' => $res->getAll()],
+                    JSON_UNESCAPED_UNICODE));
         } catch (\Exception $e) {
             Utils::alert('【异常】微服务短信渠道发送异常-九秒贷-自定义短信',
                 json_encode(['tel' => $mobile, 'key' => $key, 'e' => $e->getMessage()],
-                    256));
+                    JSON_UNESCAPED_UNICODE));
         }
         /** 加入微服务逻辑End */
 
@@ -365,7 +363,7 @@ class Sms implements sendKey
         // 如果所有通道都false会走到这一步
         Utils::alert('所有短信渠道发送失败',
             json_encode(['tel' => $mobile, 'flag' => $flag, 'send_tunnels' => $tunnelType],
-                256));
+                JSON_UNESCAPED_UNICODE));
         return false;
     }
 
@@ -395,14 +393,13 @@ class Sms implements sendKey
             if ($res->isSuccess()) {
                 return true;
             }
-            $res = '微服务请求失败';
             Utils::alert('【失败】微服务短信渠道发送失败-九秒贷-自定义短信',
-                json_encode(['tel' => $mobile, 'content' => $content, 'res' => $res],
-                    256));
+                json_encode(['tel' => $mobile, 'content' => $content, 'res' => $res->getAll()],
+                    JSON_UNESCAPED_UNICODE));
         } catch (\Exception $e) {
             Utils::alert('【异常】微服务短信渠道发送异常-九秒贷-自定义短信',
                 json_encode(['tel' => $mobile, 'content' => $content, 'e' => $e->getMessage()],
-                    256));
+                    JSON_UNESCAPED_UNICODE));
         }
         /** 加入微服务逻辑End */
 
@@ -430,7 +427,7 @@ class Sms implements sendKey
         // 如果所有通道都false会走到这一步
         Utils::alert('所有短信渠道发送失败',
             json_encode(['tel' => $mobile, 'content' => $content, 'flag' => $flag, 'send_tunnels' => $tunnelType],
-                256));
+                JSON_UNESCAPED_UNICODE));
         return false;
     }
 
