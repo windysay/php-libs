@@ -160,6 +160,12 @@ class RiskSend
         $this->addBaseRequest($method, $data);
     }
 
+    public function setUserWork($data)
+    {
+        $method = 'user_work';
+        $this->addBaseRequest($method, $data);
+    }
+
     public function setTelephoneSms($data)
     {
         $method = 'telephone_sms';
