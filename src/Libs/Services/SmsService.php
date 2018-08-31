@@ -2,8 +2,6 @@
 
 namespace JMD\Libs\Services;
 
-use JMD\App\Configs;
-
 /**
  * 短信入口
  * Class Sms
@@ -11,8 +9,6 @@ use JMD\App\Configs;
  */
 class SmsService
 {
-    public static $url = 'http://sms-chengxs.dev23.jiumiaodai.com/';
-
     ########################  推送接口方法 Start #######################
 
     /**
@@ -37,9 +33,6 @@ class SmsService
             'app_name' => $app_name,
         ];
         $request->setData($post_data);
-        if (!Configs::isProEnv()) {
-            $request->domain = self::$url;
-        }
         return $request->execute();
     }
 
@@ -69,9 +62,6 @@ class SmsService
             'app_name' => $app_name,
         ];
         $request->setData($post_data);
-        if (!Configs::isProEnv()) {
-            $request->domain = self::$url;
-        }
         return $request->execute();
     }
 
@@ -97,9 +87,6 @@ class SmsService
             'app_name' => $app_name,
         ];
         $request->setData($post_data);
-        if (!Configs::isProEnv()) {
-            $request->domain = self::$url;
-        }
         return $request->execute();
     }
 
@@ -123,9 +110,6 @@ class SmsService
             'key' => $key,
         ];
         $request->setData($post_data);
-        if (!Configs::isProEnv()) {
-            $request->domain = self::$url;
-        }
         return $request->execute();
     }
 
@@ -149,9 +133,6 @@ class SmsService
             'code' => $code,
         ];
         $request->setData($post_data);
-        if (!Configs::isProEnv()) {
-            $request->domain = self::$url;
-        }
         return $request->execute();
     }
 
@@ -172,9 +153,6 @@ class SmsService
             'report_ids' => $report_ids,
         ];
         $request->setData($post_data);
-        if(!Configs::isProEnv()){
-            $request->domain = self::$url;
-        }
         return $request->execute();
     }
 
@@ -201,9 +179,6 @@ class SmsService
             'app_name' => $appName,
         ];
         $request->setData($post_data);
-        if (!Configs::isProEnv()) {
-            $request->domain = self::$url;
-        }
         return $request->execute();
     }
 
@@ -212,9 +187,6 @@ class SmsService
         $request = new BaseRequest();
         $url = 'api/send/get-event-list';
         $request->setUrl($url);
-        if (!Configs::isProEnv()) {
-            $request->domain = self::$url;
-        }
         return $request->execute();
     }
     ########################  推送接口方法 End #######################

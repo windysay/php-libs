@@ -2,8 +2,6 @@
 
 namespace JMD\Libs\Services;
 
-use JMD\App\Configs;
-
 /**
  *
  * Class SsoService
@@ -11,8 +9,6 @@ use JMD\App\Configs;
  */
 class SsoService
 {
-    public static $url = 'http://sms-chengxs.dev23.jiumiaodai.com/';
-
     /**
      * 鉴权
      * @param $mobile
@@ -36,9 +32,6 @@ class SsoService
         ];
 
         $request->setData($post_data);
-        if (!Configs::isProEnv()) {
-            $request->domain = self::$url;
-        }
         return $request->execute();
     }
 

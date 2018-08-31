@@ -85,7 +85,7 @@ class Basic implements SsoIdentity
         $load_domain_config = DomainConfig::base_domain();
         $domain = strstr($load_domain_config['http_sso_check'], 'sso/token', true);
         $basic = new self();
-        $url = $domain . 'user/info?' . $basic->sso_request_carry_url();
+        $url = $domain . 'oa/api/user/info?' . $basic->sso_request_carry_url();
         return Basic::httpClient($url, 'get');
     }
 
@@ -100,7 +100,7 @@ class Basic implements SsoIdentity
         $domain = strstr($load_domain_config['http_sso_check'], 'sso/token', true);
         $basic = new self();
         $staff_data = http_build_query($data);
-        $url = $domain . 'api/staff/add?' . $basic->sso_request_carry_url() . '&' . $staff_data;
+        $url = $domain . 'oa/api/staff/add?' . $basic->sso_request_carry_url() . '&' . $staff_data;
         return Basic::httpClient($url, 'get');
     }
 
@@ -115,7 +115,7 @@ class Basic implements SsoIdentity
         $domain = strstr($load_domain_config['http_sso_check'], 'sso/token', true);
         $basic = new self();
         $staff_data = http_build_query($data);
-        $url = $domain . 'api/staff/edit?' . $basic->sso_request_carry_url() . '&' . $staff_data;
+        $url = $domain . 'oa/api/staff/edit?' . $basic->sso_request_carry_url() . '&' . $staff_data;
         return Basic::httpClient($url, 'get');
     }
 
@@ -129,21 +129,21 @@ class Basic implements SsoIdentity
         $load_domain_config = DomainConfig::base_domain();
         $domain = strstr($load_domain_config['http_sso_check'], 'sso/token', true);
         $basic = new self();
-        $url = $domain . 'user/agent?' . $basic->sso_request_carry_url() . '&id=' . $id;
+        $url = $domain . 'oa/api/user/agent?' . $basic->sso_request_carry_url() . '&id=' . $id;
         return Basic::httpClient($url, 'get');
     }
 
     /**
      * 获取员工列表
-     * @param $company_id 公司id
-     * @return mixed
+     * @param $companyId
+     * @return \Psr\Http\Message\StreamInterface
      */
-    public static function get_company_user($company_id)
+    public static function get_company_user($companyId)
     {
         $load_domain_config = DomainConfig::base_domain();
         $domain = strstr($load_domain_config['http_sso_check'], 'sso/token', true);
         $basic = new self();
-        $url = $domain . 'api/get/company?' . $basic->sso_request_carry_url() . '&company_id=' . $company_id;
+        $url = $domain . 'oa/api/user/company_user?' . $basic->sso_request_carry_url() . '&company_id=' . $companyId;
         return Basic::httpClient($url, 'get');
     }
 }
