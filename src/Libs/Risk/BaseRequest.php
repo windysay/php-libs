@@ -93,7 +93,7 @@ class BaseRequest implements Request
                 }
             }
             $this->data['sign'] = md5(json_encode($this->data));
-            $result = HttpHelper::post($url, $this->data, 5 * 60);
+            $result = HttpHelper::post($url, $this->data, 20 * 60);
             return $result;
         } else {
             return HttpHelper::get($url);
