@@ -160,6 +160,12 @@ class RiskSend
         $this->addBaseRequest($method, $data);
     }
 
+    public function setTestAccount($data)
+    {
+        $method = 'test_account';
+        $this->addBaseRequest($method, $data);
+    }
+
     public function setUserWork($data)
     {
         $method = 'user_work';
