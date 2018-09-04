@@ -6,8 +6,8 @@ class ExceptionServices
 {
     /**
      * 异常抛送
-     * @param string $exception
-     * @param string $receiver
+     * @param string|array $exception
+     * @param string|array $receiver
      * @return DataFormat
      * @throws \Exception
      */
