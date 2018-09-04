@@ -11,11 +11,10 @@ class EmailServers
 {
     /**
      * 发送邮件
-     * @param $content
-     * @param null $title
-     * @param $to
-     * @param $from
-     * @param bool $queue | true异步发送 false同步发送
+     * @param string|array $content
+     * @param string $title
+     * @param string|array $to
+     * @param string $from
      * @return DataFormat
      * @throws \Exception
      */
@@ -23,8 +22,7 @@ class EmailServers
         $content,
         $title = '无主题',
         $to = 'develop-alert@jiumiaodai.com',
-        $from = 'auto-send@jiumiaodai.com',
-        $queue = false
+        $from = 'auto-send@jiumiaodai.com'
     ) {
         $request = new BaseRequest();
         $url = 'api/email/send';
@@ -32,23 +30,10 @@ class EmailServers
             'to' => $to,
             'form' => $from,
             'title' => $title,
-            'message' => self::arrayToJson($content),
-            'queue' => $queue,
+            'message' => $content,
         ];
         $request->setUrl($url);
         $request->setData($sendData);
         return $request->execute();
-    }
-
-    /**
-     * @param $body
-     * @return string
-     */
-    private static function arrayToJson($body)
-    {
-        if (is_array($body)) {
-            return json_encode($body, 256);
-        }
-        return $body;
     }
 }
