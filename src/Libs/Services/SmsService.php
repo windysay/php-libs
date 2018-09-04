@@ -139,7 +139,7 @@ class SmsService
     /**
      * 通过报告id获取报告结果
      * @param $report_ids
-     * @return mixed
+     * @return DataFormat
      */
     public static function getReport($report_ids)
     {
