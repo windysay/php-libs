@@ -7,27 +7,21 @@ class ExceptionServices
     /**
      * 异常抛送
      * @param $exception
-     * @param string $requestUri
-     * @param string $requsetMethod
-     * @param string $remoteAddr
+     * @param string $receiver
      * @return DataFormat
      * @throws \Exception
      */
     public static function send(
         $exception,
-        $requestUri = '/',
-        $requsetMethod = 'GET',
-        $remoteAddr = '127.0.0.1'
+        $receiver = 'develop-alert@jiumiaodai.com'
     ) {
         $request = new BaseRequest();
         $url = 'api/exception';
         $request->setUrl($url);
         $request->setUrl('api/exception');
-        $params['data'] = [
+        $params = [
             'exception' => $exception,
-            'request_uri' => $requestUri,
-            'request_method' => $requsetMethod,
-            'remote_addr' => $remoteAddr
+            'receiver' => $receiver
         ];
         $request->setData($params);
         return $request->execute();
