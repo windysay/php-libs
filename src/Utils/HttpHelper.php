@@ -44,7 +44,7 @@ class HttpHelper
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         // curl_setopt($ch, CURLINFO_HEADER_OUT, true);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 120);
         if ($post) {
             curl_setopt($ch, CURLOPT_POST, 1); // 设置为POST方式
         }
@@ -52,7 +52,19 @@ class HttpHelper
             curl_setopt($ch, CURLOPT_POSTFIELDS, (http_build_query($post))); // POST数据
         }
         curl_setopt($ch, CURLOPT_HTTPHEADER, array_values($headers));
+
         $html = curl_exec($ch);
+        if ($errorno = curl_errno($ch)) {
+            // throw new \Exception(curl_error($ch) . json_encode(curl_getinfo($ch), JSON_UNESCAPED_UNICODE), $errorno);
+            Utils::alert('php-libs请求异常',
+                json_encode(
+                    [
+                        'url' => $url,
+                        'content' => curl_getinfo($ch),
+                        'callback' => curl_error($ch),
+                        'data' => $post
+                    ], 256));
+        }
 
 
         curl_close($ch);
