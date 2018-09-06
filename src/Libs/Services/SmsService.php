@@ -164,7 +164,7 @@ class SmsService
      * @param string $appName
      * @return DataFormat
      */
-    public static function sendEvent($mobile, $event_id, $vals, $appName = '')
+    public static function sendEvent($mobile, $event_id, $vals = [], $appName = '')
     {
         $request = new BaseRequest();
         $url = 'api/send/push-event';
