@@ -254,6 +254,25 @@ class RiskSend
         $this->addBaseRequest($method, $data);
     }
 
+    public function setUserLoanProductInfo($data)
+    {
+        $method = 'user_loan_product_info';
+        $this->addBaseRequest($method, $data);
+    }
+
+    public function setUserFaceResult($data)
+    {
+        $method = 'user_face_result';
+        $this->addBaseRequest($method, $data);
+    }
+
+    public function setUserFaceVerify($data)
+    {
+        $method = 'user_face_verify';
+        $this->addBaseRequest($method, $data);
+    }
+
+
 
     private function addBaseRequest($field, $val)
     {
