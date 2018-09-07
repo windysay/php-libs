@@ -16,10 +16,9 @@
     ````
     //微服务公共配置
     'public_services_config' => [
-        'app_key' => '5xxxxxxxxxxx',
-        'app_secret_key' => 'axxxxxxxxxxx',
-        'endpoint' => 'http://services.jiumiaodai.com/'
-//      'endpoint' => 'http://api.services.dev23.jiumiaodai.com/' //测试域名
+        'app_key' => env('SERVICES_APP_KEY', 'xxxxx'),
+        'app_secret_key' => env('SERVICES_APP_SECRET_KEY', 'xxxxxx'),
+        'endpoint' => env('SERVICES_ENDPOINT', 'http://services.jiumiaodai.com/'), //测试域名http://api.services.dev23.jiumiaodai.com/
     ]
     ````
     - 即可接入对应的微服务

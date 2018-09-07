@@ -30,13 +30,7 @@ class BaseRequest implements Request
 
         $this->appKey = $config['app_key'];
         $this->secretKey = $config['app_secret_key'];
-        $this->endpoint = $config['endpoint'];
-        if (empty($this->appKey) || empty($this->secretKey)) {
-            throw new \Exception('app_key/app_secret_key Not Found');
-        }
-        if (empty($this->endpoint)) {
-            throw new \Exception('endpoint Not Found');
-        }
+        $this->endpoint = $config['endpoint'] ?? 'http://api.services.dev23.jiumiaodai.com/';
     }
 
 
