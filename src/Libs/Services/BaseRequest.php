@@ -2,7 +2,6 @@
 
 namespace JMD\Libs\Services;
 
-use JMD\App\Configs;
 use JMD\App\Utils;
 use JMD\Libs\Services\Interfaces\Request;
 use JMD\Utils\HttpHelper;
@@ -16,12 +15,11 @@ class BaseRequest implements Request
 
     public $url;
 
-    public $domain = 'http://api.services.dev23.jiumiaodai.com/';
+    protected $endpoint;
 
     protected $appKey;
 
     protected $secretKey;
-
 
     /**
      * BaseRequest constructor.
@@ -32,8 +30,12 @@ class BaseRequest implements Request
 
         $this->appKey = $config['app_key'];
         $this->secretKey = $config['app_secret_key'];
-        if (Configs::isProEnv()) {
-            $this->domain = 'http://services.jiumiaodai.com/';
+        $this->endpoint = $config['endpoint'];
+        if (empty($this->appKey) || empty($this->secretKey)) {
+            throw new \Exception('app_key/app_secret_key Not Found');
+        }
+        if (empty($this->endpoint)) {
+            throw new \Exception('endpoint Not Found');
         }
     }
 
@@ -65,7 +67,7 @@ class BaseRequest implements Request
      */
     public function execute($isPost = true)
     {
-        $url = $this->domain . $this->url;
+        $url = $this->endpoint . $this->url;
 
         $this->data['app_key'] = $this->appKey;
         $this->data['sign'] = SignHelper::sign($this->data, $this->secretKey);
