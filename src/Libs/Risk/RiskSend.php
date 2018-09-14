@@ -272,6 +272,11 @@ class RiskSend
         $this->addBaseRequest($method, $data);
     }
 
+    public function setUserFacebook($data)
+    {
+        $method = 'user_facebook';
+        $this->addBaseRequest($method,$data);
+    }
 
 
     private function addBaseRequest($field, $val)
