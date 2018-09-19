@@ -27,7 +27,7 @@ class DataFormat
      */
     public function isSuccess()
     {
-        return $this->srcData['code'] == self::OUTPUT_SUCCESS;
+        return $this->getCode() == self::OUTPUT_SUCCESS;
     }
 
     /**
@@ -35,7 +35,7 @@ class DataFormat
      */
     public function isError()
     {
-        return $this->srcData['code'] == self::OUTPUT_ERROR;
+        return $this->getCode() == self::OUTPUT_ERROR;
     }
 
     /**
@@ -43,7 +43,7 @@ class DataFormat
      */
     public function getMsg()
     {
-        return $this->srcData['msg'] ?? 'msg获取异常';
+        return $this->srcData['msg'] ?? 'php-libs微服务访问异常';
     }
 
     /**
@@ -52,6 +52,14 @@ class DataFormat
     public function getData()
     {
         return $this->srcData['data'] ?? null;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCode()
+    {
+        return $this->srcData['code'] ?? self::OUTPUT_ERROR;
     }
 
     /**
