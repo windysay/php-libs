@@ -37,16 +37,14 @@ class SsoService
     }
 
     /**
-     * 用户信息获取
+     * 用户信息获取 通过 分页 关键字
      *
      * @param null $page
      * @param null $keyword
-     * @param null $id
      * @param null $pageSize
-     *
      * @return DataFormat
      */
-    public static function httpUserInfo($page = null, $keyword = null, $id = null, $pageSize = null)
+    public static function getUserList($page = null, $keyword = null, $pageSize = null)
     {
         $request = new BaseRequest();
         $url = 'oa/api/user/info';
@@ -63,6 +61,25 @@ class SsoService
         if ($pageSize !== null) {
             $post_data['pageSize'] = $pageSize;
         }
+
+        $request->setData($post_data);
+        return $request->execute();
+    }
+
+    /**
+     * 用户信息获取 通过id id可传数组
+     *
+     * @param $id
+     * @return DataFormat
+     */
+    public static function getUserById($id)
+    {
+        $request = new BaseRequest();
+        $url = 'oa/api/user/info';
+        $request->setUrl($url);
+
+        $post_data = [];
+
         if ($id !== null) {
             $post_data['id'] = $id;
         }
