@@ -43,6 +43,7 @@ class SsoService
      * @param null $keyword
      * @param null $pageSize
      * @return DataFormat
+     * @throws \Exception
      */
     public static function getUserList($page = null, $keyword = null, $pageSize = null)
     {
@@ -69,10 +70,11 @@ class SsoService
     /**
      * 用户信息获取 通过id id可传数组
      *
-     * @param $id
+     * @param string|array $ids
      * @return DataFormat
+     * @throws \Exception
      */
-    public static function getUserById($id)
+    public static function getUserByIds($ids)
     {
         $request = new BaseRequest();
         $url = 'oa/api/user/info';
@@ -80,8 +82,8 @@ class SsoService
 
         $post_data = [];
 
-        if ($id !== null) {
-            $post_data['id'] = $id;
+        if ($ids !== null) {
+            $post_data['id'] = $ids;
         }
 
         $request->setData($post_data);
