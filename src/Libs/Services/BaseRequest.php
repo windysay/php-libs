@@ -55,6 +55,16 @@ class BaseRequest implements Request
     }
 
     /**
+     * @param $endpoint
+     * @return $this
+     */
+    public function setEndpoint($endpoint)
+    {
+        $this->endpoint = $endpoint;
+        return $this;
+    }
+
+    /**
      * @param bool $isPost
      * @return DataFormat
      * @throws \Exception
