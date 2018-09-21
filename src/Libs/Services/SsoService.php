@@ -2,6 +2,8 @@
 
 namespace JMD\Libs\Services;
 
+use JMD\App\Utils;
+
 /**
  *
  * Class SsoService
@@ -32,6 +34,11 @@ class SsoService
             'route' => $actionId,
         ];
 
+        //鉴权使用sso外网地址
+        $config = Utils::getParam(BaseRequest::CONFIG_NAME);
+        if(isset($config['sso_endpoint'])){
+            $request->setEndpoint($config['sso_endpoint']);
+        }
         $request->setData($post_data);
         return $request->execute();
     }
