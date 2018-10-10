@@ -11,6 +11,64 @@ use JMD\App\Utils;
  */
 class SsoService
 {
+
+    const TICKET_LOCAL_CACHE = 60 * 30; //设置默认本地ticket缓存时间为30分钟
+    const TICKET_COOKIE_NAME = 'ticket_prod';//默认cookie的ticket键名
+
+    /**
+     * sso鉴权获取用户信息 ticket为前端get的ticket值，可传空
+     *
+     * @param $ticket
+     * @param $ip
+     * @param $actionId
+     * @param null $ticket_local_cache
+     * @return array|mixed
+     */
+    public static function getUserInfo($ticket, $ip, $actionId, $ticket_local_cache = null)
+    {
+        //cookie和get同时没有ticket，返回1001
+        if (empty($_COOKIE[self::TICKET_COOKIE_NAME]) && !$ticket) {
+            return ['code' => '1001'];
+        }
+        //如果有get的ticket，获取并写入cookie，否则读cookie的ticket
+        if($ticket){
+            $ticket = str_replace('+', '%2B', urlencode($ticket));
+            @setcookie(self::TICKET_COOKIE_NAME, $ticket, time() + 43200, '/', '', false, true);
+        }else{
+            $ticket = $_COOKIE[self::TICKET_COOKIE_NAME];
+        }
+        //获取redis缓存，存在则直接返回缓存数据
+        $redis = Utils::redis();
+        if(!empty($redis->exists('sso_staff:flag:' . md5($ticket))) && $actionId != 'index/logout'){
+            $user_data = json_decode($redis->get('sso_staff:flag:' . md5($ticket)), true);
+            return $user_data;
+        }
+        //redis不存在则进行鉴权
+        $result = SsoService::httpSsoCheck($ticket, $ip, $actionId);
+        if(!$result){
+            Utils::alert('单点登录鉴权异常',
+                json_encode([
+                    'ticket' => $ticket,
+                    'ip' => $ip,
+                    'actionId' => $actionId,
+                ], 256), ['chengxusheng@jiumiaodai.com']);
+            return ['code' => '1001'];
+        }
+        $body = json_encode($result->getData(), 256);
+        $response_data = json_decode($body, true);
+        //鉴权失败，清除cookie和redis中的ticket
+        if ($response_data['code'] == '1001') {
+            @setcookie(self::TICKET_COOKIE_NAME,null,null,'/','',false,true);
+            $redis->del('sso_staff:flag:' . md5($ticket));
+            return $response_data;
+        }
+        //默认设置缓存 30分钟
+        $redis->set('sso_staff:flag:' . md5($ticket), $body);
+        $ticket_local_cache = is_null($ticket_local_cache) ? self::TICKET_LOCAL_CACHE : $ticket_local_cache;
+        $redis->expire('sso_staff:flag:' . md5($ticket), $ticket_local_cache);
+        return $response_data;
+    }
+
     /**
      * 鉴权
      *
