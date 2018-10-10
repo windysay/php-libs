@@ -26,6 +26,10 @@ class SsoService
      */
     public static function getUserInfo($ticket, $ip, $actionId, $ticket_local_cache = null)
     {
+        //为前端写入登录退出cookie
+        $config = Utils::getParam(BaseRequest::CONFIG_NAME);
+        @setcookie('redirect_uri', $config['sso_endpoint'] . 'sso/login', time() + 43200, '/', Utils::getHost());
+        @setcookie('logout_url', $config['sso_endpoint'] . 'sso/logout', time() + 43200, '/', Utils::getHost());
         //cookie和get同时没有ticket，返回1001
         if (empty($_COOKIE[self::TICKET_COOKIE_NAME]) && !$ticket) {
             return ['code' => '1001'];
@@ -33,7 +37,7 @@ class SsoService
         //如果有get的ticket，获取并写入cookie，否则读cookie的ticket
         if($ticket){
             $ticket = str_replace('+', '%2B', urlencode($ticket));
-            @setcookie(self::TICKET_COOKIE_NAME, $ticket, time() + 43200, '/', '', false, true);
+            @setcookie(self::TICKET_COOKIE_NAME, $ticket, time() + 43200, '/', Utils::getHost());
         }else{
             $ticket = $_COOKIE[self::TICKET_COOKIE_NAME];
         }
@@ -58,7 +62,7 @@ class SsoService
         $response_data = json_decode($body, true);
         //鉴权失败，清除cookie和redis中的ticket
         if ($response_data['code'] == '1001') {
-            @setcookie(self::TICKET_COOKIE_NAME,null,null,'/','',false,true);
+            @setcookie(self::TICKET_COOKIE_NAME,null, null, '/', Utils::getHost());
             $redis->del('sso_staff:flag:' . md5($ticket));
             return $response_data;
         }
