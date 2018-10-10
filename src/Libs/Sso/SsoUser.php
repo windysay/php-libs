@@ -4,6 +4,7 @@ namespace JMD\Libs\Sso;
 
 
 use JMD\App\Utils;
+use JMD\Libs\Services\SsoService;
 
 class SsoUser
 {
@@ -33,7 +34,25 @@ class SsoUser
         if (empty($redis->exists('sso_staff:flag:' . md5($ticket))) || $actionId == 'index/logout') {
             //执行时间
             $start = microtime(true) * 1000;
-            $body = self::http_sso_check($ticket, $ip, $actionId);
+
+
+            //$body = self::http_sso_check($ticket, $ip, $actionId);
+            $result = SsoService::httpSsoCheck($ticket, $ip, $actionId);
+            if ($result && $result->isSuccess()) {
+                $body = json_encode($result->getData(), 256);
+            } else {
+                Utils::alert('【九秒贷】单点登录鉴权异常',
+                    json_encode([
+                        'ticket' => $ticket,
+                        'ip' => $ip,
+                        'actionId' => $actionId,
+                        'msg' => $result->getMsg(),
+                        'data' => $result->getData(),
+                    ], 256), ['chengxusheng@jiumiaodai.com']);
+                return $result->getData();
+            }
+
+
             $top = microtime(true) * 1000;
             //存入redis list
             $diff_ms = $top - $start;
