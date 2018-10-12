@@ -15,6 +15,7 @@ class EmailServers
      * @param string $title
      * @param string|array $to
      * @param string $from
+     * @param string|array $attachments
      * @return DataFormat
      * @throws \Exception
      */
@@ -22,7 +23,8 @@ class EmailServers
         $content,
         $title = '无主题',
         $to = 'develop-alert@jiumiaodai.com',
-        $from = 'auto-send@jiumiaodai.com'
+        $from = 'auto-send@jiumiaodai.com',
+        $attachments = ''
     ) {
         $request = new BaseRequest();
         $url = 'api/email/send';
@@ -31,6 +33,7 @@ class EmailServers
             'form' => $from,
             'title' => $title,
             'message' => $content,
+            'attachments' => $attachments,
         ];
         $request->setUrl($url);
         $request->setData($sendData);
