@@ -10,7 +10,6 @@ use JMD\Libs\Sms\Interfaces\Marketing;
 use JMD\Libs\Sms\Interfaces\NoticeByTemplate;
 use JMD\Libs\Sms\Interfaces\SmsBase;
 use JMD\Libs\Sms\Sms;
-use SoapClient;
 
 /**
  * 玄武短信发送接口
@@ -141,7 +140,7 @@ class XuanWu implements SmsBase
 
         /** 玄武没有回调 仅记录渠道 */
         $fun = self::$callBackFun;
-        $fun && $fun(0, sendKey::CHANNEL_TIAN_RUI_YUN);
+        $fun && $fun(0, sendKey::CHANNEL_XUAN_WU);
 
         return true;
     }

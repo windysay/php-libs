@@ -75,7 +75,6 @@ class SsoService
 
     /**
      * 鉴权
-     *
      * @param $mobile
      * @param $code
      * @param $app_name
@@ -98,7 +97,7 @@ class SsoService
 
         //鉴权使用sso外网地址
         $config = Utils::getParam(BaseRequest::CONFIG_NAME);
-        if(isset($config['sso_endpoint'])){
+        if (isset($config['sso_endpoint'])) {
             $request->setEndpoint($config['sso_endpoint']);
         }
         $request->setData($post_data);
@@ -112,7 +111,6 @@ class SsoService
      * @param null $keyword
      * @param null $pageSize
      * @return DataFormat
-     * @throws \Exception
      */
     public static function getUserList($page = null, $keyword = null, $pageSize = null)
     {
@@ -158,5 +156,49 @@ class SsoService
         $request->setData($post_data);
         return $request->execute();
     }
+
+    /**------------九秒贷专用Start------------*/
+    /**
+     * 昵称接口
+     *
+     * @param $id
+     * @return DataFormat
+     */
+    public static function httpUserAgent($id)
+    {
+        $request = new BaseRequest();
+        $url = 'oa/api/user/agent';
+        $request->setUrl($url);
+
+        $post_data = [
+            'id' => $id,
+        ];
+
+        $request->setData($post_data);
+        return $request->execute();
+    }
+
+    /**
+     * 渠道用户添加接口
+     *
+     * @param $channel_account
+     * @param $channel_name
+     * @return DataFormat
+     */
+    public static function httpChannelAdd($channel_account, $channel_name)
+    {
+        $request = new BaseRequest();
+        $url = 'oa/api/channel/add';
+        $request->setUrl($url);
+
+        $post_data = [
+            'username' => $channel_account,
+            'nickname' => $channel_name,
+        ];
+
+        $request->setData($post_data);
+        return $request->execute();
+    }
+    /**------------九秒贷专用End------------*/
 
 }

@@ -20,7 +20,6 @@ class SsoUser
     {
 //        $http_type = isset($_SERVER['HTTPS']) ? 'https://' : 'http://';
         $http_type = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')) ? 'https://' : 'http://';
-
         $load_domain_config = DomainConfig::base_domain();
         if (empty($_COOKIE[$load_domain_config['ticket_cookie_name']])) {
             $redirect_url = $http_type . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
@@ -34,7 +33,6 @@ class SsoUser
         if (empty($redis->exists('sso_staff:flag:' . md5($ticket))) || $actionId == 'index/logout') {
             //执行时间
             $start = microtime(true) * 1000;
-
 
             //$body = self::http_sso_check($ticket, $ip, $actionId);
             $result = SsoService::httpSsoCheck($ticket, $ip, $actionId);
@@ -51,7 +49,6 @@ class SsoUser
                     ], 256), ['chengxusheng@jiumiaodai.com']);
                 return $result->getData();
             }
-
 
             $top = microtime(true) * 1000;
             //存入redis list

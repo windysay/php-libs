@@ -1,10 +1,10 @@
 <?php
 namespace JMD\Libs\Sms\Tunnels;
 
+use JMD\App\Utils;
 use JMD\Libs\Sms\Interfaces\VoiceSmsBase;
 use JMD\Libs\Sms\Sms;
 use JMD\Utils\HttpHelper;
-use JMD\App\Utils;
 
 class Winic implements VoiceSmsBase
 {
@@ -52,6 +52,11 @@ class Winic implements VoiceSmsBase
         }
 
         return $code;
+    }
+
+    public function sendVoiceNotice($tmpId, $is_manual = 0)
+    {
+        throw new \Exception("todo");
     }
 
 
