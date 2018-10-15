@@ -12,8 +12,70 @@ use JMD\App\Utils;
 class SsoService
 {
 
+    /**
+     * @var array|mixed
+     */
+    public $userData;
+
+    const LOGIN_STATUS_SUCCESS = 200;//已登录，成功登录
+    const LOGIN_STATUS_FAIL = 1001;//未登录，已退出，过期
+
+    const DEFAULT_REDIRECT_URI = 'https://sso.jiumiaodai.com/';//未设置sso_endpoint默认使用九秒贷sso
+
     const TICKET_LOCAL_CACHE = 60 * 30; //设置默认本地ticket缓存时间为30分钟
     const TICKET_COOKIE_NAME = 'ticket_prod';//默认cookie的ticket键名
+
+    /**
+     * SsoService constructor.
+     * @param $ticket
+     * @param $ip
+     * @param $actionId
+     * @param null $ticket_local_cache
+     */
+    public function __construct($ticket, $ip, $actionId, $ticket_local_cache = null)
+    {
+        $this->userData = self::getUserInfo($ticket, $ip, $actionId, $ticket_local_cache);
+    }
+
+    /**
+     * 判断是否登录
+     *
+     * @return bool
+     */
+    public function isLogin()
+    {
+        if(isset($this->userData['code']) && $this->userData['code'] == self::LOGIN_STATUS_SUCCESS){
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 返回用户数据
+     *
+     * @return array|mixed
+     */
+    public function getUserData()
+    {
+        return $this->userData;
+    }
+
+    /**
+     * 获取回跳地址
+     *
+     * @return string
+     */
+    public function getRedirectUri()
+    {
+        $config = Utils::getParam(BaseRequest::CONFIG_NAME);
+        $http_type = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')) ? 'https://' : 'http://';
+        $redirect_url = $http_type . $_SERVER['HTTP_HOST'];
+        if(!isset($config['sso_endpoint'])){
+            $config['sso_endpoint'] = self::DEFAULT_REDIRECT_URI;
+        }
+        $url = $config['sso_endpoint'] . 'sso/login?redirect_uri=' . $redirect_url;
+        return $url;
+    }
 
     /**
      * sso鉴权获取用户信息 ticket为前端get的ticket值，可传空
