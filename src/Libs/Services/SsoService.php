@@ -43,7 +43,7 @@ class SsoService
         }
         //获取redis缓存，存在则直接返回缓存数据
         $redis = Utils::redis();
-        if(!empty($redis->exists('sso_staff:flag:' . md5($ticket))) && $actionId != 'index/logout'){
+        if(!empty($redis->exists('sso_staff:flag:' . md5($ticket))) && $redis->get('sso_staff:flag:' . md5($ticket)) != 'null' && $actionId != 'index/logout'){
             $user_data = json_decode($redis->get('sso_staff:flag:' . md5($ticket)), true);
             return $user_data;
         }
