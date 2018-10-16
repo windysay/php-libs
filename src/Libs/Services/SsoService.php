@@ -65,7 +65,7 @@ class SsoService
      *
      * @return string
      */
-    public function getRedirectUri()
+    public function getLoginUri()
     {
         $config = Utils::getParam(BaseRequest::CONFIG_NAME);
         $http_type = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')) ? 'https://' : 'http://';
@@ -90,11 +90,17 @@ class SsoService
     {
         //为前端写入登录退出cookie
         $config = Utils::getParam(BaseRequest::CONFIG_NAME);
-        @setcookie('redirect_uri', $config['sso_endpoint'] . 'sso/login', time() + 43200, '/', Utils::getHost());
-        @setcookie('logout_url', $config['sso_endpoint'] . 'sso/logout', time() + 43200, '/', Utils::getHost());
+        $redirectUri = $config['sso_endpoint'] . 'sso/login';
+        $logoutUrl = $config['sso_endpoint'] . 'sso/logout';
+        @setcookie('redirect_uri', $redirectUri, time() + 43200, '/', Utils::getHost());
+        @setcookie('logout_url', $logoutUrl, time() + 43200, '/', Utils::getHost());
         //cookie和get同时没有ticket，返回1001
         if (empty($_COOKIE[self::TICKET_COOKIE_NAME]) && !$ticket) {
-            return ['code' => '1001'];
+            return [
+                'code' => '1001',
+                'redirect_uri' => $redirectUri,
+                'logout_url' => $logoutUrl,
+            ];
         }
         //如果有get的ticket，获取并写入cookie，否则读cookie的ticket
         if($ticket){
@@ -118,7 +124,11 @@ class SsoService
                     'ip' => $ip,
                     'actionId' => $actionId,
                 ], 256), ['chengxusheng@jiumiaodai.com']);
-            return ['code' => '1001'];
+            return [
+                'code' => '1001',
+                'redirect_uri' => $redirectUri,
+                'logout_url' => $logoutUrl,
+            ];
         }
         $body = json_encode($result->getData(), 256);
         $response_data = json_decode($body, true);
