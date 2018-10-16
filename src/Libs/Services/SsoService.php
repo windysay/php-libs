@@ -97,7 +97,7 @@ class SsoService
         //cookie和get同时没有ticket，返回1001
         if (empty($_COOKIE[self::TICKET_COOKIE_NAME]) && !$ticket) {
             return [
-                'code' => '1001',
+                'code' => self::LOGIN_STATUS_FAIL,
                 'sso_login_url' => $redirectUri,
                 'sso_logout_url' => $logoutUrl,
             ];
@@ -125,7 +125,7 @@ class SsoService
                     'actionId' => $actionId,
                 ], 256), ['chengxusheng@jiumiaodai.com']);
             return [
-                'code' => '1001',
+                'code' => self::LOGIN_STATUS_FAIL,
                 'sso_login_url' => $redirectUri,
                 'sso_logout_url' => $logoutUrl,
             ];
@@ -133,7 +133,7 @@ class SsoService
         $body = json_encode($result->getData(), 256);
         $response_data = json_decode($body, true);
         //鉴权失败，清除cookie和redis中的ticket
-        if ($response_data['code'] == '1001') {
+        if ($response_data['code'] == self::LOGIN_STATUS_FAIL) {
             @setcookie(self::TICKET_COOKIE_NAME,null, null, '/', Utils::getHost());
             $redis->del('sso_staff:flag:' . md5($ticket));
             return $response_data;
