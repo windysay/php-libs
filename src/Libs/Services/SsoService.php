@@ -98,8 +98,8 @@ class SsoService
         if (empty($_COOKIE[self::TICKET_COOKIE_NAME]) && !$ticket) {
             return [
                 'code' => '1001',
-                'redirect_uri' => $redirectUri,
-                'logout_url' => $logoutUrl,
+                'sso_login_url' => $redirectUri,
+                'sso_logout_url' => $logoutUrl,
             ];
         }
         //如果有get的ticket，获取并写入cookie，否则读cookie的ticket
@@ -126,8 +126,8 @@ class SsoService
                 ], 256), ['chengxusheng@jiumiaodai.com']);
             return [
                 'code' => '1001',
-                'redirect_uri' => $redirectUri,
-                'logout_url' => $logoutUrl,
+                'sso_login_url' => $redirectUri,
+                'sso_logout_url' => $logoutUrl,
             ];
         }
         $body = json_encode($result->getData(), 256);
