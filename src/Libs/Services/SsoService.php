@@ -30,11 +30,11 @@ class SsoService
      * @param $ticket
      * @param $ip
      * @param $actionId
-     * @param null $ticket_local_cache
+     * @param null $ticketLocalCache
      */
-    public function __construct($ticket, $ip, $actionId, $ticket_local_cache = null)
+    public function __construct($ticket, $ip, $actionId, $ticketLocalCache = null)
     {
-        $this->userData = self::getUserInfo($ticket, $ip, $actionId, $ticket_local_cache);
+        $this->userData = self::getUserInfo($ticket, $ip, $actionId, $ticketLocalCache);
     }
 
     /**
@@ -44,7 +44,7 @@ class SsoService
      */
     public function isLogin()
     {
-        if(isset($this->userData['code']) && $this->userData['code'] == self::LOGIN_STATUS_SUCCESS){
+        if (isset($this->userData['code']) && $this->userData['code'] == self::LOGIN_STATUS_SUCCESS) {
             return true;
         }
         return false;
@@ -70,7 +70,7 @@ class SsoService
         $config = Utils::getParam(BaseRequest::CONFIG_NAME);
         $http_type = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')) ? 'https://' : 'http://';
         $redirect_url = $http_type . $_SERVER['HTTP_HOST'];
-        if(!isset($config['sso_endpoint'])){
+        if (!isset($config['sso_endpoint'])) {
             $config['sso_endpoint'] = self::DEFAULT_REDIRECT_URI;
         }
         $url = $config['sso_endpoint'] . 'sso/login?redirect_uri=' . $redirect_url;
@@ -83,10 +83,10 @@ class SsoService
      * @param $ticket
      * @param $ip
      * @param $actionId
-     * @param null $ticket_local_cache
+     * @param null $ticketLocalCache
      * @return array|mixed
      */
-    public static function getUserInfo($ticket, $ip, $actionId, $ticket_local_cache = null)
+    public static function getUserInfo($ticket, $ip, $actionId, $ticketLocalCache = null)
     {
         //为前端写入登录退出cookie
         $config = Utils::getParam(BaseRequest::CONFIG_NAME);
@@ -103,21 +103,21 @@ class SsoService
             ];
         }
         //如果有get的ticket，获取并写入cookie，否则读cookie的ticket
-        if($ticket){
+        if ($ticket) {
             $ticket = str_replace('+', '%2B', urlencode($ticket));
             @setcookie(self::TICKET_COOKIE_NAME, $ticket, time() + 43200, '/', Utils::getHost());
-        }else{
+        } else {
             $ticket = $_COOKIE[self::TICKET_COOKIE_NAME];
         }
         //获取redis缓存，存在则直接返回缓存数据
         $redis = Utils::redis();
-        if(!empty($redis->exists('sso_staff:flag:' . md5($ticket))) && $redis->get('sso_staff:flag:' . md5($ticket)) != 'null' && $actionId != 'index/logout'){
+        if (!empty($redis->exists('sso_staff:flag:' . md5($ticket))) && $redis->get('sso_staff:flag:' . md5($ticket)) != 'null' && $actionId != 'index/logout') {
             $user_data = json_decode($redis->get('sso_staff:flag:' . md5($ticket)), true);
             return $user_data;
         }
         //redis不存在则进行鉴权
         $result = SsoService::httpSsoCheck($ticket, $ip, $actionId);
-        if(!$result){
+        if (!$result) {
             Utils::alert('单点登录鉴权异常',
                 json_encode([
                     'ticket' => $ticket,
@@ -134,20 +134,19 @@ class SsoService
         $response_data = json_decode($body, true);
         //鉴权失败，清除cookie和redis中的ticket
         if ($response_data['code'] == self::LOGIN_STATUS_FAIL) {
-            @setcookie(self::TICKET_COOKIE_NAME,null, null, '/', Utils::getHost());
+            @setcookie(self::TICKET_COOKIE_NAME, null, null, '/', Utils::getHost());
             $redis->del('sso_staff:flag:' . md5($ticket));
             return $response_data;
         }
         //默认设置缓存 30分钟
         $redis->set('sso_staff:flag:' . md5($ticket), $body);
-        $ticket_local_cache = is_null($ticket_local_cache) ? self::TICKET_LOCAL_CACHE : $ticket_local_cache;
-        $redis->expire('sso_staff:flag:' . md5($ticket), $ticket_local_cache);
+        $ticketLocalCache = is_null($ticketLocalCache) ? self::TICKET_LOCAL_CACHE : $ticketLocalCache;
+        $redis->expire('sso_staff:flag:' . md5($ticket), $ticketLocalCache);
         return $response_data;
     }
 
     /**
      * 鉴权
-     *
      * @param $mobile
      * @param $code
      * @param $app_name
@@ -170,7 +169,7 @@ class SsoService
 
         //鉴权使用sso外网地址
         $config = Utils::getParam(BaseRequest::CONFIG_NAME);
-        if(isset($config['sso_endpoint'])){
+        if (isset($config['sso_endpoint'])) {
             $request->setEndpoint($config['sso_endpoint']);
         }
         $request->setData($post_data);
@@ -184,7 +183,6 @@ class SsoService
      * @param null $keyword
      * @param null $pageSize
      * @return DataFormat
-     * @throws \Exception
      */
     public static function getUserList($page = null, $keyword = null, $pageSize = null)
     {
@@ -230,5 +228,51 @@ class SsoService
         $request->setData($post_data);
         return $request->execute();
     }
+
+    /**------------九秒贷专用Start------------*/
+    /**
+     * 昵称接口
+     *
+     * @param $id
+     * @return DataFormat
+     * @throws \Exception
+     */
+    public static function httpUserAgent($id)
+    {
+        $request = new BaseRequest();
+        $url = 'oa/api/user/agent';
+        $request->setUrl($url);
+
+        $post_data = [
+            'id' => $id,
+        ];
+
+        $request->setData($post_data);
+        return $request->execute();
+    }
+
+    /**
+     * 渠道用户添加接口
+     *
+     * @param $channelAccount
+     * @param $channelName
+     * @return DataFormat
+     * @throws \Exception
+     */
+    public static function httpChannelAdd($channelAccount, $channelName)
+    {
+        $request = new BaseRequest();
+        $url = 'oa/api/channel/add';
+        $request->setUrl($url);
+
+        $post_data = [
+            'username' => $channelAccount,
+            'nickname' => $channelName,
+        ];
+
+        $request->setData($post_data);
+        return $request->execute();
+    }
+    /**------------九秒贷专用End------------*/
 
 }

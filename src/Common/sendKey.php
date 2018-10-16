@@ -20,6 +20,7 @@ interface sendKey
     const LOAN_SUCCESS = 'LOAN_SUCCESS';
     const APPLY_PASS = 'APPLY_PASS'; //初审通过
     const TIME_OUT_CANCEL_APPLY = 'TIME_OUT_CANCEL_APPLY'; //放款周期过长，系统自动取消借款申请
+    const EDB_POLICY_NOTICE = 'EDB_POLICY_NOTICE'; //保单模板
 
     //+++++++++++++++++
     //| 白名单[营销渠道]

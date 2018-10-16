@@ -157,14 +157,15 @@ class SmsService
     }
 
     /**
-     * 通过事件推送 调用试例 EventDemo/Event.php
+     * 事件发送
+     *
      * @param $mobile
-     * @param $event_id
+     * @param $eventId
      * @param $vals
      * @param string $appName
      * @return DataFormat
      */
-    public static function sendEvent($mobile, $event_id, $vals = [], $appName = '')
+    public static function sendEvent($mobile, $eventId, $vals = [], $appName = '')
     {
         $request = new BaseRequest();
         $url = 'api/send/push-event';
@@ -174,7 +175,7 @@ class SmsService
         }
         $post_data = [
             'mobile' => $mobile,
-            'event_id' => $event_id,
+            'event_id' => $eventId,
             'vals' => $vals,
             'app_name' => $appName,
         ];

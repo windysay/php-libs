@@ -75,20 +75,6 @@ class XuanWuVoice
     /*语音通知*/
     public function sendVoiceNotice($templateID, $is_manual = 0)
     {
-        //晚上7点到第二天早上9点不推送
-//        if (date('H', time()) < 9 || date('H', time()) > 19) {
-//            return true;
-//        }
-//        try {
-//            //$num = \Yii::$app->cache->get($this->mobile . '-' . $templateID) ?? 0;
-//            $num = Utils::getCache($this->mobile . '-' . $templateID) ?? 0;
-//            if ($num >= 2) {
-//                return true;
-//            }
-//        } catch (\Exception $exception) {
-//            //EmailHelper::sendEmail('推送策略异常', json_encode($exception->getMessage(), 256), 'zhengzaoping@jiumiaodai.com');
-//            Utils::alert('推送策略异常', json_encode($exception->getMessage(), 256));
-//        }
         $timestamp = $this->getTimeStamp();
         $sig = $this->getSig($timestamp);
         $url = $this->getUrl($this->notificationUrl, $sig);
@@ -102,20 +88,13 @@ class XuanWuVoice
         $this->result = $this->parseFormat($this->srcResult);
         $bool = $this->isSuccess();
         try {
-            //$num = \Yii::$app->cache->get($this->mobile . '-' . $templateID) ?? 0;
-            //$num = Utils::getCache($this->mobile . '-' . $templateID) ?? 0;
-            //\Yii::$app->cache->set($this->mobile . '-' . $templateID, $num + 1, 24 * 60 * 60);
-            //Utils::setCache($this->mobile . '-' . $templateID, $num + 1, 24 * 60 * 60);
-            //IvrLog::addLogXuanWu(intval($bool), $templateID, $this->mobile, $num + 1, $is_manual, 3);
             $fun = $this->callBackFun;
             $fun && $fun($this->result['info']['callID'], sendKey::CHANNEL_XUAN_WU);
         } catch (\Exception $exception) {
-            //EmailHelper::sendEmail('推送记录log失败', json_encode($exception->getMessage(), 256), 'zhengzaoping@jiumiaodai.com');
             Utils::alert('推送记录log失败', json_encode($exception->getMessage(), 256));
         }
         if (!$bool) {
             $errors = $this->parseSendError();
-            //EmailHelper::sendEmail('推送语音失败', json_encode($errors, 256) . json_encode($this->result, 256), 'zhengzaoping@jiumiaodai.com');
             Utils::alert('玄武语音通知发送失败->' . $this->mobile, json_encode($errors, 256));
             return $bool;
         }
@@ -133,7 +112,7 @@ class XuanWuVoice
         $subject['playTimes'] = (int)$playTimes;
         $subject['params'] = [];
         //$timestamp = DateTime::timeMs();
-        $timestamp = time()*1000;
+        $timestamp = time() * 1000;
         return ['info' => $info, 'subject' => $subject, 'timestamp' => (string)$timestamp];
     }
 

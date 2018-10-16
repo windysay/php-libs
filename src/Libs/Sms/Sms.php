@@ -247,9 +247,8 @@ class Sms implements sendKey
                 $tunnelNum = count(self::$tunnels[$tunnelType]);
 
                 // 获取缓存的通道初始序号
-                /*$cacheKey = 'captcha-tunnel-' . date('-Ymd-') . $mobile;
-                $tunnelIndex = intval(Utils::getCache($cacheKey)) % $tunnelNum;*/
-                $tunnelIndex = 0;
+            $cacheKey = 'captcha-tunnel-' . date('-Ymd-') . $mobile;
+            $tunnelIndex = intval(Utils::getCache($cacheKey)) % $tunnelNum;
 
                 // 循环发送所有通道，直到成功或全部通道都失败
                 $times = 0;
@@ -267,7 +266,7 @@ class Sms implements sendKey
                     $times++;
                 } while (!$flag && $times < $tunnelNum);
 
-                //Utils::setCache($cacheKey, $tunnelIndex % $tunnelNum, 60 * 60 * 24);
+            Utils::setCache($cacheKey, $tunnelIndex % $tunnelNum, 60 * 60 * 24);
                 if (!$flag) {
                     // 如果所有通道都false会走到这一步
                     Utils::alert('所有短信渠道发送失败', json_encode([
@@ -299,9 +298,8 @@ class Sms implements sendKey
         $tunnelNum = count(self::$tunnels[$tunnelType]);
 
         // 获取缓存的通道初始序号
-        /*$cacheKey = 'voice-captcha-tunnel-' . date('-Ymd-') . $mobile;
-        $tunnelIndex = intval(Utils::getCache($cacheKey)) % $tunnelNum;*/
-        $tunnelIndex = 0;
+        $cacheKey = 'voice-captcha-tunnel-' . date('-Ymd-') . $mobile;
+        $tunnelIndex = intval(Utils::getCache($cacheKey)) % $tunnelNum;
         // 循环发送所有通道，直到成功或全部通道都失败
         $times = 0;
         $flag = false;
