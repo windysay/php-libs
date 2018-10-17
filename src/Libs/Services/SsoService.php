@@ -95,17 +95,20 @@ class SsoService
         @setcookie('redirect_uri', $redirectUri, time() + 43200, '/', Utils::getHost());
         @setcookie('logout_url', $logoutUrl, time() + 43200, '/', Utils::getHost());
         //cookie和get同时没有ticket，返回1001
-        if (empty($_COOKIE[self::TICKET_COOKIE_NAME]) && !$ticket) {
+        //if (empty($_COOKIE[self::TICKET_COOKIE_NAME]) && !$ticket) {
+        if (!TicketCookie::get() && !$ticket) {
             return [
                 'code' => self::LOGIN_STATUS_FAIL,
                 'sso_login_url' => $redirectUri,
                 'sso_logout_url' => $logoutUrl,
+                'msg' => 'no ticket',
             ];
         }
         //如果有get的ticket，获取并写入cookie，否则读cookie的ticket
         if ($ticket) {
             $ticket = str_replace('+', '%2B', urlencode($ticket));
-            @setcookie(self::TICKET_COOKIE_NAME, $ticket, time() + 43200, '/', Utils::getHost());
+            //@setcookie(self::TICKET_COOKIE_NAME, $ticket, time() + 43200, '/', Utils::getHost());
+            TicketCookie::set($ticket);
         } else {
             $ticket = $_COOKIE[self::TICKET_COOKIE_NAME];
         }
@@ -128,13 +131,15 @@ class SsoService
                 'code' => self::LOGIN_STATUS_FAIL,
                 'sso_login_url' => $redirectUri,
                 'sso_logout_url' => $logoutUrl,
+                'msg' => 'ticket fail',
             ];
         }
         $body = json_encode($result->getData(), 256);
         $response_data = json_decode($body, true);
         //鉴权失败，清除cookie和redis中的ticket
         if ($response_data['code'] == self::LOGIN_STATUS_FAIL) {
-            @setcookie(self::TICKET_COOKIE_NAME, null, null, '/', Utils::getHost());
+            //@setcookie(self::TICKET_COOKIE_NAME, null, null, '/', Utils::getHost());
+            TicketCookie::del();
             $redis->del('sso_staff:flag:' . md5($ticket));
             return $response_data;
         }
