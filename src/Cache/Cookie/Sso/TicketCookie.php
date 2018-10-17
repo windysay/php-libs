@@ -39,7 +39,7 @@ class TicketCookie
      */
     public static function get()
     {
-        return $_COOKIE[self::getKey()];
+        return $_COOKIE[self::getKey()] ?? '';
     }
 
     /**
