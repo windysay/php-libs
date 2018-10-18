@@ -235,6 +235,32 @@ class SsoService
         return $request->execute();
     }
 
+    /**
+     * 用户列表获取(子微服务拉父微服务用户数据)
+     *
+     * @param null $page
+     * @param null $keyword
+     * @param null $pageSize
+     * @return DataFormat
+     */
+    public static function getSsoUserList()
+    {
+        $request = new BaseRequest();
+        $url = 'oa/api/user/info';
+        $request->setUrl($url);
+
+        $post_data = [];
+
+        //访问父sso外网地址
+        $config = Utils::getParam(BaseRequest::CONFIG_NAME);
+        if (isset($config['sso_endpoint'])) {
+            $request->setEndpoint($config['sso_endpoint']);
+        }
+
+        $request->setData($post_data);
+        return $request->execute();
+    }
+
     /**------------九秒贷专用Start------------*/
     /**
      * 昵称接口
