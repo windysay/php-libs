@@ -16,7 +16,7 @@ class SsoService
     /**
      * @var array|mixed
      */
-    public $userData;
+    private $userData;
 
     const LOGIN_STATUS_SUCCESS = 200;//已登录，成功登录
     const LOGIN_STATUS_FAIL = 1001;//未登录，已退出，过期
@@ -68,13 +68,10 @@ class SsoService
      */
     public function getLoginUri()
     {
-        $config = Utils::getParam(BaseRequest::CONFIG_NAME);
+        $sso_login_url = $this->userData['sso_login_url'] ?? 'https://sso.jiumiaodai.com/sso/login';
         $http_type = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')) ? 'https://' : 'http://';
         $redirect_url = $http_type . $_SERVER['HTTP_HOST'];
-        if (!isset($config['sso_endpoint'])) {
-            $config['sso_endpoint'] = self::DEFAULT_REDIRECT_URI;
-        }
-        $url = $config['sso_endpoint'] . 'sso/login?redirect_uri=' . $redirect_url;
+        $url = $sso_login_url . '?redirect_uri=' . $redirect_url;
         return $url;
     }
 
