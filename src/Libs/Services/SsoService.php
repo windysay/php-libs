@@ -4,6 +4,7 @@ namespace JMD\Libs\Services;
 
 use JMD\App\Utils;
 use JMD\Cache\Cookie\Sso\TicketCookie;
+use JMD\Utils\SsoHelper;
 
 /**
  *
@@ -70,7 +71,7 @@ class SsoService
     {
         $sso_login_url = $this->userData['sso_login_url'] ?? 'https://sso.jiumiaodai.com/sso/login';
         $http_type = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')) ? 'https://' : 'http://';
-        $redirect_url = $http_type . $_SERVER['HTTP_HOST'];
+        $redirect_url = $http_type . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
         $url = $sso_login_url . '?redirect_uri=' . $redirect_url;
         return $url;
     }
@@ -94,7 +95,18 @@ class SsoService
         @setcookie('logout_url', $logoutUrl, time() + 43200, '/', Utils::getHost());
         //cookie和get同时没有ticket，返回1001
         //if (empty($_COOKIE[self::TICKET_COOKIE_NAME]) && !$ticket) {
-        if (!TicketCookie::get() && !$ticket) {
+        //cookie和get同时没有ticket，返回1001
+        //if (empty($_COOKIE[self::TICKET_COOKIE_NAME]) && !$ticket) {
+        /*if (!TicketCookie::get() && !$ticket) {
+            return [
+                'code' => self::LOGIN_STATUS_FAIL,
+                'sso_login_url' => $redirectUri,
+                'sso_logout_url' => $logoutUrl,
+                'msg' => 'no ticket',
+            ];
+        }*/
+        //如果有get的ticket，获取并写入cookie，否则读cookie的ticket
+        if (!$ticket = SsoHelper::getTicket($ticket)) {
             return [
                 'code' => self::LOGIN_STATUS_FAIL,
                 'sso_login_url' => $redirectUri,
@@ -102,14 +114,13 @@ class SsoService
                 'msg' => 'no ticket',
             ];
         }
-        //如果有get的ticket，获取并写入cookie，否则读cookie的ticket
-        if ($ticket) {
+        /*if ($ticket) {
             $ticket = str_replace('+', '%2B', urlencode($ticket));
             //@setcookie(self::TICKET_COOKIE_NAME, $ticket, time() + 43200, '/', Utils::getHost());
             TicketCookie::set($ticket);
         } else {
             $ticket = $_COOKIE[self::TICKET_COOKIE_NAME];
-        }
+        }*/
         //获取redis缓存，存在则直接返回缓存数据
         $redis = Utils::redis();
         if (!empty($redis->exists('sso_staff:flag:' . md5($ticket))) && $redis->get('sso_staff:flag:' . md5($ticket)) != 'null' && $actionId != 'index/logout') {
