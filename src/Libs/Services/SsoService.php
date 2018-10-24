@@ -71,7 +71,11 @@ class SsoService
     {
         $sso_login_url = $this->userData['sso_login_url'] ?? 'https://sso.jiumiaodai.com/sso/login';
         $http_type = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')) ? 'https://' : 'http://';
-        $redirect_url = $http_type . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+        $redirect_url = $http_type . $_SERVER['HTTP_HOST'];
+        //退出操作后 回到根目录
+        if(!strstr($_SERVER['REQUEST_URI'], 'logout')){
+            $redirect_url .= $_SERVER['REQUEST_URI'];
+        }
         $url = $sso_login_url . '?redirect_uri=' . $redirect_url;
         return $url;
     }
@@ -89,10 +93,10 @@ class SsoService
     {
         //为前端写入登录退出cookie
         $config = Utils::getParam(BaseRequest::CONFIG_NAME);
-        $redirectUri = $config['sso_endpoint'] . 'sso/login';
+        /*$redirectUri = $config['sso_endpoint'] . 'sso/login';
         $logoutUrl = $config['sso_endpoint'] . 'sso/logout';
         @setcookie('redirect_uri', $redirectUri, time() + 43200, '/', Utils::getHost());
-        @setcookie('logout_url', $logoutUrl, time() + 43200, '/', Utils::getHost());
+        @setcookie('logout_url', $logoutUrl, time() + 43200, '/', Utils::getHost());*/
         //cookie和get同时没有ticket，返回1001
         //if (empty($_COOKIE[self::TICKET_COOKIE_NAME]) && !$ticket) {
         //cookie和get同时没有ticket，返回1001
@@ -107,12 +111,13 @@ class SsoService
         }*/
         //如果有get的ticket，获取并写入cookie，否则读cookie的ticket
         if (!$ticket = SsoHelper::getTicket($ticket)) {
-            return [
+            /*return [
                 'code' => self::LOGIN_STATUS_FAIL,
                 'sso_login_url' => $redirectUri,
                 'sso_logout_url' => $logoutUrl,
                 'msg' => 'no ticket',
-            ];
+            ];*/
+            return SsoHelper::resFail('no ticket');
         }
         /*if ($ticket) {
             $ticket = str_replace('+', '%2B', urlencode($ticket));
@@ -136,12 +141,13 @@ class SsoService
                     'ip' => $ip,
                     'actionId' => $actionId,
                 ], 256), ['chengxusheng@jiumiaodai.com']);
-            return [
+            /*return [
                 'code' => self::LOGIN_STATUS_FAIL,
                 'sso_login_url' => $redirectUri,
                 'sso_logout_url' => $logoutUrl,
                 'msg' => 'ticket fail',
-            ];
+            ];*/
+            return SsoHelper::resFail('ticket fail');
         }
         $body = json_encode($result->getData(), 256);
         $response_data = json_decode($body, true);
