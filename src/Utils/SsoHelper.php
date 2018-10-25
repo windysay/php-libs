@@ -47,24 +47,26 @@ class SsoHelper
     }
 
     /**
-     * 获取登录地址
+     * 获取登录地址 默认使用jmd
      *
      * @return string
      */
     public static function getSsoLoginUrl()
     {
-        $config = Utils::getParam(BaseRequest::CONFIG_NAME);
-        return $config['sso_endpoint'] . 'sso/login';
+        /*$config = Utils::getParam(BaseRequest::CONFIG_NAME);
+        return $config['sso_endpoint'] . 'sso/login';*/
+        return 'https://sso.jiumiaodai.com/sso/login';
     }
 
     /**
-     * 获取退出地址
+     * 获取退出地址 默认使用jmd
      *
      * @return string
      */
     public static function getSsoLogoutUrl()
     {
-        $config = Utils::getParam(BaseRequest::CONFIG_NAME);
-        return $config['sso_endpoint'] . 'sso/logout';
+        /*$config = Utils::getParam(BaseRequest::CONFIG_NAME);
+        return $config['sso_endpoint'] . 'sso/logout';*/
+        return 'https://sso.jiumiaodai.com/sso/logout';
     }
 }
