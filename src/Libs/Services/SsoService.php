@@ -91,41 +91,10 @@ class SsoService
      */
     public static function getUserInfo($ticket, $ip, $actionId, $ticketLocalCache = null)
     {
-        //为前端写入登录退出cookie
-        $config = Utils::getParam(BaseRequest::CONFIG_NAME);
-        /*$redirectUri = $config['sso_endpoint'] . 'sso/login';
-        $logoutUrl = $config['sso_endpoint'] . 'sso/logout';
-        @setcookie('redirect_uri', $redirectUri, time() + 43200, '/', Utils::getHost());
-        @setcookie('logout_url', $logoutUrl, time() + 43200, '/', Utils::getHost());*/
-        //cookie和get同时没有ticket，返回1001
-        //if (empty($_COOKIE[self::TICKET_COOKIE_NAME]) && !$ticket) {
-        //cookie和get同时没有ticket，返回1001
-        //if (empty($_COOKIE[self::TICKET_COOKIE_NAME]) && !$ticket) {
-        /*if (!TicketCookie::get() && !$ticket) {
-            return [
-                'code' => self::LOGIN_STATUS_FAIL,
-                'sso_login_url' => $redirectUri,
-                'sso_logout_url' => $logoutUrl,
-                'msg' => 'no ticket',
-            ];
-        }*/
         //如果有get的ticket，获取并写入cookie，否则读cookie的ticket
         if (!$ticket = SsoHelper::getTicket($ticket)) {
-            /*return [
-                'code' => self::LOGIN_STATUS_FAIL,
-                'sso_login_url' => $redirectUri,
-                'sso_logout_url' => $logoutUrl,
-                'msg' => 'no ticket',
-            ];*/
             return SsoHelper::resFail('no ticket');
         }
-        /*if ($ticket) {
-            $ticket = str_replace('+', '%2B', urlencode($ticket));
-            //@setcookie(self::TICKET_COOKIE_NAME, $ticket, time() + 43200, '/', Utils::getHost());
-            TicketCookie::set($ticket);
-        } else {
-            $ticket = $_COOKIE[self::TICKET_COOKIE_NAME];
-        }*/
         //获取redis缓存，存在则直接返回缓存数据
         $redis = Utils::redis();
         if (!empty($redis->exists('sso_staff:flag:' . md5($ticket))) && $redis->get('sso_staff:flag:' . md5($ticket)) != 'null' && $actionId != 'index/logout') {
@@ -141,12 +110,6 @@ class SsoService
                     'ip' => $ip,
                     'actionId' => $actionId,
                 ], 256), ['chengxusheng@jiumiaodai.com']);
-            /*return [
-                'code' => self::LOGIN_STATUS_FAIL,
-                'sso_login_url' => $redirectUri,
-                'sso_logout_url' => $logoutUrl,
-                'msg' => 'ticket fail',
-            ];*/
             return SsoHelper::resFail('ticket fail');
         }
         $body = json_encode($result->getData(), 256);
@@ -187,10 +150,12 @@ class SsoService
             'route' => $actionId,
         ];
 
-        //鉴权使用sso外网地址
+        //鉴权使用sso外网地址 默认使用jmd外网地址
         $config = Utils::getParam(BaseRequest::CONFIG_NAME);
         if (isset($config['sso_endpoint'])) {
             $request->setEndpoint($config['sso_endpoint']);
+        } else {
+            $request->setEndpoint('https://sso.jiumiaodai.com/');
         }
         $request->setData($post_data);
         return $request->execute();
@@ -267,9 +232,7 @@ class SsoService
 
         //访问父sso外网地址
         $config = Utils::getParam(BaseRequest::CONFIG_NAME);
-        if (isset($config['sso_endpoint'])) {
-            $request->setEndpoint($config['sso_endpoint']);
-        }
+        $request->setEndpoint('https://sso.jiumiaodai.com/');
 
         $request->setData($post_data);
         return $request->execute();
