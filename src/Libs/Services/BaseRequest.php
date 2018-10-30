@@ -30,7 +30,7 @@ class BaseRequest implements Request
 
         $this->appKey = $config['app_key'];
         $this->secretKey = $config['app_secret_key'];
-        $this->endpoint = $config['endpoint'] ?? 'http://services.jiumiaodai.com/';
+        $this->endpoint = $config['endpoint'] ?? 'https://sso.jiumiaodai.com/';
     }
 
 
