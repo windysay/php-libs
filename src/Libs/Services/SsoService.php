@@ -4,6 +4,7 @@ namespace JMD\Libs\Services;
 
 use JMD\App\Utils;
 use JMD\Cache\Cookie\Sso\TicketCookie;
+use JMD\Utils\SsoHelper;
 
 /**
  *
@@ -16,7 +17,7 @@ class SsoService
     /**
      * @var array|mixed
      */
-    public $userData;
+    private $userData;
 
     const LOGIN_STATUS_SUCCESS = 200;//已登录，成功登录
     const LOGIN_STATUS_FAIL = 1001;//未登录，已退出，过期
@@ -68,13 +69,14 @@ class SsoService
      */
     public function getLoginUri()
     {
-        $config = Utils::getParam(BaseRequest::CONFIG_NAME);
+        $sso_login_url = $this->userData['sso_login_url'] ?? 'https://sso.jiumiaodai.com/sso/login';
         $http_type = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')) ? 'https://' : 'http://';
         $redirect_url = $http_type . $_SERVER['HTTP_HOST'];
-        if (!isset($config['sso_endpoint'])) {
-            $config['sso_endpoint'] = self::DEFAULT_REDIRECT_URI;
+        //退出操作后 回到根目录
+        if(!strstr($_SERVER['REQUEST_URI'], 'logout')){
+            $redirect_url .= $_SERVER['REQUEST_URI'];
         }
-        $url = $config['sso_endpoint'] . 'sso/login?redirect_uri=' . $redirect_url;
+        $url = $sso_login_url . '?redirect_uri=' . $redirect_url;
         return $url;
     }
 
@@ -89,29 +91,9 @@ class SsoService
      */
     public static function getUserInfo($ticket, $ip, $actionId, $ticketLocalCache = null)
     {
-        //为前端写入登录退出cookie
-        $config = Utils::getParam(BaseRequest::CONFIG_NAME);
-        $redirectUri = $config['sso_endpoint'] . 'sso/login';
-        $logoutUrl = $config['sso_endpoint'] . 'sso/logout';
-        @setcookie('redirect_uri', $redirectUri, time() + 43200, '/', Utils::getHost());
-        @setcookie('logout_url', $logoutUrl, time() + 43200, '/', Utils::getHost());
-        //cookie和get同时没有ticket，返回1001
-        //if (empty($_COOKIE[self::TICKET_COOKIE_NAME]) && !$ticket) {
-        if (!TicketCookie::get() && !$ticket) {
-            return [
-                'code' => self::LOGIN_STATUS_FAIL,
-                'sso_login_url' => $redirectUri,
-                'sso_logout_url' => $logoutUrl,
-                'msg' => 'no ticket',
-            ];
-        }
         //如果有get的ticket，获取并写入cookie，否则读cookie的ticket
-        if ($ticket) {
-            $ticket = str_replace('+', '%2B', urlencode($ticket));
-            //@setcookie(self::TICKET_COOKIE_NAME, $ticket, time() + 43200, '/', Utils::getHost());
-            TicketCookie::set($ticket);
-        } else {
-            $ticket = $_COOKIE[self::TICKET_COOKIE_NAME];
+        if (!$ticket = SsoHelper::getTicket($ticket)) {
+            return SsoHelper::resFail('no ticket');
         }
         //获取redis缓存，存在则直接返回缓存数据
         $redis = Utils::redis();
@@ -128,12 +110,7 @@ class SsoService
                     'ip' => $ip,
                     'actionId' => $actionId,
                 ], 256), ['chengxusheng@jiumiaodai.com']);
-            return [
-                'code' => self::LOGIN_STATUS_FAIL,
-                'sso_login_url' => $redirectUri,
-                'sso_logout_url' => $logoutUrl,
-                'msg' => 'ticket fail',
-            ];
+            return SsoHelper::resFail('ticket fail');
         }
         $body = json_encode($result->getData(), 256);
         $response_data = json_decode($body, true);
@@ -173,10 +150,12 @@ class SsoService
             'route' => $actionId,
         ];
 
-        //鉴权使用sso外网地址
+        //鉴权使用sso外网地址 默认使用jmd外网地址
         $config = Utils::getParam(BaseRequest::CONFIG_NAME);
         if (isset($config['sso_endpoint'])) {
             $request->setEndpoint($config['sso_endpoint']);
+        } else {
+            $request->setEndpoint('https://sso.jiumiaodai.com/');
         }
         $request->setData($post_data);
         return $request->execute();
@@ -230,6 +209,30 @@ class SsoService
         if ($ids !== null) {
             $post_data['id'] = $ids;
         }
+
+        $request->setData($post_data);
+        return $request->execute();
+    }
+
+    /**
+     * 用户列表获取(子微服务拉父微服务用户数据)
+     *
+     * @param null $page
+     * @param null $keyword
+     * @param null $pageSize
+     * @return DataFormat
+     */
+    public static function getSsoUserList()
+    {
+        $request = new BaseRequest();
+        $url = 'oa/api/user/info';
+        $request->setUrl($url);
+
+        $post_data = [];
+
+        //访问父sso外网地址
+        $config = Utils::getParam(BaseRequest::CONFIG_NAME);
+        $request->setEndpoint('https://sso.jiumiaodai.com/');
 
         $request->setData($post_data);
         return $request->execute();
