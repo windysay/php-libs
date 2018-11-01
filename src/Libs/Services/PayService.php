@@ -24,7 +24,18 @@ class PayService
      * @var string 余额查询地址接口
      */
     public $queryBalanceUrl = 'api/pay/queryBalance';
-
+    /**
+     * @var string 支付短验发送
+     */
+    public $sendCodeUrl = 'api/trade/send_code';
+    /**
+     * @var string 支付短验重发接口
+     */
+    public $againSendCodeUrl = 'api/trade/again_send_code';
+    /**
+     * @var string 确认支付短验接口
+     */
+    public $confirmPayUrl = 'api/trade/confirm_pay';
     /**
      * @var array 请求参数
      */
@@ -57,6 +68,7 @@ class PayService
 
 //        $this->request->domain = 'http://local.services.com/';
 //        $this->request->domain = 'http://zy-api.services.dev23.jiumiaodai.com/';
+
     }
 
     /**
@@ -79,6 +91,29 @@ class PayService
      * 出款通知
      */
     public function remitNotice()
+    {
+        $noticeInfo = file_get_contents("php://input");
+        $this->result = json_decode($noticeInfo, true);
+
+        //写入日志文件
+        $file = '/data/log/pay/' . date('Y_m_d') . '_remitNotice.log';
+        $log = sprintf('[%s]---%s%s', date('Y-m-d H:i:s'), $this->result['orderNo'] ?? '',
+            PHP_EOL . $noticeInfo . PHP_EOL . PHP_EOL);
+        @file_put_contents($file, $log, FILE_APPEND);
+
+        //验签
+        $this->checkSign();
+
+        //交易结果
+        $this->tradeSuccess = $this->result['status'] === 'SUCCESS';
+
+        return $this->result;
+    }
+
+    /**
+     * 通知
+     */
+    public function notice()
     {
         $noticeInfo = file_get_contents("php://input");
         $this->result = json_decode($noticeInfo, true);
@@ -126,6 +161,39 @@ class PayService
     public function queryBalance()
     {
         $this->request->setUrl($this->queryBalanceUrl);
+        $this->request->setData($this->params);
+
+        return $this->request->execute()->getData();
+    }
+
+    /**
+     * 实时支付发送短验
+     */
+    public function sendCode()
+    {
+        $this->request->setUrl($this->sendCodeUrl);
+        $this->request->setData($this->params);
+
+        return $this->request->execute()->getData();
+    }
+
+    /**
+     * 实时支付短验重发
+     */
+    public function againSendCode()
+    {
+        $this->request->setUrl($this->againSendCodeUrl);
+        $this->request->setData($this->params);
+
+        return $this->request->execute()->getData();
+    }
+
+    /**
+     * 确认支付
+     */
+    public function confirmPay()
+    {
+        $this->request->setUrl($this->confirmPayUrl);
         $this->request->setData($this->params);
 
         return $this->request->execute()->getData();
