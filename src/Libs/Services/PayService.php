@@ -37,6 +37,11 @@ class PayService
      */
     public $confirmPayUrl = 'api/trade/confirm_pay';
     /**
+     * @var string 单笔出款地址接口
+     */
+    public $single_payUrl = 'api/trade/single_pay';
+
+    /**
      * @var array 请求参数
      */
     public $params = [];
@@ -198,4 +203,21 @@ class PayService
 
         return $this->request->execute()->getData();
     }
+
+
+    /**
+     * 单笔代付
+     */
+    public function single_pay()
+    {
+//        //todo 测试
+//        $endpoint = 'http://zy-api.services.dev23.jiumiaodai.com/';
+//        $this->request->setEndpoint($endpoint);
+
+        $this->request->setUrl($this->single_payUrl);
+        $this->request->setData($this->params);
+
+        return $this->request->execute()->getData();
+    }
+
 }
