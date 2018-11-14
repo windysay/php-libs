@@ -44,6 +44,10 @@ class PayService
      * @var string 单笔出款地址接口
      */
     public $singleRepayCollectUrl = 'api/trade/single_repay_collect';
+    /**
+     * @var string 单笔退款接口
+     */
+    public $refundUrl = 'api/trade/refund';
 
     /**
      * @var array 请求参数
@@ -229,7 +233,18 @@ class PayService
      */
     public function singleRepayCollect()
     {
-       $this->request->setUrl($this->singleRepayCollectUrl);
+        $this->request->setUrl($this->singleRepayCollectUrl);
+        $this->request->setData($this->params);
+
+        return $this->request->execute()->getData();
+    }
+
+    /**
+     * 单笔退款
+     */
+    public function refund()
+    {
+        $this->request->setUrl($this->refundUrl);
         $this->request->setData($this->params);
 
         return $this->request->execute()->getData();
