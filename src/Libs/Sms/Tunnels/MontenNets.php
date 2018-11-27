@@ -222,6 +222,7 @@ class MontenNets implements VoiceSmsBase
 
     public static function getRpt($statusNum = 500)
     {
+        return false;
         try {
             $userid = 'YY0286';
             $pwd = '159367';
