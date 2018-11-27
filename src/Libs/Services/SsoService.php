@@ -130,9 +130,10 @@ class SsoService
 
     /**
      * 鉴权
-     * @param $mobile
-     * @param $code
-     * @param $app_name
+     *
+     * @param $ticket
+     * @param $ip
+     * @param $actionId
      * @return DataFormat
      * @throws \Exception
      */
