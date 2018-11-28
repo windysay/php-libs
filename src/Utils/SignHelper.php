@@ -33,7 +33,7 @@ class SignHelper
 
     /**
      * @param $params
-     * @param null $apiSecretKey
+     * @param $apiSecretKey
      * @return string
      * @throws \Exception
      */
