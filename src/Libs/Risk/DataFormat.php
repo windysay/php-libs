@@ -1,4 +1,5 @@
 <?php
+
 namespace JMD\Libs\Risk;
 
 class DataFormat
@@ -19,39 +20,38 @@ class DataFormat
 
     public function isSuccess()
     {
-        return $this->srcData['code'] == self::OUTPUT_SUCCESS;
+        return $this->getCode() == self::OUTPUT_SUCCESS;
     }
 
     public function isError()
     {
-        return $this->srcData['code'] == self::OUTPUT_ERROR;
+        return $this->getCode() == self::OUTPUT_ERROR;
     }
 
     public function getMsg()
     {
-        return $this->srcData['msg'];
+        return $this->srcData['msg'] ?? null;
     }
 
     public function getData()
     {
-        return $this->srcData['data'];
+        return $this->srcData['data'] ?? null;
+    }
+
+    public function getCode()
+    {
+        return $this->srcData['code'] ?? null;
     }
 
     public function getDataField($field)
     {
-        $data = $this->srcData['data'];
-
+        $data = $this->getData();
         if (!is_array($data)) {
             return '';
         }
-
         if (!array_key_exists($field, $data)) {
             return '';
         }
-
         return $data[$field];
-
     }
-
-
 }
