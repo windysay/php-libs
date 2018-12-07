@@ -40,6 +40,18 @@ class PayService
      * @var string 单笔出款地址接口
      */
     public $single_payUrl = 'api/trade/single_pay';
+    /**
+     * @var string 单笔出款地址接口
+     */
+    public $singleRepayCollectUrl = 'api/trade/single_repay_collect';
+    /**
+     * @var string 单笔退款接口
+     */
+    public $refundUrl = 'api/trade/refund';
+    /**
+     * @var string 单笔退款接口
+     */
+    public $offlineTradeUploadUrl = 'api/trade/trade_offline_batch';
 
     /**
      * @var array 请求参数
@@ -215,6 +227,39 @@ class PayService
 //        $this->request->setEndpoint($endpoint);
 
         $this->request->setUrl($this->single_payUrl);
+        $this->request->setData($this->params);
+
+        return $this->request->execute()->getData();
+    }
+
+    /**
+     * 单笔代扣
+     */
+    public function singleRepayCollect()
+    {
+        $this->request->setUrl($this->singleRepayCollectUrl);
+        $this->request->setData($this->params);
+
+        return $this->request->execute()->getData();
+    }
+
+    /**
+     * 单笔退款
+     */
+    public function refund()
+    {
+        $this->request->setUrl($this->refundUrl);
+        $this->request->setData($this->params);
+
+        return $this->request->execute()->getData();
+    }
+
+    /**
+     * 线下交易数据上传
+     */
+    public function offlineTradeUpload()
+    {
+        $this->request->setUrl($this->offlineTradeUploadUrl);
         $this->request->setData($this->params);
 
         return $this->request->execute()->getData();
