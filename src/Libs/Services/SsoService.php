@@ -215,6 +215,7 @@ class SsoService
         return $request->execute();
     }
 
+    /**------------子微服务<->父微服务Start------------*/
     /**
      * 用户列表获取(子微服务拉父微服务用户数据)
      *
@@ -238,6 +239,35 @@ class SsoService
         $request->setData($post_data);
         return $request->execute();
     }
+
+    /**
+     * 用户列表获取(用户更新同步到其他微服务)
+     *
+     * @return DataFormat
+     * @throws \Exception
+     */
+    public static function sendUserToServices($servicesConfig = [], $userData, $data = [])
+    {
+        $request = new BaseRequest();
+        $url = 'oa/api/user/update';
+        $request->setUrl($url);
+
+        $postData = [
+            'userData' => $userData,
+            'data' => $data,
+        ];
+
+        //访问父sso外网地址
+        if(count($servicesConfig) > 0){
+            $request->setAppKey($servicesConfig['app_key']);
+            $request->setSecretKey($servicesConfig['app_secret_key']);
+            $request->setEndpoint($servicesConfig['url']);
+        }
+
+        $request->setData($postData);
+        return $request->execute();
+    }
+    /**------------子微服务<->父微服务End------------*/
 
     /**------------九秒贷专用Start------------*/
     /**
