@@ -33,6 +33,25 @@ class BaseRequest implements Request
         $this->endpoint = $config['endpoint'] ?? 'https://sso.jiumiaodai.com/';
     }
 
+    /**
+     * @param $appKey
+     * @return $this
+     */
+    public function setAppKey($appKey)
+    {
+        $this->appKey = $appKey;
+        return $this;
+    }
+
+    /**
+     * @param $secretKey
+     * @return $this
+     */
+    public function setSecretKey($secretKey)
+    {
+        $this->secretKey = $secretKey;
+        return $this;
+    }
 
     /**
      * @param $data
