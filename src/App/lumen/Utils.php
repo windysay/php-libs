@@ -59,9 +59,11 @@ class Utils implements \JMD\App\Interfaces\Utils
         });
     }
 
-    public static function redis($dataBase = 0)
+    public static function redis($dataBase = '')
     {
-        $redis = Redis::command('select', [$dataBase]);
+        if($dataBase != ''){
+            $redis = Redis::command('select', [$dataBase]);
+        }
         return app('redis');
         //return $redis;
     }
