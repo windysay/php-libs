@@ -47,7 +47,7 @@ class Utils implements \JMD\App\Interfaces\Utils
                 return true;
             }
         } catch (\Exception $e) {
-            \Log::error($e->getMessage());
+            Yii::error($e->getMessage());
         }
         /** 接入邮件微服务end */
 
