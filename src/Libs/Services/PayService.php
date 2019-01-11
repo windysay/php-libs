@@ -52,7 +52,10 @@ class PayService
      * @var string 单笔退款接口
      */
     public $offlineTradeUploadUrl = 'api/trade/trade_offline_batch';
-
+    /**
+     * @var string 银行卡bin接口
+     */
+    public $bankcardBin = 'api/bankcard/bin';
     /**
      * @var array 请求参数
      */
