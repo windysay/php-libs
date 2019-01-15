@@ -33,7 +33,7 @@ class CrmApprove
      * @return \JMD\Common\DataFormat
      * @throws \Exception
      */
-    public static function cancel($orderId, $type)
+    public static function cancel($orderId, $type = self::MANUAL_CANCEL)
     {
         $request = new BaseRequest();
         $url = 'api/main/approve-cancel';
