@@ -17,22 +17,21 @@ class AuthService
     /**
      * 验证身份by token
      * @param $token
-     * @return bool|DataFormat
+     * @return DataFormat
      */
     public static function authByToken($token)
     {
         $config = Utils::getParam(BaseRequest::CONFIG_NAME);
-        if (isset($config['auth'])) {
+        if (isset($config['auth']['api'])) {
             /** 鉴权接口 */
             $url = $config['auth']['api'];
             /** 令牌key */
-            $tokenKey = $config['auth']['tokenKey'];
+            $tokenKey = $config['auth']['tokenKey'] ?? 'token';
             $params = [
                 $tokenKey => $token
             ];
             $url = $url . '?' . http_build_query($params);
             return new DataFormat(HttpHelper::get($url, $params));
         }
-        return false;
     }
 }
