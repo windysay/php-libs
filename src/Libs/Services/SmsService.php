@@ -191,4 +191,20 @@ class SmsService
         return $request->execute();
     }
     ########################  推送接口方法 End #######################
+
+    /**
+     * 获取短信列表
+     *
+     * @param $params
+     * @return DataFormat
+     * @throws \Exception
+     */
+    public function getSmsList($params)
+    {
+        $request = new BaseRequest();
+        $url = 'api/send/sms-list';
+        $request->setUrl($url);
+        $request->setData($params);
+        return $request->execute();
+    }
 }
