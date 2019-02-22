@@ -57,6 +57,10 @@ class PayService
      */
     public $bankcardBin = 'api/bankcard/bin';
     /**
+     * @var string 支付短验发送
+     */
+    public $h5PayUrl = 'api/trade/h5_js_pay';
+    /**
      * @var array 请求参数
      */
     public $params = [];
@@ -268,4 +272,15 @@ class PayService
         return $this->request->execute()->getData();
     }
 
+
+    /**
+     * 实时支付发送短验
+     */
+    public function h5Pay()
+    {
+        $this->request->setUrl($this->h5PayUrl);
+        $this->request->setData($this->params);
+
+        return $this->request->execute()->getData();
+    }
 }
