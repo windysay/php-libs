@@ -274,7 +274,7 @@ class PayService
 
 
     /**
-     * 实时支付发送短验
+     * 构造支付参数
      */
     public function h5Pay()
     {
