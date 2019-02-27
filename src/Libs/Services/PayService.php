@@ -161,11 +161,15 @@ class PayService
      *
      *
      */
-    private function checkSign()
+    public function checkSign($params = null)
     {
         $config = Utils::getParam(BaseRequest::CONFIG_NAME);
 
-        $this->checkSign = SignHelper::validateSign($this->result, $config['app_secret_key']);
+        $params = $params ?? $this->result;
+
+        $this->checkSign = SignHelper::validateSign($params, $config['app_secret_key']);
+
+        return $this->checkSign;
     }
 
     /**
