@@ -34,4 +34,37 @@ class AuthService
             return new DataFormat(HttpHelper::get($url, $params));
         }
     }
+
+    public static function authByToken2($url, $tokenKey, $token)
+    {
+        /** 令牌key */
+        $tokenKey = $tokenKey ?? 'token';
+        $params = [
+            $tokenKey => $token
+        ];
+        $url = $url . '?' . http_build_query($params); dd($url);
+        return new DataFormat(HttpHelper::get($url, $params));
+    }
+
+    /**
+     * 验证身份by jwt - token
+     * @param $token
+     * @return DataFormat
+     * @throws \Exception
+     */
+    public static function validateToken($token)
+    {
+        try {
+            $parse = (new \Lcobucci\JWT\Parser())->parse($token);
+
+            $verifyUrl = $parse->getClaim('verify_url');
+            $tokenKey = $parse->getClaim('token_key');
+        } catch (\OutOfBoundsException $outE) {
+            throw new \Exception('verify_url or token_key does not exist in token');
+        } catch (\Exception $e) {
+            throw new \Exception('jwt parse error');
+        }
+
+        return self::authByToken2($verifyUrl, $tokenKey, $token);
+    }
 }
