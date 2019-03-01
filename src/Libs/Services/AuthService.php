@@ -42,7 +42,7 @@ class AuthService
         $params = [
             $tokenKey => $token
         ];
-        $url = $url . '?' . http_build_query($params); dd($url);
+        $url = $url . '?' . http_build_query($params);
         return new DataFormat(HttpHelper::get($url, $params));
     }
 
