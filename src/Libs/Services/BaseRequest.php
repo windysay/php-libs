@@ -88,7 +88,7 @@ class BaseRequest implements Request
      * @return DataFormat
      * @throws \Exception
      */
-    public function execute($isPost = true)
+    public function execute($isPost = true, $export = false, $fileName = null)
     {
         $url = $this->endpoint . $this->url;
 
@@ -99,7 +99,24 @@ class BaseRequest implements Request
         } else {
             $result = HttpHelper::get($url);
         }
+
+        if ($export) {
+            $fileName = $this->formatGbk($fileName ? $fileName : 'export_' . date('YmdHis'));
+            header('Content-Type: application/vnd.ms-excel;charset=utf-8');
+            header('Content-Disposition: attachment;filename="' . $fileName . '.csv"');
+            header('Cache-Control: max-age=0');
+            die($result);
+        }
+
         return new DataFormat($result);
     }
 
+    /**
+     * @param $str
+     * @return string
+     */
+    protected function formatGbk($str)
+    {
+        return iconv('utf-8', 'gbk//IGNORE', $str);
+    }
 }
