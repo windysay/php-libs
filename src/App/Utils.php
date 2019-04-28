@@ -287,7 +287,7 @@ class Utils extends BaseClass
         }
         //兼容IP
         if(is_numeric($data[$co_ta-2]) && $data[$co_ta-2] < 256){
-            $host = $data[$co_ta-4].'.'.$data[$co_ta-3].'.'.$data[$co_ta-2].'.'.$data[$co_ta-1];
+            $host = $data[$co_ta-4].'.'.$data[$co_ta-3].'.'.$data[$co_ta-2].'.'.explode(':', $data[$co_ta-1])[0];
         }
         return $host;
     }
