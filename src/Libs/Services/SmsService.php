@@ -183,6 +183,33 @@ class SmsService
         return $request->execute();
     }
 
+    /**
+     * 新事件发送
+     *
+     * @param $mobile
+     * @param $eventId
+     * @param $vals
+     * @param string $appName
+     * @return DataFormat
+     */
+    public static function sendNEvent($mobile, $eventId, $vals = [], $appName = '')
+    {
+        $request = new BaseRequest();
+        $url = 'api/send/push-n-event';
+        $request->setUrl($url);
+        if (is_array($mobile)) {
+            $mobile = implode(',', $mobile);
+        }
+        $post_data = [
+            'mobile' => $mobile,
+            'event_id' => $eventId,
+            'vals' => $vals,
+            'app_name' => $appName,
+        ];
+        $request->setData($post_data);
+        return $request->execute();
+    }
+
     public static function getEventList()
     {
         $request = new BaseRequest();
