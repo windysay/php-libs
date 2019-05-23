@@ -61,6 +61,10 @@ class PayService
      */
     public $h5PayUrl = 'api/trade/h5_js_pay';
     /**
+     * @var string readyPay
+     */
+    public $readyPayUrl = 'api/trade/third_pay/ready_pay';
+    /**
      * @var array 请求参数
      */
     public $params = [];
@@ -283,6 +287,17 @@ class PayService
     public function h5Pay()
     {
         $this->request->setUrl($this->h5PayUrl);
+        $this->request->setData($this->params);
+
+        return $this->request->execute()->getData();
+    }
+
+    /**
+     * 准备支付
+     */
+    public function readyPay()
+    {
+        $this->request->setUrl($this->readyPayUrl);
         $this->request->setData($this->params);
 
         return $this->request->execute()->getData();
